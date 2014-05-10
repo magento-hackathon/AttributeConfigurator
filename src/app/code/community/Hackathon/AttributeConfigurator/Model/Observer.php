@@ -27,7 +27,7 @@ class Hackathon_AttributeConfigurator_Model_Observer
      */
     protected function isAttributeXmlNewer()
     {
-        $filename        = Mage::getConfig()->getNode(self::XML_PATH_FILENAME);
+        $filename        = Mage::getStoreConfig(self::XML_PATH_FILENAME);
         $currentFileHash = Mage::getStoreConfigFlag(self::XML_PATH_CURRENT_HASH);
         $latestFileHash  = $this->_helper->createFileHash($filename);
 

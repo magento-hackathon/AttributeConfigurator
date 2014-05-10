@@ -17,8 +17,8 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
 
     public function createFileHash($file)
     {
-        if (file_exists($file)) {
-            return md5_file($file);
+        if (file_exists('./'.$file)) {
+            return md5_file('./'.$file);
         }
 
         return false;
