@@ -25,7 +25,7 @@ Compatibility
 
 Installation Instructions
 -------------------------
-Use the magento-hackathon/magento-composer-installer or the included modman manifest to integrate into your project. If you want to manually copy the files, use the directory structure provided at /src.
+Use the included modman manifest to integrate into your project. If you want to manually copy the files, use the directory structure provided at /src.
 
 Uninstallation
 --------------
