@@ -1,0 +1,19 @@
+{
+  "name": "magentoHackathon/attributeconfigurator",
+  "licence": "osl",
+  "type": "magento-module",
+  "description": "Module for attribute creation and maintenance by file instead of setup scripts or backend",
+  "require": {
+    "magento-hackathon/magento-composer-installer": "*"
+  },
+  "authors":[
+    {"name": "nhp"
+    }, 
+    { "name": "riconeitzel"
+    },
+    {"name": "ikkaan"
+    },
+    {"name": "stefanschan"
+    }
+  ]
+}
