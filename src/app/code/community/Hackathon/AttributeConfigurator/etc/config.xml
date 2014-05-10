@@ -27,17 +27,18 @@
             </hackathon_attributeconfigurator>
         </resources>
     </global>
-    <events>
-        <controller_action_predispatch_adminhtml>
-            <observers>
-                <hackathon_attributeconfigurator_version>
-                    <type>singleton</type>
-                    <class>hackathon_attributeconfigurator/observer</class>
-                    <method>checkAttributeVersion</method>
-                </hackathon_attributeconfigurator_version>
-            </observers>
-        </controller_action_predispatch_adminhtml>
-    </events>
+    <adminhtml>
+        <events>
+            <controller_action_predispatch_adminhtml>
+                <observers>
+                    <hackathon_attributeconfigurator_version>
+                        <class>hackathon_attributeconfigurator/observer</class>
+                        <method>controllerActionPredispatchAdminhtml</method>
+                    </hackathon_attributeconfigurator_version>
+                </observers>
+            </controller_action_predispatch_adminhtml>
+        </events>
+    </adminhtml>
     <default>
         <catalog>
             <attribute_configurator>
@@ -48,7 +49,7 @@
     <phpunit>
         <suite>
             <modules>
-                <Hackathon_AttributeConfigurator />
+                <Hackathon_AttributeConfigurator/>
             </modules>
         </suite>
     </phpunit>
