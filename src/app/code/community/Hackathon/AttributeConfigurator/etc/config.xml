@@ -29,14 +29,14 @@
     </global>
     <adminhtml>
         <events>
-            <controller_action_predispatch>
+            <controller_action_predispatch_adminhtml>
                 <observers>
                     <hackathon_attributeconfigurator_version>
                         <class>hackathon_attributeconfigurator/observer</class>
                         <method>controllerActionPredispatchAdminhtml</method>
                     </hackathon_attributeconfigurator_version>
                 </observers>
-            </controller_action_predispatch>
+            </controller_action_predispatch_adminhtml>
         </events>
     </adminhtml>
     <default>
