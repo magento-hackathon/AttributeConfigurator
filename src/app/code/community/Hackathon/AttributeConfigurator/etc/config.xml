@@ -45,4 +45,11 @@
             </attribute_configurator>
         </catalog>
     </default>
+    <phpunit>
+        <suite>
+            <modules>
+                <Hackathon_AttributeConfigurator />
+            </modules>
+        </suite>
+    </phpunit>
 </config>
