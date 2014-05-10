@@ -38,4 +38,11 @@
             </observers>
         </controller_action_predispatch_adminhtml>
     </events>
+    <phpunit>
+        <suite>
+            <modules>
+                <Hackathon_AttributeConfigurator />
+            </modules>
+        </suite>
+    </phpunit>
 </config>
