@@ -2,7 +2,7 @@
 
 <attributeconfig>
     <attributesets>
-        <attributeset name="Gitarren" skeleton="Default">
+        <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default">
             <attributegroups>
                 <attributegroup name="Default">
                         <attribute code="hersteller">

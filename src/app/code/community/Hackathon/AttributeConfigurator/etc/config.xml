@@ -38,4 +38,18 @@
             </observers>
         </controller_action_predispatch_adminhtml>
     </events>
+    <default>
+        <catalog>
+            <attribute_configurator>
+                <product_csv_location>/var/importexport/product_attributes/attribute.csv</product_csv_location>
+            </attribute_configurator>
+        </catalog>
+    </default>
+    <phpunit>
+        <suite>
+            <modules>
+                <Hackathon_AttributeConfigurator />
+            </modules>
+        </suite>
+    </phpunit>
 </config>
