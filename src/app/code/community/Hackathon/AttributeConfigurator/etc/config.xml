@@ -41,7 +41,7 @@
     <default>
         <catalog>
             <attribute_configurator>
-                <product_csv_location>/var/importexport/product_attributes/attribute.csv</product_csv_location>
+                <product_xml_location>/var/importexport/product_attributes/attribute.xml</product_xml_location>
             </attribute_configurator>
         </catalog>
     </default>
