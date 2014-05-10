@@ -28,7 +28,7 @@
         </resources>
     </global>
     <events>
-        <controller_action_predispatch_adminhtml>
+        <controller_action_predispatch>
             <observers>
                 <hackathon_attributeconfigurator_version>
                     <type>singleton</type>
@@ -36,7 +36,7 @@
                     <method>checkAttributeVersion</method>
                 </hackathon_attributeconfigurator_version>
             </observers>
-        </controller_action_predispatch_adminhtml>
+        </controller_action_predispatch>
     </events>
     <default>
         <catalog>
