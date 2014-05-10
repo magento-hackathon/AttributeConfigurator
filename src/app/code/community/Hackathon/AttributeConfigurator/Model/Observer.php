@@ -16,7 +16,7 @@ class Hackathon_AttributeConfigurator_Model_Observer
     }
 
     /**
-     * 
+     *
      *
      * @param Varien_Event_Observer $observer
      *
