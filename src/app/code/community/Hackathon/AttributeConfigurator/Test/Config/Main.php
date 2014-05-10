@@ -16,10 +16,19 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
         $this->assertModuleVersionGreaterThan('0.0.1');
     }
 
+    public function testSetupRessources()
+    {
+        $this->assertDataSetupExists();
+    }
+
     public function testClassAliases()
     {
-        $this->assertHelperAlias('hackathon_attributeconfigurator', 'Hackathon_AttributeConfigurator_Helper_Data');
+        $this->assertHelperAlias('hackathon_attributeconfigurator',
+                'Hackathon_AttributeConfigurator_Helper_Data'
+        );
+
     }
+
 
     public function testObserverDefinition()
     {
@@ -27,7 +36,7 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
                 'adminhtml',
                 'controller_action_predispatch_adminhtml',
                 'hackathon_attributeconfigurator/observer',
-                'checkAttributeVersion'
+                'controllerActionPredispatchAdminhtml'
         );
     }
 
