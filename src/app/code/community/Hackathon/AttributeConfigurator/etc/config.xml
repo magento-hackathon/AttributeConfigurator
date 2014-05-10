@@ -27,28 +27,29 @@
             </hackathon_attributeconfigurator>
         </resources>
     </global>
-    <events>
-        <controller_action_predispatch>
-            <observers>
-                <hackathon_attributeconfigurator_version>
-                    <type>singleton</type>
-                    <class>hackathon_attributeconfigurator/observer</class>
-                    <method>checkAttributeVersion</method>
-                </hackathon_attributeconfigurator_version>
-            </observers>
-        </controller_action_predispatch>
-    </events>
+    <adminhtml>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <hackathon_attributeconfigurator_version>
+                        <class>hackathon_attributeconfigurator/observer</class>
+                        <method>controllerActionPredispatchAdminhtml</method>
+                    </hackathon_attributeconfigurator_version>
+                </observers>
+            </controller_action_predispatch>
+        </events>
+    </adminhtml>
     <default>
         <catalog>
             <attribute_configurator>
-                <product_csv_location>/var/importexport/product_attributes/attribute.csv</product_csv_location>
+                <product_xml_location>/var/importexport/product_attributes/attribute.xml</product_xml_location>
             </attribute_configurator>
         </catalog>
     </default>
     <phpunit>
         <suite>
             <modules>
-                <Hackathon_AttributeConfigurator />
+                <Hackathon_AttributeConfigurator/>
             </modules>
         </suite>
     </phpunit>
