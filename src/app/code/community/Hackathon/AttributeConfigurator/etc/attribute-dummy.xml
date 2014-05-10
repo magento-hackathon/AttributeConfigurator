@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<attributeconfig>
+    <attributesets>
+        <attributeset name="Gitarren" skeleton="Default">
+            <attributegroups>
+                <attributegroup name="Default">
+                        <attribute code="hersteller">
+                            <settings>
+                                <is_visible>1</is_visible>
+                                <is_configurable>1</is_configurable>
+                                <is_global>1</is_global>
+                            </settings>
+                            <values>
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Fender</de_DE>
+                                </pair>
+
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Acoustics</de_DE>
+                                </pair>
+
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Hendrix</de_DE>
+                                </pair>
+
+                            </values>
+                        </attribute>
+                        <attribute code="bärstecker">
+                            <settings>
+                                <is_visible>1</is_visible>
+                                <is_configurable>1</is_configurable>
+                                <is_global>1</is_global>
+                            </settings>
+                            <values>
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Fender</de_DE>
+                                </pair>
+
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Acoustics</de_DE>
+                                </pair>
+
+                                <pair>
+                                    <key>1</key>
+                                    <de_DE>Hendrix</de_DE>
+                                </pair>
+
+                            </values>
+                        </attribute>
+                </attributegroup>
+            </attributegroups>
+        </attributeset>
+    </attributesets>
+</attributeconfig>
