@@ -15,9 +15,17 @@ class Hackathon_AttributeConfigurator_Model_Observer
         $this->_helper = Mage::helper('hackathon_attributeconfigurator');
     }
 
+    /**
+     * 
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     */
     public function controllerActionPredispatchAdminhtml(Varien_Event_Observer $observer)
     {
-        $this->isAttributeXmlNewer();
+        if($this->isAttributeXmlNewer()) {
+            Mage::getModel('hackathon_attributeconfigurator/sync_import')->import();
+        }
     }
 
     /**
