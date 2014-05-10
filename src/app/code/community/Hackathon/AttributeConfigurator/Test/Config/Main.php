@@ -21,4 +21,16 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
         $this->assertHelperAlias('hackathon_attributeconfigurator', 'Hackathon_AttributeConfigurator_Helper_Data');
     }
 
+    public function testObserverDefinition()
+    {
+        $this->assertEventObserverDefined(
+                'adminhtml',
+                'controller_action_predispatch_adminhtml',
+                'hackathon_attributeconfigurator/observer',
+                'checkAttributeVersion'
+        );
+    }
+
+
+
 }
