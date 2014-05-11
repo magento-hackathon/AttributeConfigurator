@@ -19,7 +19,7 @@
                     <fields>
                         <product_xml_location translate="label">
                             <label>Product Attribute XML Location</label>
-                            <comment>e.g. /var/importexport/product_attributes/attribute.xml</comment>
+                            <comment>e.g. /var/importexport/product_attributes/attribute.xmlproduct_xml_location</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>

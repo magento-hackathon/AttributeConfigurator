@@ -7,6 +7,11 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
     const XML_PATH_FILENAME = 'catalog/attribute_configurator/product_xml_location';
     const XML_PATH_CURRENT_HASH = 'attributeconfigurator/hashes/current';
 
+    /**
+     * Build Import Filename from Store Config
+     *
+     * @return string
+     */
     public function getImportFilename()
     {
         return Mage::getBaseDir() . DS . trim(Mage::getStoreConfig(self::XML_PATH_FILENAME), '/\ ');
@@ -20,7 +25,6 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      *
      * @return bool|string
      */
-
     public function createFileHash($file)
     {
         if (file_exists($file)) {
@@ -36,7 +40,7 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      */
     public function isAttributeXmlNewer()
     {
-        $filename        = $this->getImportFilename();
+        $filename = $this->getImportFilename();
         $currentFileHash = Mage::getStoreConfigFlag(self::XML_PATH_CURRENT_HASH);
         $latestFileHash  = $this->createFileHash($filename);
         if ($latestFileHash !== $currentFileHash) {
