@@ -197,6 +197,9 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
 
     /**
      * Insert new Attribute
+     *
+     * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
+     *
      * @param $data array
      * @throws Mage_Core_Exception
      */
