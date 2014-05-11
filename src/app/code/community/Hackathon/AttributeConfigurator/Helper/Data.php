@@ -52,37 +52,13 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
     /**
      * Check if Attribute is maintained by extension, return false if not (leave system and third party attributes as they are)
      *
-     * @param string $attributeCode
-     * @param string|integer $entityType
+     * @param $attribute
      * @return bool
      */
-    public function checkAttributeMaintained($attributeCode, $entityType){
-        if (is_numeric($entityType)) {
-            $entityTypeId = $entityType;
-        } elseif (is_string($entityType)) {
-            $entityType = Mage::getModel('eav/entity_type')->loadByCode($entityType);
+    public function checkAttributeMaintained($attribute){
+        if (!$attribute || $attribute->getIsMaintainedByConfigurator() !== 1){
+            return false;
         }
-        if ($entityType instanceof Mage_Eav_Model_Entity_Type) {
-            $entityTypeId = $entityType->getId();
-        }
-        $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
-        $sql = 'SELECT is_maintained_by_configurator FROM eav_attribute WHERE attribute_code=? AND entity_type_id=?';
-        try{
-            $sourceQuery = $_dbConnection->query(
-                $sql,
-                array(
-                    $attributeCode,
-                    $entityTypeId
-                )
-            );
-            $row = $sourceQuery->fetch();
-            Mage::log($row['is_maintained_by_configurator']);
-            if ($row['is_maintained_by_configurator'] === 1){
-                return true;
-            }
-        }catch(Exception $e){
-            Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
-        }
-        return false;
+        return true;
     }
 }

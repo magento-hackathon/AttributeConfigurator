@@ -24,13 +24,17 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         /* @var $attribute Mage_Eav_Model_Entity_Attribute */
         $attribute = $this->loadByCode($entityType, $attributeCode);
         // Stop if $data not set or Attribute not available or Attribute not maintained by module
-        if ($data === null || !$attribute || !$this->_helper->checkAttributeMaintained($attribute->getAttributeCode(), $entityType)) {
+        $this->_helper->checkAttributeMaintained($attribute);
+        if ($data === null || !$attribute || !$this->_helper->checkAttributeMaintained($attribute)) {
             return;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
         if ($attribute->getBackendType() !== $data['backend_type']){
             $this->migrateData($attribute, $data);
         }
+        /*
+         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
+         */
         // Actual Conversion of Attribute
         $sql = 'UPDATE eav_attribute SET attribute_model=?, backend_model=?, backend_type=?, backend_table=?, frontend_model=?, frontend_input=?, frontend_label=?, frontend_class=?, source_model=?, is_required=?, is_user_defined=?, default_value=?, is_unique=?, note=? WHERE attribute_id=?';
         try{
