@@ -23,10 +23,22 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
 
     public function testClassAliases()
     {
-        $this->assertHelperAlias('hackathon_attributeconfigurator',
+        $this->assertHelperAlias(
+                'hackathon_attributeconfigurator',
                 'Hackathon_AttributeConfigurator_Helper_Data'
         );
-
+        $this->assertModelAlias(
+                'hackathon_attributeconfigurator/attribute',
+                'Hackathon_AttributeConfigurator_Model_Attribute'
+        );
+        $this->assertModelAlias(
+                'hackathon_attributeconfigurator/sync_import',
+                'Hackathon_AttributeConfigurator_Model_Sync_Import'
+        );
+        $this->assertModelAlias(
+                'hackathon_attributeconfigurator/observer',
+                'Hackathon_AttributeConfigurator_Model_Observer'
+        );
     }
 
 
@@ -38,6 +50,11 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
                 'hackathon_attributeconfigurator/observer',
                 'controllerActionPredispatchAdminhtml'
         );
+    }
+
+    public function testConfigContainsXmlLoactionNode()
+    {
+        $this->assertConfigNodeHasChild('default/catalog/attribute_configurator', 'product_xml_location');
     }
 
 

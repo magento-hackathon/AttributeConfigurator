@@ -36,6 +36,7 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
         $attribute = Mage::getModel('catalog/entity_attribute');
         $attribute->setIsMaintainedByConfigurator(1);
         $this->assertTrue($this->_helper->checkAttributeMaintained($attribute));
+        $this->assertFalse($this->_helper->checkAttributeMaintained($attribute->setIsMaintainedByConfigurator(0)));
         $this->assertFalse($this->_helper->checkAttributeMaintained(NULL));
     }
 
