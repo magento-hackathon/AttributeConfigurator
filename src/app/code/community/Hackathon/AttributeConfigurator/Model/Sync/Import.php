@@ -72,7 +72,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         return $returnarray;
     }
 
-    }
+
 
     /**
      * @param $xml
@@ -85,7 +85,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         }
 	/** @TODO: RICO schön machen und weitermachen :D **/
     protected function _validate($attributesets, $attributes)
-
+    {
 
         $attributesets = $attributesets;
         $lo_attributesets = $this->_getAttributeSetsFromXml($attributesets);
@@ -94,25 +94,25 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         foreach ($attributes->children() as $attribute) {
             foreach ($attribute->attributesets->children() as $attributeset) {
                 //echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
-    
-    }
+            }
+        }
 
-    public function prepareAttributeGroups($xml)
-    {
-        $this->_groupData = json_decode(json_encode($xml->attributegroups), true);
-        return $this;
+
+
                 if(!in_array($attributeset["name"], $lo_attributesets)){
                     throw new Mage_Adminhtml_Exception("Attributeset '".$attributeset["name"]."' referenced by '".$attribute["code"]."' is not listed in the attributesetslist element");
                 }
-            }
-        }
 
         foreach ($attributesets->children() as $attributeset) {
             //echo $attributeset['name'] . "<br />";
         }
 
         return false;
-    }
+}
+   public function prepareAttributeGroups($xml)
+    {
+        $this->_groupData = json_decode(json_encode($xml->attributegroups), true);
+        return $this;    }
 
     protected function bibiBlocksberg()
     {
