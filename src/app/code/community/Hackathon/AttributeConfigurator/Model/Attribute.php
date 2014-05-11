@@ -1,11 +1,13 @@
 <?php
-
 /**
  * Class Hackathon_AttributeConfigurator_Model_Attribute
  */
 class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
 {
+    protected $_helper;
+
     public function __construct(){
+        $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
         parent::_construct();
     }
 
@@ -21,8 +23,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
         /* @var $attribute Mage_Eav_Model_Entity_Attribute */
         $attribute = $this->loadByCode($entityType, $attributeCode);
-        // Stop if $data not set or Attribute not available
-        if ($data === null || !$attribute) {
+        // Stop if $data not set or Attribute not available or Attribute not maintained by module
+        if ($data === null || !$attribute || !$this->_helper->checkAttributeMaintained($attribute->getAttributeCode(), $entityType)) {
             return;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
@@ -54,6 +56,37 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             );
         }catch(Exception $e){
             Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
+        }
+        // If entity of catalog_product, also update catalog_eav_attribute
+        if ($attribute->getEntity()->getData('entity_type_code') === Mage_Catalog_Model_Product::ENTITY) {
+            $sql = 'UPDATE catalog_eav_attribute SET frontend_input_renderer=?, is_global, is_visible=?, is_searchable=?, is_filterable=?, is_comparable=?, is_visible_on_front=?, is_html_allowed_on_front=?, is_used_for_price_rules=?, is_filterable_in_search=?, used_in_product_listing=?, used_for_sort_by=?, is_configurable=?, apply_to=?, is_visible_in_advanced_search=?, position=?, is_wysiwyg_enabled=?, is_used_for_promo_rules=?';
+            try{
+                $_dbConnection->query(
+                    $sql,
+                    array(
+                        $data['frontend_input_renderer'],
+                        $data['is_global'],
+                        $data['is_visible'],
+                        $data['is_searchable'],
+                        $data['is_filterable'],
+                        $data['is_comparable'],
+                        $data['is_visible_on_front'],
+                        $data['is_html_allowed_on_front'],
+                        $data['is_used_for_price_rules'],
+                        $data['is_filterable_in_search'],
+                        $data['used_in_product_listing'],
+                        $data['used_for_sort_by'],
+                        $data['is_configurable'],
+                        $data['apply_to'],
+                        $data['is_visible_in_advanced_search'],
+                        $data['position'],
+                        $data['is_wysiwyg_enabled'],
+                        $data['is_used_for_promo_rules'],
+                    )
+                );
+            }catch(Exception $e){
+                Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
+            }
         }
     }
 

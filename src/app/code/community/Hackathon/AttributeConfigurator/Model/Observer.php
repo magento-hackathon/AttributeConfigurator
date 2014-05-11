@@ -1,11 +1,9 @@
 <?php
-
 /**
  * Class Hackathon_AttributeConfigurator_Model_Observer
  */
 class Hackathon_AttributeConfigurator_Model_Observer
 {
-
     protected $_helper;
 
     public function __construct()
@@ -14,7 +12,7 @@ class Hackathon_AttributeConfigurator_Model_Observer
     }
 
     /**
-     *
+     * Poll for Changes in XML
      *
      * @param Varien_Event_Observer $observer
      *
@@ -25,5 +23,4 @@ class Hackathon_AttributeConfigurator_Model_Observer
             Mage::getModel('hackathon_attributeconfigurator/sync_import')->import();
         }
     }
-
 }
