@@ -12,9 +12,6 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
         parent::setUp();
     }
 
-    /**
-     * @incomplete
-     */
     public function testCreateFileHash()
     {
         /** @var string $fileHash */
@@ -22,16 +19,17 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
         /** @var string $testFile */
         $testFileName = Mage::getModuleDir('', 'Hackathon_AttributeConfigurator') .
                 DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-dummy.xml' ;
-        $docRoot = Mage::getBaseDir();
 
-
-        $testFileLocation = str_replace($docRoot, '', $testFileName);
-        $this->assertEquals($fileHash, $this->_helper->createFileHash($testFileLocation));
-        //TODO: Check if passing empty strings is a problem -> currently returns a hash, not false
-        $this->assertFalse($this->_helper->createFileHash('zxcv'));
-
-
+        $this->assertEquals($fileHash, $this->_helper->createFileHash($testFileName));
+        $this->assertFalse($this->_helper->createFileHash(''));
+        $this->assertFalse($this->_helper->createFileHash('ranD0MsTr1ng'));
     }
 
+    public function testGetImportFilename()
+    {
+        $this->assertNotNull(Mage::getStoreConfig(Hackathon_AttributeConfigurator_Helper_Data::XML_PATH_FILENAME));
+        $this->assertInternalType('int', strpos($this->_helper->getImportFilename(), Mage::getBaseDir() . DS ));
+    }
+    
 
 }
