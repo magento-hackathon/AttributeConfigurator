@@ -53,7 +53,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                 )
             );
         }catch(Exception $e){
-            Mage::log(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
+            Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
         }
     }
 
@@ -88,9 +88,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             $currentValue = $row['value'];
             if (!is_null($currentValue)) {
                 // Cast Value Type to new Type (e.g. decimal to text)
-                Mage::log('row:'.print_r($row, true));
                 $targetValue = $this->typeCast($currentValue, $sourceType, $targetType);
-                Mage::log('current:'.$currentValue.' - target:'.$targetValue);
                 // Insert Value to target Entity
                 $sql = 'INSERT INTO '.$targetTable.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
                 try{
@@ -99,7 +97,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                         array($row['entity_type_id'], $row['attribute_id'], $row['store_id'], $row['entity_id'], $targetValue)
                     );
                 }catch(Exception $e){
-                    Mage::log(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
+                    Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
                 }
             }
             // Delete Value from source Entity
