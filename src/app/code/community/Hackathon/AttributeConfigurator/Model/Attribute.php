@@ -153,21 +153,21 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         }
         switch ($targetType) {
             case 'decimal':
-                return min((int)$value, 999999999999);
+                return min((int)$value, 2147483648);
             case 'gallery':
                 return $this->truncateString((string)$value, 254);
             case 'group_price':
-                return min((int)$value, 99999);
+                return min((int)$value, 65535);
             case 'int':
-                return min((int)$value, 99999999999);
+                return min((int)$value, 2147483648);
             case 'media_gallery':
                 return $this->truncateString((string)$value, 254);
             case 'media_gallery_value':
-                return min((int)$value, 99999);
+                return min((int)$value, 65535);
             case 'text':
                 return (string)$value;
             case 'tier_price':
-                return min((int)$value, 99999);
+                return min((int)$value, 65535);
             case 'url_key':
                 return $this->truncateString((string)$value, 254);
             case 'varchar':
