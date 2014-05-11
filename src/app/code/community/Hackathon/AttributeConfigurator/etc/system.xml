@@ -17,15 +17,15 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <product_csv_location translate="label">
-                            <label>Product Attribute CSV Location</label>
-                            <comment>e.g. /var/importexport/product_attributes/attribute.csv</comment>
+                        <product_xml_location translate="label">
+                            <label>Product Attribute XML Location</label>
+                            <comment>e.g. /var/importexport/product_attributes/attribute.xml</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </product_csv_location>
+                        </product_xml_location>
                     </fields>
                 </attribute_configurator>
             </groups>
