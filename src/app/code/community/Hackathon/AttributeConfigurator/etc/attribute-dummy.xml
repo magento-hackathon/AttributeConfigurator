@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <attributeconfig>
-    <attributesetslist>
+    <attributesets>
         <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default"/>
         <attributeset name="Flöten/Blechbläser" skeleton="Default"/>
-    </attributesetslist>
+    </attributesets>
 
-    <attributeslist>
+    <attributes>
         <attribute code="hersteller">
             <values>
                 <pair>
@@ -69,7 +69,7 @@
                 </attributeset>
             </attributesets>
         </attribute>
-    </attributeslist>
+    </attributes>
 </attributeconfig>
 
 
