@@ -30,6 +30,13 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
         $this->assertNotNull(Mage::getStoreConfig(Hackathon_AttributeConfigurator_Helper_Data::XML_PATH_FILENAME));
         $this->assertInternalType('int', strpos($this->_helper->getImportFilename(), Mage::getBaseDir() . DS ));
     }
-    
+
+    public function testcheckAttributeMaintained()
+    {
+        $attribute = Mage::getModel('catalog/entity_attribute');
+        $attribute->setIsMaintainedByConfigurator(1);
+        $this->assertTrue($this->_helper->checkAttributeMaintained($attribute));
+        $this->assertFalse($this->_helper->checkAttributeMaintained(NULL));
+    }
 
 }
