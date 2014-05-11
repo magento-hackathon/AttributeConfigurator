@@ -54,8 +54,6 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         }
         $attribute->addData($newData);
         $setup = Mage::getModel('eav/entity_setup');
-        $attribute->setAttributeSetId(Mage::registry($data['attribute_set_id']));
-        $attribute->setAttributeGroupId(Mage::registry($data['attribute_group_id']));
         $attribute->save();
         foreach ($data['attribute_set'] as $key => $set) {
             $attributeSetId = Mage::getModel('eav/entity_attribute_set')
