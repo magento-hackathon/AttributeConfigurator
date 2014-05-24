@@ -47,7 +47,7 @@ Joachim Adomeit
 
 License
 -------
-[OSL - Open Software Licence 3.0](http://opensource.org/licenses/osl-3.0.php)
+[GNU GPL v3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
 
 Copyright
 ---------

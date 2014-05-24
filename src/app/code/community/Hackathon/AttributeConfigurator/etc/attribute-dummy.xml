@@ -4,7 +4,6 @@
         <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default"/>
         <attributeset name="Flöten/Blechbläser" skeleton="Default"/>
     </attributesets>
-
     <attributes>
         <attribute code="hersteller">
             <values>
@@ -22,7 +21,6 @@
                     <key>1</key>
                     <de_DE>Hendrix</de_DE>
                 </pair>
-
             </values>
             <settings>
                 <is_visible>1</is_visible>
@@ -71,5 +69,3 @@
         </attribute>
     </attributes>
 </attributeconfig>
-
-

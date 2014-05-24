@@ -1,6 +1,8 @@
 <?php
-
-class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPUnit_Test_Case
+/**
+ * Class Hackathon_AttributeConfigurator_Test_Helper_DataTest
+ */
+class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_Case
 {
     /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper*/
     protected $_helper;
@@ -8,7 +10,6 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
     protected function setUp()
     {
         $this->_helper = MAGE::helper('hackathon_attributeconfigurator');
-
         parent::setUp();
     }
 
@@ -39,5 +40,4 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest  extends EcomDev_PHPU
         $this->assertFalse($this->_helper->checkAttributeMaintained($attribute->setIsMaintainedByConfigurator(0)));
         $this->assertFalse($this->_helper->checkAttributeMaintained(NULL));
     }
-
 }

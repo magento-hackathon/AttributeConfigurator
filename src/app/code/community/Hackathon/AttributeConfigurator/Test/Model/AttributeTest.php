@@ -1,8 +1,9 @@
 <?php
-
+/**
+ * Class Hackathon_AttributeConfigurator_Test_Model_AttributeTest
+ */
 class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
 {
-
     /**
      * @var Hackathon_AttributeConfigurator_Model_Attribute
      */
@@ -14,20 +15,16 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
         parent::setUp();
     }
 
-
     /**
      * @test
      */
     public function insertAttributeThrowsExceptionIfIdExists()
     {
-        /** @var  Mage_Catalog_Model_Resource_Category_Attribute_Collection $attributes */
-
+        /** @var Mage_Catalog_Model_Resource_Category_Attribute_Collection $attributes */
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection');
         $attributeCode = $attributes->getFirstItem()->getCode();
         if (!empty($attributes)) {
             $this->_model->insertAttribute(array('data' => $attributeCode));
         }
-
     }
-
 }

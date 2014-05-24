@@ -21,11 +21,10 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
 
     protected $_groupData = array();
 
-
     public function _construct()
     {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
-        $this->bibiBlocksberg();
+        $this->getImport();
     }
 
     /**
@@ -133,9 +132,9 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     }
 
     /**
-     * Does 'magic' ?
+     * Load XML File via Varien Simplexml to Mage Config
      */
-    protected function bibiBlocksberg()
+    protected function getImport()
     {
         Mage::getConfig()->loadFile($this->_helper->getImportFilename());
     }
