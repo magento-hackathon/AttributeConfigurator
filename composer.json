@@ -1,6 +1,6 @@
 {
   "name": "magentoHackathon/attributeconfigurator",
-  "licence": "osl",
+  "licence": "osl-3.0",
   "type": "magento-module",
   "description": "Module for attribute creation and maintenance by file instead of setup scripts or backend",
   "require": {
