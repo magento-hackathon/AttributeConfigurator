@@ -8,6 +8,7 @@ Facts
 - version: 0.1.0
 - extension key: Hackathon_AttributeConfigurator
 - [extension on GitHub](https://github.com/magento-hackathon/AttributeConfigurator)
+- no workflow implemented right now, only supportive functionality was developed
 
 Description
 -----------
@@ -30,6 +31,14 @@ Use the included modman manifest to integrate into your project. If you want to 
 Uninstallation
 --------------
 1. Remove all extension files from your Magento installation
+
+Planned Features
+----------------
+- supply an XML File with attribute information (name, label, type, values/options, ...)
+- add new attributes
+- change existing one (type change also, but in some cases information loss is inevitable)
+- clean up no longer needed ones
+- just care about a specific subset that comes/came from XML (handled by flagging) to not interfere with system or 3rd party attributes
 
 Support
 -------
