@@ -14,7 +14,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     protected $_attributeData = array();
 
     /**
-     * Attribute-Set Data
+     * Attribute-Setb Data
      * @var array
      */
     protected $_setData = array();
@@ -35,12 +35,16 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      */
     public function import()
     {
+        /** @var Mage_Core_Model_Config $_config */
         $_config = Mage::getConfig();
 
         // 1. Import/Delete Attribute Sets
+        /** @var Mage_Core_Model_Config_Element $attributesets */
         $attributesets = $_config->getNode('attributesetslist');
+        var_dump($attributesets);
 
         // 2. Import/Delete Attributes
+        /** @var Mage_Core_Model_Config_Element $attributes */
         $attributes = $_config->getNode('attributeslist');
 
         if ($this->_validate($attributesets, $attributes)) {
