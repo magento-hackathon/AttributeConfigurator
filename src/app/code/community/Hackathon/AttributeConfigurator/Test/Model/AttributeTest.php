@@ -2,7 +2,7 @@
 /**
  * Class Hackathon_AttributeConfigurator_Test_Model_AttributeTest
  */
-class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
+class Hackathon_AttributeConfigurator_Test_Model_Attribute extends EcomDev_PHPUnit_Test_Case
 {
     /**
      * @var Hackathon_AttributeConfigurator_Model_Attribute
@@ -13,6 +13,13 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
     {
         $this->_model = Mage::getModel('hackathon_attributeconfigurator/attribute');
         parent::setUp();
+    }
+    /**
+     * @test
+     */
+    public function testDa()
+    {
+        $this->assertTrue(false);
     }
 
     /**

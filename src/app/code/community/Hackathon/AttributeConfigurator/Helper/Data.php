@@ -8,6 +8,17 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
     const XML_PATH_CURRENT_HASH = 'attributeconfigurator/hashes/current';
 
     /**
+     * @var string The filename of the importfile
+     */
+    protected $_importFilename;
+
+    function __construct()
+    {
+        $this->_importFilename = $this->getImportFilename();
+    }
+
+
+    /**
      * Build Import Filename from Store Config
      *
      * @return string
@@ -40,8 +51,8 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      */
     public function isAttributeXmlNewer()
     {
-        $filename = $this->getImportFilename();
-        $currentFileHash = Mage::getStoreConfigFlag(self::XML_PATH_CURRENT_HASH);
+        $filename = $this->_importFilename;
+        $currentFileHash = Mage::getStoreConfig(self::XML_PATH_CURRENT_HASH);
         $latestFileHash  = $this->createFileHash($filename);
         if ($latestFileHash !== $currentFileHash) {
             return true;
