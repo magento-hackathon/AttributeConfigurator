@@ -1,8 +1,8 @@
 <?php
 /**
- * Class Hackathon_AttributeConfigurator_Test_Model_AttributeTest
+ * Class Hackathon_AttributeConfigurator_Test_Model_ObserverTest
  */
-class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
+class Hackathon_AttributeConfigurator_Test_Model_ObserverTest extends EcomDev_PHPUnit_Test_Case
 {
     public function testConstructorSetsHelper()
     {
