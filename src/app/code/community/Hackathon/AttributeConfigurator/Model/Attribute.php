@@ -17,6 +17,10 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      * @param string $attributeCode
      * @param int $entityType
      * @param array $data
+     * @throws Mage_Core_Exception
+     *
+     * @return bool
+     *
      */
     public function convertAttribute($attributeCode, $entityType, $data = null)
     {
@@ -24,9 +28,9 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         /* @var $attribute Mage_Eav_Model_Entity_Attribute */
         $attribute = $this->loadByCode($entityType, $attributeCode);
         // Stop if $data not set or Attribute not available or Attribute not maintained by module
-        $this->_helper->checkAttributeMaintained($attribute);
+        //$this->_helper->checkAttributeMaintained($attribute);
         if ($data === null || !$attribute || !$this->_helper->checkAttributeMaintained($attribute)) {
-            return;
+            return false;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
         if ($attribute->getBackendType() !== $data['backend_type']){
@@ -92,6 +96,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                 Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
             }
         }
+        return true;
     }
 
     /**
@@ -200,16 +205,19 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      *
      * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
      *
+     * @param int $entityType
      * @param $data array
      * @throws Mage_Core_Exception
+     *
+     * @return void
      */
-    public function insertAttribute($data)
+    public function insertAttribute($entityType, $data)
     {
-        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($data['code']);
+        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($entityType, $data['code']);
 
         if ($attribute->getId()) {
             Mage::throwException('Attribute already exists.');
-        } elseif (trim($data['settings']['frontend_label']) == '' || trim($data['code']) == '') {
+        } elseif (trim($data['frontend_label']) == '' || trim($data['code']) == '') {
             Mage::throwException("Can't import the attribute with an empty label or code.");
         } // code for set/group id checks here
 
@@ -218,6 +226,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             $newData[$node] = $value;
         }
         $attribute->addData($newData);
+
         $setup = Mage::getModel('eav/entity_setup');
         $attribute->save();
         foreach ($data['attribute_set'] as $key => $set) {

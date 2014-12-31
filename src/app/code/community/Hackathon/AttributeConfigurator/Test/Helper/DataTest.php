@@ -33,18 +33,18 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUn
                         $this->_testFile
                 )
         );
+
+        $this->assertFalse(
+                $this->_helper->createFileHash(
+                        "notAvalidFile"
+                )
+        );
     }
 
     public function testIsAttributeXmlNewer()
     {
-
-
-
-        //get the current value of the config - should be null, but will be restored after testing just in case
+        //get the current value of the config - should be null, but will be restored after testing just in case it's different
         $originalConfigValue = Mage::getStoreConfig(Hackathon_AttributeConfigurator_Helper_Data::XML_PATH_CURRENT_HASH);
-
-
-
 
         //Set up a reflection class to change the filename to an abitrary value
         $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
@@ -52,9 +52,7 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUn
 
         $fileNameProperty = $helperReflection->getProperty('_importFilename');
         $fileNameProperty->setAccessible(true);
-
         $fileNameProperty->setValue( $helperInstance, $this->_testFile);
-
 
         //set the config to the test file's hash
         Mage::getModel('core/config')
