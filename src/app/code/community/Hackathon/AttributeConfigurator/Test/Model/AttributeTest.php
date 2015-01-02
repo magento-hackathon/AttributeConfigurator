@@ -58,19 +58,22 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
      */
     public function testEmptyLabelOrCodeThrowException()
     {
-        $entityType = Mage_Catalog_Model_Product::ENTITY;
+
+        $entityType = Mage::getModel('eav/config')
+                ->getEntityType(Mage_Catalog_Model_Product::ENTITY)
+                ->getEntityTypeId();
         $this->_model->insertAttribute(
-                $entityType,
                 array(
                         'code' => '',
-                        'frontend_label' => 'notempty'
+                        'frontend_label' => 'notempty',
+                        'entity_type_id' => $entityType
                 )
         );
         $this->_model->insertAttribute(
-                $entityType,
                 array(
                         'code' => 'notempty',
-                        'frontend_label' => ''
+                        'frontend_label' => '',
+                        'entity_type_id' => $entityType
                 )
         );
     }
@@ -111,9 +114,11 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
         $attributeCode = $attributes->getFirstItem()->getAttributeCode();
 
         if (!empty($attributes)) {
+
             $this->_model->insertAttribute(
-                    $attributes->getFirstItem()->getEntityTypeId(),
+
                     array(
+                            'entity_type_id' => $attributes->getFirstItem()->getEntityTypeId(),
                             'code' => $attributeCode,
                             'frontend_label' => 'not Empty')
             );
