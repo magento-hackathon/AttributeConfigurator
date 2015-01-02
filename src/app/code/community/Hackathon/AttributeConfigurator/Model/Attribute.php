@@ -205,15 +205,15 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      *
      * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
      *
-     * @param int $entityType
      * @param $data array
      * @throws Mage_Core_Exception
      *
      * @return void
      */
-    public function insertAttribute($entityType, $data)
+    public function insertAttribute($data)
     {
-        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($entityType, $data['code']);
+        /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
+        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($data['entity_type_id'], $data['code']);
 
         if ($attribute->getId()) {
             Mage::throwException('Attribute already exists.');
