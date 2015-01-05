@@ -114,7 +114,10 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         }
 
         if (!in_array($attributeset["name"], $lo_attributesets)) {
-            throw new Mage_Adminhtml_Exception("Attributeset '".$attributeset["name"]."' referenced by '".$attribute["code"]."' is not listed in the attributesetslist element");
+            throw new Mage_Adminhtml_Exception(
+                    "Attributeset '".$attributeset["name"].
+                    "' referenced by '".$attribute["code"]."'
+                    is not listed in the attributesetslist element");
         }
 
         foreach ($attributesets->children() as $attributeset) {

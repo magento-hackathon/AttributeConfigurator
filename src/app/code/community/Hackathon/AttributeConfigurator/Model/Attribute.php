@@ -6,7 +6,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
 {
     protected $_helper;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
         parent::_construct();
     }
@@ -33,14 +34,30 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             return false;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
-        if ($attribute->getBackendType() !== $data['backend_type']){
+        if ($attribute->getBackendType() !== $data['backend_type']) {
             $this->migrateData($attribute, $data);
         }
         /*
-         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
+         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen,
+         * falls der neue BackendType ein anderer ist
          */
         // Actual Conversion of Attribute
-        $sql = 'UPDATE eav_attribute SET attribute_model=?, backend_model=?, backend_type=?, backend_table=?, frontend_model=?, frontend_input=?, frontend_label=?, frontend_class=?, source_model=?, is_required=?, is_user_defined=?, default_value=?, is_unique=?, note=? WHERE attribute_id=?';
+        $sql = 'UPDATE eav_attribute SET \
+                    attribute_model=?, \
+                    backend_model=?, \
+                    backend_type=?, \
+                    backend_table=?, \
+                    frontend_model=?, \
+                    frontend_input=?, \
+                    frontend_label=?, \
+                    frontend_class=?, \
+                    source_model=?, \
+                    is_required=?, \
+                    is_user_defined=?, \
+                    default_value=?, \
+                    is_unique=?, \
+                    note=? \
+                    WHERE attribute_id=?';
         try{
             $_dbConnection->query(
                 $sql,
@@ -67,7 +84,24 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         }
         // If entity of catalog_product, also update catalog_eav_attribute
         if ($attribute->getEntity()->getData('entity_type_code') === Mage_Catalog_Model_Product::ENTITY) {
-            $sql = 'UPDATE catalog_eav_attribute SET frontend_input_renderer=?, is_global, is_visible=?, is_searchable=?, is_filterable=?, is_comparable=?, is_visible_on_front=?, is_html_allowed_on_front=?, is_used_for_price_rules=?, is_filterable_in_search=?, used_in_product_listing=?, used_for_sort_by=?, is_configurable=?, apply_to=?, is_visible_in_advanced_search=?, position=?, is_wysiwyg_enabled=?, is_used_for_promo_rules=?';
+            $sql = 'UPDATE catalog_eav_attribute SET \
+                    frontend_input_renderer=?, \
+                    is_global, is_visible=?, \
+                    is_searchable=?, \
+                    is_filterable=?, \
+                    is_comparable=?, \
+                    is_visible_on_front=?, \
+                    is_html_allowed_on_front=?, \
+                    is_used_for_price_rules=?, \
+                    is_filterable_in_search=?, \
+                    used_in_product_listing=?, \
+                    used_for_sort_by=?, \
+                    is_configurable=?, \
+                    apply_to=?, \
+                    is_visible_in_advanced_search=?, \
+                    position=?, \
+                    is_wysiwyg_enabled=?, \
+                    is_used_for_promo_rules=?';
             try{
                 $_dbConnection->query(
                     $sql,
@@ -125,19 +159,23 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             $srcSql,
             array($attribute->getId(), $attribute->getEntity()->getData('entity_type_id'))
         );
-        while($row = $sourceQuery->fetch())
-        {
+        while ($row = $sourceQuery->fetch()) {
             $currentValue = $row['value'];
             if (!is_null($currentValue)) {
                 // Cast Value Type to new Type (e.g. decimal to text)
                 $targetValue = $this->typeCast($currentValue, $sourceType, $targetType);
                 // Insert Value to target Entity
-                $sql = 'INSERT INTO '.$targetTable.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
+                $sql = 'INSERT INTO '.$targetTable.
+                        ' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
                 try{
                     $_dbConnection->query(
                         $sql,
-                        array($row['entity_type_id'], $row['attribute_id'], $row['store_id'], $row['entity_id'], $targetValue)
-                    );
+                        array($row['entity_type_id'],
+                                $row['attribute_id'],
+                                $row['store_id'],
+                                $row['entity_id'],
+                                $targetValue)
+                            );
                 }catch(Exception $e){
                     Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
                 }
@@ -156,7 +194,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      * @param $targetType
      * @return null
      */
-    private function typeCast($value, $sourceType, $targetType){
+    private function typeCast($value, $sourceType, $targetType)
+    {
         if ($sourceType === $targetType) {
             return $value;
         }
@@ -213,7 +252,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
     public function insertAttribute($data)
     {
         /** @var Mage_Catalog_Model_Resource_Eav_Attribute $attribute */
-        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($data['entity_type_id'], $data['code']);
+        $attribute = Mage::getModel('catalog/resource_eav_attribute')
+                ->loadByCode($data['entity_type_id'], $data['code']);
 
         if ($attribute->getId()) {
             Mage::throwException('Attribute already exists.');
@@ -234,7 +274,12 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                             ->load($set, 'attribute_set_name')
                             ->getAttributeSetId();
             $setup->addAttributeGroup($data['entity_type_id'], $attributeSetId, $data['group']);
-            $setup->addAttributeToSet($data['entity_type_id'], $attributeSetId, $data['group'], $data['attribute_code'], $data['sort_order']);
+            $setup->addAttributeToSet(
+                    $data['entity_type_id'],
+                    $attributeSetId, $data['group'],
+                    $data['attribute_code'],
+                    $data['sort_order']
+            );
         }
     }
 }

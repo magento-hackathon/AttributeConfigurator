@@ -12,7 +12,7 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      */
     protected $_importFilename;
 
-    function __construct()
+    public function __construct()
     {
         $this->_importFilename = $this->getImportFilename();
     }
@@ -61,13 +61,16 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
     }
 
     /**
-     * Check if Attribute is maintained by extension, return false if not (leave system and third party attributes as they are)
+     * Check if Attribute is maintained by extension,
+     * return false if not (leave system and third party attributes as they are)
      *
      * @param $attribute
+     *
      * @return bool
      */
-    public function checkAttributeMaintained($attribute){
-        if (!$attribute || $attribute->getIsMaintainedByConfigurator() !== 1){
+    public function checkAttributeMaintained($attribute)
+    {
+        if (!$attribute || $attribute->getIsMaintainedByConfigurator() !== 1) {
             return false;
         }
         return true;
