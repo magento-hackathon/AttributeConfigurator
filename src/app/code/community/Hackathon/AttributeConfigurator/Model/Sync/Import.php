@@ -21,11 +21,33 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
 
     protected $_groupData = array();
 
+    protected $_config;
+
     public function _construct()
     {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
         $this->getImport();
     }
+
+
+    /**
+     * Load XML File via Varien Simplexml to Mage Config
+     */
+    protected function getImport()
+    {
+
+        $config = Mage::getModel('core/config');
+        if ($this->_helper->getImportFilename() != '') {
+            if (!$config->loadFile($this->_helper->getImportFilename())) {
+                Mage::throwException('Import File can not be loaded');
+            }
+        }
+        $this->_config = $config;
+
+
+    }
+
+
 
     /**
      * Sync Import Method coordinates the migration process from
@@ -35,21 +57,18 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      */
     public function import()
     {
-        /** @var Mage_Core_Model_Config $_config */
-        $_config = Mage::getConfig();
-
         // 1. Import/Delete Attribute Sets
         /** @var Mage_Core_Model_Config_Element $attributesets */
-        $attributesets = $_config->getNode('attributesetslist');
+        $attributesets = $this->_config->getNode('attributesetslist');
         var_dump($attributesets);
 
         // 2. Import/Delete Attributes
         /** @var Mage_Core_Model_Config_Element $attributes */
-        $attributes = $_config->getNode('attributeslist');
+        //$attributes = $_config->getNode('attributeslist');
 
-        if ($this->_validate($attributesets, $attributes)) {
+        //if ($this->_validate($attributesets, $attributes)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
-        }
+        //}
     }
 
     /**
@@ -138,11 +157,4 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         return $this;
     }
 
-    /**
-     * Load XML File via Varien Simplexml to Mage Config
-     */
-    protected function getImport()
-    {
-        Mage::getConfig()->loadFile($this->_helper->getImportFilename());
-    }
 }

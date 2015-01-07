@@ -124,4 +124,19 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
             );
         }
     }
+
+//    public function testAttributeConversion()
+//    {
+//        /** @var Mage_Catalog_Model_Resource_Product_Attribute_Collection $attributes */
+//        $attributes = Mage::getResourceModel('catalog/product_attribute_collection');
+//        $attributes->addFieldToFilter('frontend_model', array('notnull'=>1));
+//
+//        /** @var Mage_Eav_Model_Attribute $attribute */
+//        $attribute = $attributes->getFirstItem();
+//
+//        //echo $attributes->getSelect();
+//        //var_dump($attribute->getData());
+//
+//        $this->assertFalse(true);
+//    }
 }
