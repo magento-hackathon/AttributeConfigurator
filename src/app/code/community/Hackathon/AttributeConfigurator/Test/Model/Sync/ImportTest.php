@@ -4,7 +4,7 @@
  */
 class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev_PHPUnit_Test_Case
 {
-    /** @var  Hackathon_AttributeConfigurator_Helper_Data */
+    /** @var  Hackathon_AttributeConfigurator_Model_Sync_Import */
     protected $_model;
 
     /** @var  string */
@@ -55,6 +55,7 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
 
     public function testExceptionFiredIfFileNotFound()
     {
+
         //Set up a reflection of the helper to change the filename to an abitrary value
         $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
         $helperInstance = $helperReflection->newInstance();
@@ -75,9 +76,24 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
         $getImportMethod->invoke($this->_model);
     }
 
-    public function testImport()
+    /**
+     * @test
+     * @expectedException Mage_Core_Exception
+     * @expectedExceptionMessage No attributesets found
+     */
+    public function importThrowsExceptionIfNoSetsFound()
     {
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importConfigProperty = $importReflection->getProperty('_config');
+        $importConfigProperty->setAccessible(true);
 
+
+        //get the config from the object, set the node empyt, start import
+        $config = $importConfigProperty->getValue($this->_model);
+        $config->setNode('attributesetslist',NULL);
+        $importConfigProperty->setValue($this->_model, $config);
+
+        $this->_model->import();
     }
 
 
