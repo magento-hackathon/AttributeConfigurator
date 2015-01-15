@@ -14,15 +14,29 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     protected $_attributeData = array();
 
     /**
-     * Attribute-Setb Data
+     * Attribute-Set Data
+     * @var Varien_Simplexml_Element
+     */
+    protected $_setData;
+
+    /**
+     * Attribute Data
+     * @var Varien_Simplexml_Element
+     */
+    protected $_attrData;
+
+    /**
+     * Group Data
+     * $_groupData
      * @var array
      */
-    protected $_setData = array();
-
     protected $_groupData = array();
 
-    /** @var Mage_Core_Model_Config */
-    protected $_config;
+    /**
+     * The XML to import
+     * @var Varien_Simplexml_Config
+     */
+    protected $_xml;
 
     public function _construct()
     {
@@ -36,19 +50,11 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      */
     protected function getImport()
     {
-
-        $config = Mage::getModel('core/config');
-        if ($this->_helper->getImportFilename() != '') {
-            if (!$config->loadFile($this->_helper->getImportFilename())) {
-                Mage::throwException('Import File can not be loaded');
-            }
+        if (!is_readable($this->_helper->getImportFilename())) {
+            Mage::throwException('Import file can not be loaded');
         }
-        $this->_config = $config;
-
-
+        $this->_xml = new Varien_Simplexml_Config($this->_helper->getImportFilename());
     }
-
-
 
     /**
      * Sync Import Method coordinates the migration process from
@@ -58,107 +64,91 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      */
     public function import()
     {
+
+        //Get the data
+        $this->_getAttributeSetsFromXml();
+        $this->_getAttributesFromXml();
+
+
+
         // 1. Import/Delete Attribute Sets
-        /** @var Mage_Core_Model_Config_Element $attributesets */
-        $attributesets = $this->_config->getNode('attributesetslist');
-
-        if (count($attributesets->children()) == 0) {
-            Mage::throwException('No attributesets found');
-        }
-
         // 2. Import/Delete Attributes
         /** @var Mage_Core_Model_Config_Element $attributes */
-        $attributes = $this->_config->getNode('attributeslist');
 
-        if ($this->_validate($attributesets, $attributes)) {
+        if ($this->_validate($this->_setData, $this->_attrData)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
         }
-    }
 
-    /**
-     * Get Attribute Set from XML
-     *
-     * @param $xml
-     * @return $this
-     */
-    public function prepareAttributeSet($xml)
-    {
-        $this->_setData = json_decode(json_encode($xml->attributesets), true);
-        return $this;
-    }
-
-    /**
-     * Parse XML for Attribute Set
-     *
-     * @param $attributesets
-     * @return array
-     */
-    protected function _getAttributeSetsFromXml($attributesets)
-    {
-        $returnarray = array();
-        foreach ($attributesets->children() as $attributeset) {
-            $returnarray[] = (string) $attributeset['name'];
-        }
-        return $returnarray;
-    }
-
-    /**
-     * Fetch Attributes from XML
-     *
-     * @param $xml
-     * @return $this
-     */
-    public function prepareAttributes($xml)
-    {   
-        $this->_attributeData = json_decode(json_encode($xml->attributes), true);
-        return $this;
     }
 
     /**
      * Validate Attributesets and Attributes
-     *
-     * @TODO: RICO schön machen und weitermachen :D
-     *
      * @param $attributesets
      * @param $attributes
+     *
      * @return bool
-     * @throws Mage_Adminhtml_Exception
      */
-    protected function _validate($attributesets, $attributes)
+    public function _validate($attributesets, $attributes)
     {
-        $attributesets = $attributesets;
-        $lo_attributesets = $this->_getAttributeSetsFromXml($attributesets);
-        $attributes = $attributes;
 
-        foreach ($attributes->children() as $attribute) {
-            foreach ($attribute->attributesets->children() as $attributeset) {
-                //echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
-            }
-        }
 
-        if (!in_array($attributeset["name"], $lo_attributesets)) {
-            throw new Mage_Adminhtml_Exception(
-                    "Attributeset '".$attributeset["name"].
-                    "' referenced by '".$attribute["code"]."'
-                    is not listed in the attributesetslist element");
-        }
+//        foreach ($attributes->children() as $attribute) {
+//            foreach ($attribute->attributesets->children() as $attributeset) {
+//                echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
+//                }
+//        }
+//
+//
+//        if (!in_array($attributeset["name"], $lo_attributesets)) {
+//            throw new Mage_Adminhtml_Exception(
+//                    "Attributeset '".$attributeset["name"].
+//                    "' referenced by '".$attribute["code"]."'
+//                    is not listed in the attributesetslist element");
+//        }
 
-        foreach ($attributesets->children() as $attributeset) {
-            //echo $attributeset['name'] . "<br />";
-        }
+//        foreach ($attributesets->children() as $attributeset) {
+//            echo $attributeset['name'] . "<br />";
+//        }
         return false;
     }
 
     /**
-     * Fetches Attribute Groups from XML
+     * Gets the attributesets
      *
-     * @param $xml
-     * @return $this
+     * @throws Mage_Core_Exception
+     * @return void
      */
-    public function prepareAttributeGroups($xml)
+
+    protected function _getAttributeSetsFromXml()
     {
-        $this->_groupData = json_decode(json_encode($xml->attributegroups), true);
-        return $this;
+
+        /** @var Mage_Core_Model_Config_Element $attributesets */
+        $attributesets = $this->_xml->getNode('attributesetslist');
+        if (!$attributesets->hasChildren()) {
+            Mage::throwException('No attributesets found in file');
+        } else {
+            $this->_setData = $attributesets;
+        }
     }
+
+    /**
+     * Gets the attributes
+     *
+     * @throws Mage_Core_Exception
+     * @return void
+     */
+    protected function _getAttributesFromXml()
+    {
+
+        /** @var Mage_Core_Model_Config_Element $attributes */
+        $attributes = $this->_xml->getNode('attributeslist');
+
+        if (!$attributes->hasChildren()) {
+            Mage::throwException('No attributes found in file');
+        } else {
+            $this->_attrData = $attributes;
+        }
+    }
+
 
 }
