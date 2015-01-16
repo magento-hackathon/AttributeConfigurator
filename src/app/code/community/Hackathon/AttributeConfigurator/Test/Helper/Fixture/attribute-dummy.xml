@@ -61,9 +61,7 @@
             </settings>
             <attributesets>
                 <attributeset name="Gitarren &amp; Saiteninstrumente"> <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
-                    <attributegroups>
                         <attributegroup name="Default"/>
-                    </attributegroups>
                 </attributeset>
             </attributesets>
         </attribute>

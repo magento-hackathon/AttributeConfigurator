@@ -46,14 +46,15 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
 
 
     /**
-     * Load XML File via Varien Simplexml to Mage Config
+     * Parse the _xml for Attriubtes and Sets
+     *
+     * @return $this
      */
-    protected function getImport()
+    public function getDataFromXml()
     {
-        if (!is_readable($this->_helper->getImportFilename())) {
-            Mage::throwException('Import file can not be loaded');
-        }
-        $this->_xml = new Varien_Simplexml_Config($this->_helper->getImportFilename());
+        $this->_getAttributeSetsFromXml();
+        $this->_getAttributesFromXml();
+        return $this;
     }
 
     /**
@@ -66,81 +67,123 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     {
 
         //Get the data
-        $this->_getAttributeSetsFromXml();
-        $this->_getAttributesFromXml();
-
-
+        $this->getDataFromXml();
 
         // 1. Import/Delete Attribute Sets
         // 2. Import/Delete Attributes
-        /** @var Mage_Core_Model_Config_Element $attributes */
 
-        if ($this->_validate($this->_setData, $this->_attrData)) {
+        if ($this->validate($this->_setData, $this->_attrData)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
         }
 
     }
 
+
     /**
-     * Validate Attributesets and Attributes
-     * @param $attributesets
-     * @param $attributes
+     * Validate Attributes and Attributesets
      *
-     * @return bool
+     * @param Varien_Simplexml_Element $attributesets
+     * @param Varien_Simplexml_Element $attributes
+     *
+     * @return $this
+     * @throws Mage_Adminhtml_Exception
      */
-    public function _validate($attributesets, $attributes)
+    public function validate(
+        Varien_Simplexml_Element $attributesets = NULL,
+        Varien_Simplexml_Element $attributes = NULL
+    ) {
+        if (is_null($attributesets)) {
+            $attributesets = $this->_setData;
+        }
+        if (is_null($attributes)) {
+            $attributes = $this->_attrData;
+        }
+
+        $attributsetnames = $this->getAttributesetNames($attributesets);
+        //$names = $attributes->xpath("attribute/attributesets/attributeset/@name");
+
+        foreach ($attributes->children() as $attribute) {
+            //Check if the attribute is included in at least one attributeset
+            if ($attribute->attributesets->count() == 0) {
+                throw new Mage_Adminhtml_Exception(
+                        "Attribute '".$attribute["code"].
+                        "' is not part of a Attributeset"
+                );
+            }
+            /** @var Varien_Simplexml_Element $attributeset */
+            foreach ($attribute->attributesets->children() as $attributeset) {
+                //Check if the attributeset is in the Config (-> is the xml consistant?)
+                if (!in_array($attributeset["name"], $attributsetnames)) {
+                    throw new Mage_Adminhtml_Exception(
+                            "Attributeset '".$attributeset["name"].
+                            "' referenced by '".$attribute["code"]."'
+                        is not listed in the attributesetslist element"
+                    );
+                }
+                //Check if the attributeset contains only one group
+                if ($attributeset->attributegroup->count() == 0) {
+                    throw new Mage_Adminhtml_Exception(
+                            "Attributeset '".$attributeset["name"].
+                            "' referenced by '".$attribute["code"]."'
+                        does not contain a attributegroup"
+                    );
+                }
+                if ($attributeset->attributegroup->count() > 1) {
+                    throw new Mage_Adminhtml_Exception(
+                            "Attributeset '".$attributeset["name"].
+                            "' referenced by '".$attribute["code"]."'
+                        contains more than one attributegroup"
+                    );
+                }
+
+            }
+
+
+        }
+        return $this;
+    }
+
+    /**
+     * Load XML File via Varien Simplexml to Mage Config
+     */
+    protected function getImport()
     {
-
-
-//        foreach ($attributes->children() as $attribute) {
-//            foreach ($attribute->attributesets->children() as $attributeset) {
-//                echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
-//                }
-//        }
-//
-//
-//        if (!in_array($attributeset["name"], $lo_attributesets)) {
-//            throw new Mage_Adminhtml_Exception(
-//                    "Attributeset '".$attributeset["name"].
-//                    "' referenced by '".$attribute["code"]."'
-//                    is not listed in the attributesetslist element");
-//        }
-
-//        foreach ($attributesets->children() as $attributeset) {
-//            echo $attributeset['name'] . "<br />";
-//        }
-        return false;
+        if (!is_readable($this->_helper->getImportFilename())) {
+            Mage::throwException('Import file can not be loaded');
+        }
+        $this->_xml = new Varien_Simplexml_Config($this->_helper->getImportFilename());
     }
 
     /**
      * Gets the attributesets
      *
      * @throws Mage_Core_Exception
-     * @return void
+     * @return $this
      */
 
     protected function _getAttributeSetsFromXml()
     {
 
-        /** @var Mage_Core_Model_Config_Element $attributesets */
+        /** @var Varien_Simplexml_Element $attributesets */
         $attributesets = $this->_xml->getNode('attributesetslist');
         if (!$attributesets->hasChildren()) {
             Mage::throwException('No attributesets found in file');
         } else {
             $this->_setData = $attributesets;
         }
+        return $this;
     }
 
     /**
      * Gets the attributes
      *
      * @throws Mage_Core_Exception
-     * @return void
+     * @return $this
      */
     protected function _getAttributesFromXml()
     {
 
-        /** @var Mage_Core_Model_Config_Element $attributes */
+        /** @var Varien_Simplexml_Element $attributes */
         $attributes = $this->_xml->getNode('attributeslist');
 
         if (!$attributes->hasChildren()) {
@@ -148,7 +191,26 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
         } else {
             $this->_attrData = $attributes;
         }
+        return $this;
     }
 
 
+    /**
+     * Parses Attributesetnames
+     * @param Varien_Simplexml_Element $attributesets
+     *
+     * @return array
+     */
+    public function getAttributesetNames(Varien_Simplexml_Element $attributesets = NULL)
+    {
+        if (is_null($attributesets)) {
+            $attributesets = $this->_setData;
+        }
+        $returnarray = array();
+        $names = $attributesets->xpath('attributeset/@name');
+        foreach ($names as $name) {
+            $returnarray[] = (string) $name->name;
+        }
+        return $returnarray;
+    }
 }

@@ -20,89 +20,89 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
         parent::setUp();
     }
 
-//    public function testDataLoadedToConfig()
-//    {
-//        //Create a reflection to make the config property accessible
-//        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
-//        $importXmlProperty = $importReflection->getProperty('_xml');
-//        $importXmlProperty->setAccessible(true);
-//
-//        //Assert that the property has been set by the getImport Method
-//        $this->assertInstanceOf(
-//                'Varien_Simplexml_Config',
-//                $importXmlProperty->getValue(new Hackathon_AttributeConfigurator_Model_Sync_Import )
-//        );
-//
-//        //Set the config property to a new object create with the testfile
-//        $testConfig = new Varien_Simplexml_Config($this->_testFile);
-//
-//        $importXmlProperty->setValue($this->_model, $testConfig);
-//
-//        //Assert Success
-//        $this->assertInstanceOf(
-//                'Varien_Simplexml_Config',
-//                $importXmlProperty->getValue($this->_model)
-//        );
-//    }
-//
-//    /**
-//     * @expectedException Mage_Core_Exception
-//     * @expectedExceptionMessage Import file can not be loaded
-//     *
-//     */
-//
-//    public function testExceptionFiredIfFileNotFound()
-//    {
-//
-//        //Set up a reflection of the helper to change the filename to an abitrary value
-//        $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
-//        $helperInstance = $helperReflection->newInstance();
-//        $fileNameProperty = $helperReflection->getProperty('_importFilename');
-//        $fileNameProperty->setAccessible(true);
-//        $fileNameProperty->setValue( $helperInstance, 'fileNotFound');
-//
-//        //Set up a reflection of the import to inject the helper and invoke getImport
-//        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
-//        $importXmlProperty = $importReflection->getProperty('_helper');
-//        $importXmlProperty->setAccessible(true);
-//        $importXmlProperty->setValue($this->_model, $helperInstance);
-//
-//        $getImportMethod = $importReflection->getMethod('getImport');
-//        $getImportMethod->setAccessible(true);
-//        $getImportMethod->invoke($this->_model);
-//    }
-//
-//    /**
-//     * @test
-//     * @expectedException Mage_Core_Exception
-//     * @expectedExceptionMessage No attributesets found in file
-//     */
-//    public function importThrowsExceptionIfNoSetsFound()
-//    {
-//        $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
-//        $helperInstance = $helperReflection->newInstance();
-//        $fileNameProperty = $helperReflection->getProperty('_importFilename');
-//        $fileNameProperty->setAccessible(true);
-//        $fileNameProperty->setValue( $helperInstance, $this->_testFile);
-//
-//        //Set up a reflection of the import to inject the helper and invoke getImport
-//        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
-//
-//        $importHelperProperty = $importReflection->getProperty('_helper');
-//        $importHelperProperty->setAccessible(true);
-//        $importHelperProperty->setValue($this->_model, $helperInstance);
-//
-//        $importXmlProperty = $importReflection->getProperty('_xml');
-//        $importXmlProperty->setAccessible(true);
-//
-//        $config = $importXmlProperty->getValue($this->_model);
-//        $config->setNode('attributesetslist', NULL);
-//        $importXmlProperty->setValue($this->_model, $config);
-//
-//        $this->_model->import();
-//
-//    }
-//
+    public function testDataLoadedToConfig()
+    {
+        //Create a reflection to make the config property accessible
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        //Assert that the property has been set by the getImport Method
+        $this->assertInstanceOf(
+                'Varien_Simplexml_Config',
+                $importXmlProperty->getValue(new Hackathon_AttributeConfigurator_Model_Sync_Import )
+        );
+
+        //Set the config property to a new object create with the testfile
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        //Assert Success
+        $this->assertInstanceOf(
+                'Varien_Simplexml_Config',
+                $importXmlProperty->getValue($this->_model)
+        );
+    }
+
+    /**
+     * @expectedException Mage_Core_Exception
+     * @expectedExceptionMessage Import file can not be loaded
+     *
+     */
+
+    public function testExceptionFiredIfFileNotFound()
+    {
+
+        //Set up a reflection of the helper to change the filename to an abitrary value
+        $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
+        $helperInstance = $helperReflection->newInstance();
+        $fileNameProperty = $helperReflection->getProperty('_importFilename');
+        $fileNameProperty->setAccessible(true);
+        $fileNameProperty->setValue( $helperInstance, 'fileNotFound');
+
+        //Set up a reflection of the import to inject the helper and invoke getImport
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_helper');
+        $importXmlProperty->setAccessible(true);
+        $importXmlProperty->setValue($this->_model, $helperInstance);
+
+        $getImportMethod = $importReflection->getMethod('getImport');
+        $getImportMethod->setAccessible(true);
+        $getImportMethod->invoke($this->_model);
+    }
+
+    /**
+     * @test
+     * @expectedException Mage_Core_Exception
+     * @expectedExceptionMessage No attributesets found in file
+     */
+    public function importThrowsExceptionIfNoSetsFound()
+    {
+        $helperReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Helper_Data');
+        $helperInstance = $helperReflection->newInstance();
+        $fileNameProperty = $helperReflection->getProperty('_importFilename');
+        $fileNameProperty->setAccessible(true);
+        $fileNameProperty->setValue( $helperInstance, $this->_testFile);
+
+        //Set up a reflection of the import to inject the helper and invoke getImport
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+
+        $importHelperProperty = $importReflection->getProperty('_helper');
+        $importHelperProperty->setAccessible(true);
+        $importHelperProperty->setValue($this->_model, $helperInstance);
+
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $config = $importXmlProperty->getValue($this->_model);
+        $config->setNode('attributesetslist', NULL);
+        $importXmlProperty->setValue($this->_model, $config);
+
+        $this->_model->import();
+
+    }
+
     /**
      * @test
      * @expectedException Mage_Core_Exception
@@ -122,9 +122,9 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
         $this->_model->import();
     }
 
-    public function testImportPopulatesDataProperties()
+    public function testGetDataFromXmlPopulatesDataProperties()
     {
-        //Create a reflection to set the config to a known state
+        //Create a reflection to set the data to a known state
         $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
         $importXmlProperty = $importReflection->getProperty('_xml');
 
@@ -132,7 +132,7 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
         $testConfig = new Varien_Simplexml_Config($this->_testFile);
         $importXmlProperty->setValue($this->_model, $testConfig);
 
-        $this->_model->import();
+        $this->_model->getDataFromXml();
 
         $importSetDataProperty = $importReflection->getProperty('_setData');
         $importSetDataProperty->setAccessible(true);
@@ -151,10 +151,145 @@ class Hackathon_AttributeConfigurator_Test_Model_Sync_ImportTest extends EcomDev
 
     }
 
-    public function testValidate()
+    public function testGetAttributesetNames()
     {
-        //$this->assertFalse(TRUE);
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        $this->_model->getDataFromXml();
+        $names = $this->_model->getAttributesetNames();
+        $this->assertEquals(
+                'Gitarren & Saiteninstrumente',
+                $names[0]
+        );
     }
+
+    /**
+     * @test
+     *
+     * @expectedException Mage_Adminhtml_Exception
+     * @expectedExceptionMessage Attribute 'unittestattribute' is not part of a Attributeset
+     *
+     */
+    public function expceptionThrownIfAttributeIsInNoAttributeSet()
+    {
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        $this->_model->getDataFromXml();
+
+        $importAttributeProperty = $importReflection->getProperty('_attrData');
+        $importAttributeProperty->setAccessible(true);
+        $attributes = $importAttributeProperty->getValue($this->_model);
+
+        $testAttribute = $attributes->addChild('attribute');
+        $testAttribute->addAttribute('code', 'unittestattribute');
+
+        $this->_model->validate();
+    }
+
+
+    /**
+     * @test
+     *
+     * @expectedException Mage_Adminhtml_Exception
+     * @expectedExceptionMessage Attributeset 'unittestattributeset' referenced by 'unittestattribute'
+     */
+    public function exceptionThrownOnUnknownAttributeSet()
+    {
+        //Create a reflection to set the data to a known state
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        $this->_model->getDataFromXml();
+
+        $importAttributeProperty = $importReflection->getProperty('_attrData');
+        $importAttributeProperty->setAccessible(true);
+        $attributes = $importAttributeProperty->getValue($this->_model);
+
+
+        $testAttribute = $attributes->addChild('attribute');
+        $testAttribute->addAttribute('code', 'unittestattribute');
+        $testAttributeSets = $testAttribute->addChild('attributesets');
+        $testattributeSet = $testAttributeSets->addChild('attributeset');
+        $testattributeSet->addAttribute('name', 'unittestattributeset');
+
+        $this->_model->validate();
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Mage_Adminhtml_Exception
+     * @expectedExceptionMessage does not contain a attributegroup
+     */
+    public function expceptionThrownIfNoGroupsInAttributeset()
+    {
+        //Create a reflection to set the data to a known state
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        $this->_model->getDataFromXml();
+
+        $importAttributeProperty = $importReflection->getProperty('_attrData');
+        $importAttributeProperty->setAccessible(true);
+        /** @var Varien_Simplexml_Element $attributes */
+        $attributes = $importAttributeProperty->getValue($this->_model);
+
+        //remove the group from the first attributeset
+        $sets = $attributes->attribute[0]->attributesets;
+        unset($sets->attributeset->attributegroup);
+
+        $this->_model->validate();
+    }
+
+    /**
+     * @test
+     * @expectedException Mage_Adminhtml_Exception
+     * @expectedExceptionMessage contains more than one attributegroup
+     */
+    public function expceptionThrownIfMultipleGroupsInAttributeset()
+    {
+        //Create a reflection to set the data to a known state
+        $importReflection = new ReflectionClass('Hackathon_AttributeConfigurator_Model_Sync_Import');
+        $importXmlProperty = $importReflection->getProperty('_xml');
+        $importXmlProperty->setAccessible(true);
+
+        $testConfig = new Varien_Simplexml_Config($this->_testFile);
+        $importXmlProperty->setValue($this->_model, $testConfig);
+
+        $this->_model->getDataFromXml();
+
+        $importAttributeProperty = $importReflection->getProperty('_attrData');
+        $importAttributeProperty->setAccessible(true);
+        /** @var Varien_Simplexml_Element $attributes */
+        $attributes = $importAttributeProperty->getValue($this->_model);
+        $set = $attributes->attribute[0]->attributesets->attributeset;
+        $group = $set->addChild('attributegroup');
+
+        $this->_model->validate();
+
+        //remove the group from the first attributeset
+
+
+    }
+
 
 
 
