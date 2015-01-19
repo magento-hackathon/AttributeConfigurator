@@ -16,7 +16,7 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUn
     {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator');
         $this->_testFile = Mage::getModuleDir('', 'Hackathon_AttributeConfigurator') .
-                DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-dummy.xml' ;
+                DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-fixture.xml' ;
         parent::setUp();
     }
 

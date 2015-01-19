@@ -12,20 +12,28 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      */
     protected $_importFilename;
 
+
+    /**
+     * The filename gets set
+     */
     public function __construct()
     {
-        $this->_importFilename = $this->getImportFilename();
+        $this->setImportFilename();
     }
-
 
     /**
      * Build Import Filename from Store Config
      *
      * @return string
      */
+    public function setImportFilename()
+    {
+        $this->_importFilename = DS . trim(Mage::getStoreConfig(self::XML_PATH_FILENAME), '/\ ');
+    }
+
     public function getImportFilename()
     {
-        return Mage::getBaseDir() . DS . trim(Mage::getStoreConfig(self::XML_PATH_FILENAME), '/\ ');
+        return $this->_importFilename;
     }
 
     /**
