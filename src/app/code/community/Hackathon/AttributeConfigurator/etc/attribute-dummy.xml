@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <attributeconfig>
-    <attributesets>
+    <attributesetslist>
         <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default"/>
         <attributeset name="Flöten/Blechbläser" skeleton="Default"/>
-    </attributesets>
-    <attributes>
+    </attributesetslist>
+    <attributeslist>
         <attribute code="hersteller">
             <values>
                 <pair>
@@ -61,11 +61,9 @@
             </settings>
             <attributesets>
                 <attributeset name="Gitarren &amp; Saiteninstrumente"> <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
-                    <attributegroups>
                         <attributegroup name="Default"/>
-                    </attributegroups>
                 </attributeset>
             </attributesets>
         </attribute>
-    </attributes>
+    </attributeslist>
 </attributeconfig>
