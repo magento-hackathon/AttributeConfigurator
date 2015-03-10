@@ -1,30 +1,36 @@
 <?php
+
 /**
  * Class Hackathon_AttributeConfigurator_Model_Sync_Import
+ *
+ * @category Model
+ * @package  Hackathon_AttributeConfigurator
+ * @author   Firegento <contact@firegento.com>
+ * @license  Open Software License v. 3.0 (OSL-3.0)
+ * @link     https://github.com/magento-hackathon/AttributeConfigurator
  */
 class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstract
 {
     /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
-    /**
-     * Attribute Data
-     * @var array
-     */
-    protected $_attributeData = array();
+    /** @var array $_attributeData Attribute Config Data */
+    protected $_attributeData = [];
+
+    /** @var array $_setData Attribute Set Config Data */
+    protected $_setData = [];
+
+    /** @var array $_groupData Attribute Group Config Data */
+    protected $_groupData = [];
 
     /**
-     * Attribute-Set Data
-     * @var array
+     * Constructor
+     * @return void
      */
-    protected $_setData = array();
-
-    protected $_groupData = array();
-
     public function _construct()
     {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
-        $this->getImport();
+        $this->loadConfiguration();
     }
 
     /**
@@ -32,6 +38,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      * XML File Data into the Magento Database
      *
      * return bool
+     * @return void
      */
     public function import()
     {
@@ -51,7 +58,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     /**
      * Get Attribute Set from XML
      *
-     * @param $xml
+     * @param  Varien_Simplexml_Element $xml Attribute XML Data
      * @return $this
      */
     public function prepareAttributeSet($xml)
@@ -63,26 +70,26 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     /**
      * Parse XML for Attribute Set
      *
-     * @param $attributesets
+     * @param  Varien_Simplexml_Element $attributesets Attribute Set Data
      * @return array
      */
     protected function _getAttributeSetsFromXml($attributesets)
     {
-        $returnarray = array();
+        $result = [];
         foreach ($attributesets->children() as $attributeset) {
-            $returnarray[] = (string) $attributeset['name'];
+            $result[] = (string) $attributeset['name'];
         }
-        return $returnarray;
+        return $result;
     }
 
     /**
      * Fetch Attributes from XML
      *
-     * @param $xml
+     * @param  Varien_Simplexml_Element $xml Attribute XML Data
      * @return $this
      */
     public function prepareAttributes($xml)
-    {   
+    {
         $this->_attributeData = json_decode(json_encode($xml->attributes), true);
         return $this;
     }
@@ -90,31 +97,25 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     /**
      * Validate Attributesets and Attributes
      *
-     * @TODO: RICO schön machen und weitermachen :D
+     * @TODO: This is not complete and probably not working at all
      *
-     * @param $attributesets
-     * @param $attributes
+     * @param  Varien_Simplexml_Element $attributesets Attribute Set XML Data
+     * @param  Varien_Simplexml_Element $attributes    Attributes XML Data
      * @return bool
      * @throws Mage_Adminhtml_Exception
      */
     protected function _validate($attributesets, $attributes)
     {
-        $attributesets = $attributesets;
-        $lo_attributesets = $this->_getAttributeSetsFromXml($attributesets);
-        $attributes = $attributes;
+        $attributesetNames = $this->_getAttributeSetsFromXml($attributesets);
 
         foreach ($attributes->children() as $attribute) {
             foreach ($attribute->attributesets->children() as $attributeset) {
-                //echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
+                echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
+                if (!in_array($attributeset["name"], $attributesetNames)) {
+                    Mage::throwException(sprintf('Attributeset %s referenced by %s is not listed in the attributesetslist element', $attributeset["name"], $attribute["code"]));
+                }
+
             }
-        }
-
-        if (!in_array($attributeset["name"], $lo_attributesets)) {
-            throw new Mage_Adminhtml_Exception("Attributeset '".$attributeset["name"]."' referenced by '".$attribute["code"]."' is not listed in the attributesetslist element");
-        }
-
-        foreach ($attributesets->children() as $attributeset) {
-            //echo $attributeset['name'] . "<br />";
         }
         return false;
     }
@@ -122,19 +123,22 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
     /**
      * Fetches Attribute Groups from XML
      *
-     * @param $xml
+     * @param  Varien_Simplexml_Element $xml Attribute Group Configuration
      * @return $this
      */
     public function prepareAttributeGroups($xml)
     {
+        // Encode/decode to easily get Array Format
         $this->_groupData = json_decode(json_encode($xml->attributegroups), true);
         return $this;
     }
 
     /**
      * Load XML File via Varien Simplexml to Mage Config
+     *
+     * @return void
      */
-    protected function getImport()
+    protected function loadConfiguration()
     {
         Mage::getConfig()->loadFile($this->_helper->getImportFilename());
     }

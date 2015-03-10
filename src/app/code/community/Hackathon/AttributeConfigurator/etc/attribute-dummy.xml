@@ -11,12 +11,10 @@
                     <key>1</key>
                     <de_DE>Fender</de_DE>
                 </pair>
-
                 <pair>
                     <key>1</key>
                     <de_DE>Acoustics</de_DE>
                 </pair>
-
                 <pair>
                     <key>1</key>
                     <de_DE>Hendrix</de_DE>
@@ -53,14 +51,16 @@
                 <used_in_product_listing></used_in_product_listing>
                 <used_for_sort_by></used_for_sort_by>
                 <is_configurable></is_configurable>
-                <apply_to>NULL</apply_to> <!-- NULL = All Product Types -->
+                <apply_to>NULL</apply_to>
+                <!-- NULL = All Product Types -->
                 <is_visible_in_advanced_search></is_visible_in_advanced_search>
                 <position></position>
                 <is_wysiwyg_enabled></is_wysiwyg_enabled>
                 <is_used_for_promo_rules></is_used_for_promo_rules>
             </settings>
             <attributesets>
-                <attributeset name="Gitarren &amp; Saiteninstrumente"> <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                <attributeset name="Gitarren &amp; Saiteninstrumente">
+                    <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
                     <attributegroups>
                         <attributegroup name="Default"/>
                     </attributegroups>

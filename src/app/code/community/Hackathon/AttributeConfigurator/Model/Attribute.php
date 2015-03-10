@@ -1,12 +1,24 @@
 <?php
+
 /**
  * Class Hackathon_AttributeConfigurator_Model_Attribute
+ *
+ * @category Model
+ * @package  Hackathon_AttributeConfigurator
+ * @author   Firegento <contact@firegento.com>
+ * @license  Open Software License v. 3.0 (OSL-3.0)
+ * @link     https://github.com/magento-hackathon/AttributeConfigurator
  */
 class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
 {
+    /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
-    public function __construct(){
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
         $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
         parent::_construct();
     }
@@ -14,9 +26,10 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
     /**
      * Converts existing Attribute to different type
      *
-     * @param string $attributeCode
-     * @param int $entityType
-     * @param array $data
+     * @param  string $attributeCode Attribute Code
+     * @param  int    $entityType    Entity Type which Attribute is attached to
+     * @param  array  $data          New Attribute Data
+     * @return void
      */
     public function convertAttribute($attributeCode, $entityType, $data = null)
     {
@@ -29,7 +42,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             return;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
-        if ($attribute->getBackendType() !== $data['backend_type']){
+        if ($attribute->getBackendType() !== $data['backend_type']) {
             $this->migrateData($attribute, $data);
         }
         /*
@@ -40,7 +53,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         try{
             $_dbConnection->query(
                 $sql,
-                array(
+                [
                     $data['attribute_model'],
                     $data['backend_model'],
                     $data['backend_type'],
@@ -55,8 +68,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                     $data['default_value'],
                     $data['is_unique'],
                     $data['note'],
-                    $attribute->getId(),
-                )
+                    $attribute->getId()
+                ]
             );
         }catch(Exception $e){
             Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
@@ -67,7 +80,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             try{
                 $_dbConnection->query(
                     $sql,
-                    array(
+                    [
                         $data['frontend_input_renderer'],
                         $data['is_global'],
                         $data['is_visible'],
@@ -86,7 +99,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                         $data['position'],
                         $data['is_wysiwyg_enabled'],
                         $data['is_used_for_promo_rules'],
-                    )
+                    ]
                 );
             }catch(Exception $e){
                 Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
@@ -97,8 +110,9 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
     /**
      * Migrate Entries from source to target tables (if possible)
      *
-     * @param Mage_Eav_Model_Entity_Attribute $attribute
-     * @param array $data
+     * @param  Mage_Eav_Model_Entity_Attribute $attribute Attribute Model
+     * @param  array                           $data      Attribute Data
+     * @return void
      */
     private function migrateData($attribute, $data = null)
     {
@@ -112,16 +126,18 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         $sourceType = $attribute->getBackendType();
         $targetType = $data['backend_type'];
         // Create complete Entity Table names, e.g. 'catalog_product_entity_text'
-        $sourceTable = implode (array($entityTypeCode, 'entity', $sourceType), '_');
-        $targetTable = implode (array($entityTypeCode, 'entity', $targetType), '_');
+        $sourceTable = implode([$entityTypeCode, 'entity', $sourceType], '_');
+        $targetTable = implode([$entityTypeCode, 'entity', $targetType], '_');
         // Select all existing entries for given Attribute
         $srcSql = 'SELECT * FROM '.$sourceTable.' WHERE attribute_id = ? AND entity_type_id = ?';
         $sourceQuery = $_dbConnection->query(
             $srcSql,
-            array($attribute->getId(), $attribute->getEntity()->getData('entity_type_id'))
+            [
+                $attribute->getId(),
+                $attribute->getEntity()->getData('entity_type_id')
+            ]
         );
-        while($row = $sourceQuery->fetch())
-        {
+        while ($row = $sourceQuery->fetch()) {
             $currentValue = $row['value'];
             if (!is_null($currentValue)) {
                 // Cast Value Type to new Type (e.g. decimal to text)
@@ -131,7 +147,13 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
                 try{
                     $_dbConnection->query(
                         $sql,
-                        array($row['entity_type_id'], $row['attribute_id'], $row['store_id'], $row['entity_id'], $targetValue)
+                        [
+                            $row['entity_type_id'],
+                            $row['attribute_id'],
+                            $row['store_id'],
+                            $row['entity_id'],
+                            $targetValue
+                        ]
                     );
                 }catch(Exception $e){
                     Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
@@ -146,36 +168,37 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
     /**
      * Force Casting of Backend Types
      *
-     * @param $value
-     * @param $sourceType
-     * @param $targetType
+     * @param mixed  $value      Current Value
+     * @param string $sourceType Current Source Type
+     * @param string $targetType New Source Type
      * @return null
      */
-    private function typeCast($value, $sourceType, $targetType){
+    private function typeCast($value, $sourceType, $targetType)
+    {
         if ($sourceType === $targetType) {
             return $value;
         }
         switch ($targetType) {
             case 'decimal':
-                return min((int)$value, 2147483648);
+                return min((int) $value, 2147483648);
             case 'gallery':
-                return $this->truncateString((string)$value, 254);
+                return $this->truncateString((string) $value, 254);
             case 'group_price':
-                return min((int)$value, 65535);
+                return min((int) $value, 65535);
             case 'int':
-                return min((int)$value, 2147483648);
+                return min((int) $value, 2147483648);
             case 'media_gallery':
-                return $this->truncateString((string)$value, 254);
+                return $this->truncateString((string) $value, 254);
             case 'media_gallery_value':
-                return min((int)$value, 65535);
+                return min((int) $value, 65535);
             case 'text':
-                return (string)$value;
+                return (string) $value;
             case 'tier_price':
-                return min((int)$value, 65535);
+                return min((int) $value, 65535);
             case 'url_key':
-                return $this->truncateString((string)$value, 254);
+                return $this->truncateString((string) $value, 254);
             case 'varchar':
-                return $this->truncateString((string)$value, 254);
+                return $this->truncateString((string) $value, 254);
         }
         return null;
     }
@@ -183,8 +206,8 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
     /**
      * Truncate string if too long
      *
-     * @param string $str
-     * @param integer $maxlen
+     * @param  string  $str    Input String
+     * @param  integer $maxlen Maximum String Length
      * @return string
      */
     public static function truncateString($str, $maxlen)
@@ -200,8 +223,9 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      *
      * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
      *
-     * @param $data array
+     * @param  array $data Attribute Configuration Data
      * @throws Mage_Core_Exception
+     * @return void
      */
     public function insertAttribute($data)
     {
@@ -213,7 +237,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
             Mage::throwException("Can't import the attribute with an empty label or code.");
         } // code for set/group id checks here
 
-        $newData = array();
+        $newData = [];
         foreach ($data as $node => $value) {
             $newData[$node] = $value;
         }
@@ -221,9 +245,12 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
         $setup = Mage::getModel('eav/entity_setup');
         $attribute->save();
         foreach ($data['attribute_set'] as $key => $set) {
+            // TODO: Load is not performant in Loop
+            // @codingStandardsIgnoreStart
             $attributeSetId = Mage::getModel('eav/entity_attribute_set')
                             ->load($set, 'attribute_set_name')
                             ->getAttributeSetId();
+            // @codingStandardsIgnoreEnd
             $setup->addAttributeGroup($data['entity_type_id'], $attributeSetId, $data['group']);
             $setup->addAttributeToSet($data['entity_type_id'], $attributeSetId, $data['group'], $data['attribute_code'], $data['sort_order']);
         }

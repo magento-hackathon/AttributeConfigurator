@@ -1,18 +1,34 @@
 <?php
+
 /**
  * Class Hackathon_AttributeConfigurator_Test_Helper_DataTest
+ *
+ * @category Test
+ * @package  Hackathon_AttributeConfigurator
+ * @author   Firegento <contact@firegento.com>
+ * @license  Open Software License v. 3.0 (OSL-3.0)
+ * @link     https://github.com/magento-hackathon/AttributeConfigurator
  */
 class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_Case
 {
     /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper*/
     protected $_helper;
 
+    /**
+     * Setup Method
+     *
+     * @return void
+     */
     protected function setUp()
     {
-        $this->_helper = MAGE::helper('hackathon_attributeconfigurator');
+        $this->_helper = Mage::helper('hackathon_attributeconfigurator');
         parent::setUp();
     }
 
+    /**
+     * @test
+     * @return void
+     */
     public function testCreateFileHash()
     {
         /** @var string $fileHash */
@@ -26,18 +42,30 @@ class Hackathon_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUn
         $this->assertFalse($this->_helper->createFileHash('ranD0MsTr1ng'));
     }
 
+    /**
+     * @test
+     * @return void
+     */
     public function testGetImportFilename()
     {
         $this->assertNotNull(Mage::getStoreConfig(Hackathon_AttributeConfigurator_Helper_Data::XML_PATH_FILENAME));
-        $this->assertInternalType('int', strpos($this->_helper->getImportFilename(), Mage::getBaseDir() . DS ));
+        $this->assertInternalType('int', strpos($this->_helper->getImportFilename(), Mage::getBaseDir() . DS));
     }
 
+    /**
+     * @test
+     * @return void
+     */
     public function testcheckAttributeMaintained()
     {
+        /** @var Mage_Catalog_Model_Entity_Attribute $attribute */
         $attribute = Mage::getModel('catalog/entity_attribute');
-        $attribute->setIsMaintainedByConfigurator(1);
+
+        $attribute->getData('is_maintained_by_configurator');
         $this->assertTrue($this->_helper->checkAttributeMaintained($attribute));
-        $this->assertFalse($this->_helper->checkAttributeMaintained($attribute->setIsMaintainedByConfigurator(0)));
-        $this->assertFalse($this->_helper->checkAttributeMaintained(NULL));
+
+        $attribute->setData('is_maintained_by_configurator', 0);
+        $this->assertFalse($this->_helper->checkAttributeMaintained($attribute));
+        $this->assertFalse($this->_helper->checkAttributeMaintained(null));
     }
 }

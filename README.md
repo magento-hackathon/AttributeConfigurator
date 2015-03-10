@@ -3,6 +3,10 @@ AttributeConfigurator
 The AttributeConfigurator enables you to centralize the versioning of your attributes in one file (compared to have
 them scaattered over several update scripts).
 
+Warning
+-------
+Work Draft. Currently nonworking.
+
 Facts
 -----
 - version: 0.1.0

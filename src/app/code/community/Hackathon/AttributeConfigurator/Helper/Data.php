@@ -1,6 +1,13 @@
 <?php
+
 /**
  * Class Hackathon_AttributeConfigurator_Helper_Data
+ *
+ * @category Helper
+ * @package  Hackathon_AttributeConfigurator
+ * @author   Firegento <contact@firegento.com>
+ * @license  Open Software License v. 3.0 (OSL-3.0)
+ * @link     https://github.com/magento-hackathon/AttributeConfigurator
  */
 class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
 {
@@ -27,22 +34,25 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
      */
     public function createFileHash($file)
     {
+        // Ignore Coding Standards for forbidden functions
+        // @codingStandardsIgnoreStart
         if (file_exists($file)) {
             return md5_file($file);
         }
+        // @codingStandardsIgnoreEnd
         return false;
     }
 
     /**
      * Check if the XML file is newer than the last imported one.
      *
-     * return bool
+     * @return bool
      */
     public function isAttributeXmlNewer()
     {
         $filename = $this->getImportFilename();
         $currentFileHash = Mage::getStoreConfigFlag(self::XML_PATH_CURRENT_HASH);
-        $latestFileHash  = $this->createFileHash($filename);
+        $latestFileHash = $this->createFileHash($filename);
         if ($latestFileHash !== $currentFileHash) {
             return true;
         }
@@ -50,13 +60,15 @@ class Hackathon_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstr
     }
 
     /**
-     * Check if Attribute is maintained by extension, return false if not (leave system and third party attributes as they are)
+     * Check if Attribute is maintained by extension, return false if not
+     * (keep system and third party attributes untouched)
      *
-     * @param $attribute
+     * @param  Mage_Eav_Model_Entity_Attribute $attribute Attribute Model
      * @return bool
      */
-    public function checkAttributeMaintained($attribute){
-        if (!$attribute || $attribute->getIsMaintainedByConfigurator() !== 1){
+    public function checkAttributeMaintained($attribute)
+    {
+        if (!$attribute || $attribute->getData('is_maintained_by_configurator') !== 1) {
             return false;
         }
         return true;
