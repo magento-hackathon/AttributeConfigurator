@@ -46,9 +46,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
         Mage::getModel('aoe_attributeconfigurator/attribute', $this->_config->getAttributes());
 
         // TODO: Refactor this into the attribute model
-        if ($this->_validate($attributesets, $attributes)) {
+        //if ($this->_validate($attributesets, $attributes)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
-        }
+        //}
     }
 
 

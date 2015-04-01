@@ -34,6 +34,6 @@ class Aoe_AttributeConfigurator_Model_Attributeset extends Mage_Eav_Model_Entity
 
     private function createOrUpdate()
     {
-        
+
     }
 }
