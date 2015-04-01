@@ -40,28 +40,31 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset extends Mage_Core
     {
         foreach ($this->_config->children() as $childConfig) {
             try {
-                //$this->validate($config);
-                //$this->createAttributeSet($config);
-                return;
+                $this->validate($childConfig);
+                $this->createAttributeSet($childConfig);
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception $e) {
                 $this->_helper->log('Attribute Set validation exception.', $e);
+            }catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception $e) {
+                $this->_helper->log('Attribute Set could not be saved.', $e);
             } catch (Exception $e) {
-                $this->_helper->log('Attribute Set was not created, skipping', $e);
+                $this->_helper->log('Unexpected Attribute Set Error, skipping.', $e);
             }
         }
     }
 
     /**
-     * @param  Mage_Core_Model_Config_Element $config Single Attribute Set Config
+     * @param  SimpleXMLElement $config Single Attribute Set Config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception
      * @return void
      */
     private function validate($config)
     {
-        if (!isset($config['name']) || !trim($config['name'])) {
+        $name = (string) $config['name'];
+        $skeleton = (string) $config['skeleton'];
+        if (!isset($name) || !trim($name)) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception();
         }
-        if (!isset($config['skeleton']) || !trim($config['skeleton'])) {
+        if (!isset($skeleton) || !trim($skeleton)) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception();
         }
     }
@@ -69,13 +72,32 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset extends Mage_Core
     /**
      * Create Attribute Set
      *
-     * @param  Mage_Core_Model_Config_Element $config Single Attribute Set Config
+     * @param  SimpleXMLElement $config Attribute Set Config
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception
      * @return void
      */
     private function createAttributeSet($config)
     {
+        $name = trim((string) $config['name']);
+        $skeleton = trim((string) $config['skeleton']);
+        // Get Product Entity Id
+        $productEntityId = Mage::getModel('catalog/product')->getResource()->getTypeId();
+        // Retrieve Id of Skeleton Attribute Set to use for the new Attribute Set
+        $skeletonAttributeSet = Mage::getResourceModel('eav/entity_attribute_set_collection')
+            ->setEntityTypeFilter($productEntityId)
+            ->addFilter('attribute_set_name', $skeleton);
+        $skeletonId = $skeletonAttributeSet->getData()[0]['attribute_set_id'];
         /** @var Mage_Eav_Model_Entity_Attribute_Set $setModel */
         $setModel = Mage::getModel('eav/entity_attribute_set');
-        $setModel->setData('name', trim($config['name']));
+        // Set required Data to new Attribute Set
+        $setModel->setEntityTypeId($productEntityId);
+        $setModel->setData('attribute_set_name', trim($name));
+        if ($setModel->validate()) {
+            $setModel->save();
+            $setModel->initFromSkeleton($skeletonId);
+            $setModel->save();
+        } else {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception();
+        }
     }
 }
