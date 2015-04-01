@@ -21,6 +21,9 @@ them scaattered over several update scripts).
 
 Configuration is found at System/Configuration/Catalog/Catalog/Attribute Configurator.
 
+Import Path is created at Magento Base Director with var/importexport/product_attributes. Change this path in
+the config if this doesn´t suit your needs - but use only var as it is some kind of spool file.
+
 Requirements
 ------------
 - PHP >= 5.2.0

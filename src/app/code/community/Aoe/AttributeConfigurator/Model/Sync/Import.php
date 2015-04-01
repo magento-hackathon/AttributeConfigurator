@@ -25,6 +25,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     /** @var array $_groupData Attribute Group Config Data */
     protected $_groupData = [];
 
+    /** @var Aoe_AttributeConfigurator_Model_Config $_config */
+    protected $_config;
+
     /**
      * Constructor
      * @return void
@@ -51,7 +54,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
 
         // 2. Import/Delete Attributes
         $attributes = $_config->getNode('attributeslist');
-
+        return;
         if ($this->_validate($attributesets, $attributes)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
         }
@@ -142,6 +145,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
      */
     protected function loadConfiguration()
     {
-        Mage::getConfig()->loadFile($this->_helper->getImportFilename());
+        $this->_config = Mage::getModel('aoe_attributeconfigurator/config');
+        $this->_config->loadCustomConfigXml($this->_helper->getImportFilename());
     }
 }

@@ -6,6 +6,7 @@ $installer->startSetup();
 // Add Maintainer Flag to eav_attribute
 try {
     $directory = Mage::getBaseDir('var') . DS . 'importexport';
+    // Ignore Coding Standards for forbidden functions
     // @codingStandardsIgnoreStart
     mkdir($directory);
     mkdir($directory . DS . 'product_attributes');

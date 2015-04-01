@@ -14,7 +14,7 @@
 class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const XML_PATH_FILENAME = 'catalog/attribute_configurator/product_xml_location';
-    const XML_PATH_CURRENT_HASH = 'attributeconfigurator/hashes/current';
+    const CODE_CURRENT_HASH = 'attributeconfigurator_hash';
 
     /**
      * @return string
@@ -31,7 +31,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getImportFilename()
     {
-        return Mage::getBaseDir() . DS . trim(Mage::getStoreConfig($this->getXmlImportPath()), '/\ ');
+        return trim(Mage::getStoreConfig($this->getXmlImportPath()));
     }
 
     /**
@@ -54,6 +54,32 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Writes Values with given code to the core_flag Table (underutilized feature)
+     *
+     * @param string $code  flag_code for core_flag table
+     * @param string $value value to write
+     * @return void
+     */
+    public function setFlagValue($code, $value)
+    {
+        /** @var Mage_Core_Model_Flag $flagModel */
+        $flagModel = Mage::getModel('core/flag', ['flag_code' => $code])->loadSelf();
+        $flagModel->setFlagData($value);
+        $flagModel->save();
+    }
+
+    /**
+     * @param  string $code flag_code for core_flag table
+     * @return stdClass
+     */
+    public function getFlagValue($code)
+    {
+        /** @var Mage_Core_Model_Flag $flagModel */
+        $flagModel = Mage::getModel('core/flag', ['flag_code' => $code])->loadSelf();
+        return $flagModel->getFlagData();
+    }
+
+    /**
      * Check if the XML file is newer than the last imported one.
      *
      * @return bool
@@ -61,7 +87,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     public function isAttributeXmlNewer()
     {
         $filename = $this->getImportFilename();
-        $currentFileHash = Mage::getStoreConfigFlag(self::XML_PATH_CURRENT_HASH);
+        $currentFileHash = $this->getFlagValue(self::CODE_CURRENT_HASH);
         $latestFileHash = $this->createFileHash($filename);
         if ($latestFileHash !== $currentFileHash) {
             return true;

@@ -42,10 +42,14 @@
     <default>
         <catalog>
             <attribute_configurator>
-                <product_xml_location>/var/importexport/product_attributes/attribute.xml</product_xml_location>
+                <product_xml_location>importexport/product_attributes/attribute.xml</product_xml_location>
             </attribute_configurator>
         </catalog>
     </default>
+    <aoe_attributeconfigurator>
+        <title>Aoe Attributeconfigurator</title>
+        <!-- Do not remove -->
+    </aoe_attributeconfigurator>
     <phpunit>
         <suite>
             <modules>
