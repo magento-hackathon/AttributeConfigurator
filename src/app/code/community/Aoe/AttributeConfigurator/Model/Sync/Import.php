@@ -1,17 +1,19 @@
 <?php
 
 /**
- * Class Hackathon_AttributeConfigurator_Model_Sync_Import
+ * Class Aoe_AttributeConfigurator_Model_Sync_Import
  *
  * @category Model
- * @package  Hackathon_AttributeConfigurator
+ * @package  Aoe_AttributeConfigurator
  * @author   Firegento <contact@firegento.com>
+ * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
- * @link     https://github.com/magento-hackathon/AttributeConfigurator
+ * @link     https://github.com/AOEpeople/AttributeConfigurator
+ * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstract
+class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstract
 {
-    /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper */
+    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
     /** @var array $_attributeData Attribute Config Data */
@@ -29,7 +31,7 @@ class Hackathon_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_
      */
     public function _construct()
     {
-        $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
+        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
         $this->loadConfiguration();
     }
 

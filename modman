@@ -1,2 +1,2 @@
-src/app/etc/modules/Hackathon_AttributeConfigurator.xml		app/etc/modules/Hackathon_AttributeConfigurator.xml
-src/app/code/community/Hackathon/AttributeConfigurator/		app/code/community/Hackathon/AttributeConfigurator
+src/app/etc/modules/Aoe_AttributeConfigurator.xml		    app/etc/modules/Aoe_AttributeConfigurator.xml
+src/app/code/community/Aoe/AttributeConfigurator/		    app/code/community/Aoe/AttributeConfigurator

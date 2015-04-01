@@ -1,40 +1,40 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-        <Hackathon_AttributeConfigurator>
+        <Aoe_AttributeConfigurator>
             <version>0.1.0</version>
-        </Hackathon_AttributeConfigurator>
+        </Aoe_AttributeConfigurator>
     </modules>
     <global>
         <helpers>
-            <hackathon_attributeconfigurator>
-                <class>Hackathon_AttributeConfigurator_Helper</class>
-            </hackathon_attributeconfigurator>
+            <aoe_attributeconfigurator>
+                <class>Aoe_AttributeConfigurator_Helper</class>
+            </aoe_attributeconfigurator>
         </helpers>
         <models>
-            <hackathon_attributeconfigurator>
-                <class>Hackathon_AttributeConfigurator_Model</class>
-            </hackathon_attributeconfigurator>
+            <aoe_attributeconfigurator>
+                <class>Aoe_AttributeConfigurator_Model</class>
+            </aoe_attributeconfigurator>
         </models>
         <resources>
-            <hackathon_attributeconfigurator>
+            <aoe_attributeconfigurator>
                 <setup>
-                    <module>Hackathon_AttributeConfigurator</module>
+                    <module>Aoe_AttributeConfigurator</module>
                 </setup>
                 <connection>
                     <use>core_setup</use>
                 </connection>
-            </hackathon_attributeconfigurator>
+            </aoe_attributeconfigurator>
         </resources>
     </global>
     <adminhtml>
         <events>
             <controller_action_predispatch_adminhtml>
                 <observers>
-                    <hackathon_attributeconfigurator_version>
-                        <class>hackathon_attributeconfigurator/observer</class>
+                    <aoe_attributeconfigurator_version>
+                        <class>aoe_attributeconfigurator/observer</class>
                         <method>controllerActionPredispatchAdminhtml</method>
-                    </hackathon_attributeconfigurator_version>
+                    </aoe_attributeconfigurator_version>
                 </observers>
             </controller_action_predispatch_adminhtml>
         </events>
@@ -49,7 +49,7 @@
     <phpunit>
         <suite>
             <modules>
-                <Hackathon_AttributeConfigurator/>
+                <Aoe_AttributeConfigurator/>
             </modules>
         </suite>
     </phpunit>

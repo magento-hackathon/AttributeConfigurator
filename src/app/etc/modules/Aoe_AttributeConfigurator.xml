@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-        <Hackathon_AttributeConfigurator>
+        <Aoe_AttributeConfigurator>
             <active>true</active>
             <codePool>community</codePool>
-        </Hackathon_AttributeConfigurator>
+        </Aoe_AttributeConfigurator>
     </modules>
 </config>

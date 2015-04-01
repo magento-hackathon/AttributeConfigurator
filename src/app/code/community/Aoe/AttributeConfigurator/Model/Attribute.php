@@ -1,17 +1,19 @@
 <?php
 
 /**
- * Class Hackathon_AttributeConfigurator_Model_Attribute
+ * Class Aoe_AttributeConfigurator_Model_Attribute
  *
  * @category Model
- * @package  Hackathon_AttributeConfigurator
+ * @package  Aoe_AttributeConfigurator
  * @author   Firegento <contact@firegento.com>
+ * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
- * @link     https://github.com/magento-hackathon/AttributeConfigurator
+ * @link     https://github.com/AOEpeople/AttributeConfigurator
+ * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
+class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
 {
-    /** @var Hackathon_AttributeConfigurator_Helper_Data $_helper */
+    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
     /**
@@ -19,7 +21,7 @@ class Hackathon_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Ent
      */
     public function __construct()
     {
-        $this->_helper = Mage::helper('hackathon_attributeconfigurator/data');
+        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
         parent::_construct();
     }
 

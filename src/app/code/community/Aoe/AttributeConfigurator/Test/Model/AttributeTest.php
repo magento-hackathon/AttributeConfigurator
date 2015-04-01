@@ -1,17 +1,19 @@
 <?php
 
 /**
- * Class Hackathon_AttributeConfigurator_Test_Model_AttributeTest
+ * Class Aoe_AttributeConfigurator_Test_Model_AttributeTest
  *
  * @category Test
- * @package  Hackathon_AttributeConfigurator
+ * @package  Aoe_AttributeConfigurator
  * @author   Firegento <contact@firegento.com>
+ * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
- * @link     https://github.com/magento-hackathon/AttributeConfigurator
+ * @link     https://github.com/AOEpeople/AttributeConfigurator
+ * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
+class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
 {
-    /** @var Hackathon_AttributeConfigurator_Model_Attribute $_model */
+    /** @var Aoe_AttributeConfigurator_Model_Attribute $_model */
     protected $_model;
 
     /**
@@ -20,7 +22,7 @@ class Hackathon_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_P
      */
     protected function setUp()
     {
-        $this->_model = Mage::getModel('hackathon_attributeconfigurator/attribute');
+        $this->_model = Mage::getModel('aoe_attributeconfigurator/attribute');
         parent::setUp();
     }
 

@@ -1,15 +1,17 @@
 <?php
 
 /**
- * Class Hackathon_AttributeConfigurator_Test_Config_Main
+ * Class Aoe_AttributeConfigurator_Test_Config_Main
  *
  * @category Test
- * @package  Hackathon_AttributeConfigurator
+ * @package  Aoe_AttributeConfigurator
  * @author   Firegento <contact@firegento.com>
+ * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
- * @link     https://github.com/magento-hackathon/AttributeConfigurator
+ * @link     https://github.com/AOEpeople/AttributeConfigurator
+ * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_Test_Case_Config
+class Aoe_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_Test_Case_Config
 {
     /**
      * @test
@@ -45,20 +47,20 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
     public function testClassAliases()
     {
         $this->assertHelperAlias(
-            'hackathon_attributeconfigurator',
-            'Hackathon_AttributeConfigurator_Helper_Data'
+            'aoe_attributeconfigurator',
+            'Aoe_AttributeConfigurator_Helper_Data'
         );
         $this->assertModelAlias(
-            'hackathon_attributeconfigurator/attribute',
-            'Hackathon_AttributeConfigurator_Model_Attribute'
+            'aoe_attributeconfigurator/attribute',
+            'Aoe_AttributeConfigurator_Model_Attribute'
         );
         $this->assertModelAlias(
-            'hackathon_attributeconfigurator/sync_import',
-            'Hackathon_AttributeConfigurator_Model_Sync_Import'
+            'aoe_attributeconfigurator/sync_import',
+            'Aoe_AttributeConfigurator_Model_Sync_Import'
         );
         $this->assertModelAlias(
-            'hackathon_attributeconfigurator/observer',
-            'Hackathon_AttributeConfigurator_Model_Observer'
+            'aoe_attributeconfigurator/observer',
+            'Aoe_AttributeConfigurator_Model_Observer'
         );
     }
 
@@ -71,7 +73,7 @@ class Hackathon_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_T
         $this->assertEventObserverDefined(
             'adminhtml',
             'controller_action_predispatch_adminhtml',
-            'hackathon_attributeconfigurator/observer',
+            'aoe_attributeconfigurator/observer',
             'controllerActionPredispatchAdminhtml'
         );
     }

@@ -10,8 +10,8 @@ Work Draft. Currently nonworking.
 Facts
 -----
 - version: 0.1.0
-- extension key: Hackathon_AttributeConfigurator
-- [extension on GitHub](https://github.com/magento-hackathon/AttributeConfigurator)
+- extension key: Aoe_AttributeConfigurator
+- [extension on GitHub](https://github.com/AOEpeople/AttributeConfigurator)
 - no workflow implemented right now, only supportive functionality was developed
 
 Description
@@ -46,7 +46,7 @@ Planned Features
 
 Support
 -------
-If you have any issues with this extension, open an issue on [GitHub](https://github.com/magento-hackathon/AttributeConfigurator/issues).
+If you have any issues with this extension, open an issue on [GitHub](https://github.com/AOEpeople/AttributeConfigurator/issues).
 
 Contribution
 ------------
@@ -64,4 +64,5 @@ License
 
 Copyright
 ---------
-(c) 2014 Magento Hackathon
+(c) 2014 Firegento
+Rework 2015 Aoe
