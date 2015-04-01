@@ -5,11 +5,10 @@ $installer->startSetup();
 
 // Add Maintainer Flag to eav_attribute
 try {
-    /** @var Aoe_AttributeConfigurator_Helper_Data $helper */
-    $helper = Mage::helper('aoe_attributeconfigurator/data');
-    $directory = Mage::getStoreConfig($helper->getXmlImportPath());
+    $directory = Mage::getBaseDir('var') . DS . 'importexport';
     // @codingStandardsIgnoreStart
     mkdir($directory);
+    mkdir($directory . DS . 'product_attributes');
     // @codingStandardsIgnoreEnd
 } catch (Exception $e) {
     Mage::logException($e);
