@@ -16,6 +16,25 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_FILENAME = 'catalog/attribute_configurator/product_xml_location';
     const CODE_CURRENT_HASH = 'attributeconfigurator_hash';
     const EAV_ATTRIBUTE_MAINTAINED = 'is_maintained_by_configurator';
+    const FILENAME_LOGFILE = 'fraport_import.log';
+
+    /**
+     * Custom Logging
+     *
+     * @param string    $message   Text
+     * @param Exception $exception Optional Exception
+     * @param integer   $level     Zend Debug Level
+     * @return void
+     */
+    public function log($message, $exception = null, $level = null)
+    {
+        $exceptionMessage = '';
+        if (!is_null($exception)) {
+            Mage::logException($exception);
+            $exceptionMessage = $exception->getMessage();
+        }
+        Mage::log(sprintf('%s %s', $message, $exceptionMessage), $level, self::FILENAME_LOGFILE);
+    }
 
     /**
      * @return string
