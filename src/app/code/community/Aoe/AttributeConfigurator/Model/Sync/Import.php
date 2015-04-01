@@ -40,8 +40,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     public function import()
     {
         // 1. Create/Update Attribute Sets
-        /** @var Aoe_AttributeConfigurator_Model_Attributeset $attributeSetModel */
-        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/attributeset', $this->_config->getAttributeSets());
+        /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset $attributeSetModel */
+        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attributeset', $this->_config->getAttributeSets());
         $attributeSetModel->run();
 
         // 2. Create/Update Attributes

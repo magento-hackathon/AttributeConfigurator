@@ -30,7 +30,7 @@ class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
     }
 
     /**
-     * @return Mage_Core_Model_Config_Element
+     * @return Varien_Simplexml_Element
      */
     public function getAttributeSets()
     {
@@ -38,7 +38,7 @@ class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
     }
 
     /**
-     * @return Mage_Core_Model_Config_Element
+     * @return Varien_Simplexml_Element
      */
     public function getAttributes()
     {
