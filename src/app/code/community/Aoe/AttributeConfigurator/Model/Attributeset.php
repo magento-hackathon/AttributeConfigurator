@@ -29,11 +29,21 @@ class Aoe_AttributeConfigurator_Model_Attributeset extends Mage_Eav_Model_Entity
         parent::_construct();
         $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
         $this->_config = $config;
-        $this->createOrUpdate();
     }
 
-    private function createOrUpdate()
+    /**
+     * Cycle through Attributesets
+     *
+     * @return void
+     */
+    public function run()
     {
+        forach($this->_config as $)
+        while($this->_config) {
+            if ($this->validate()) {
 
+            }
+        }
+        return;
     }
 }
