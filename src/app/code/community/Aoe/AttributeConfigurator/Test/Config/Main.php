@@ -82,8 +82,11 @@ class Aoe_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_Test_Ca
      * @test
      * @return void
      */
-    public function testConfigContainsXmlLoactionNode()
+    public function testConfigContainsXmlLocationNode()
     {
-        $this->assertConfigNodeHasChild('default/catalog/attribute_configurator', 'product_xml_location');
+        $this->assertConfigNodeHasChild(
+            'default/catalog/attribute_configurator',
+            'product_xml_location'
+        );
     }
 }
