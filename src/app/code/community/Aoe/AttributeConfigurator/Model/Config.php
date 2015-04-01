@@ -13,16 +13,35 @@
  */
 class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
 {
+    const CONFIG_ATTRIBUTE_SETS = 'aoe_attributeconfigurator/attributesets';
+    const CONFIG_ATTRIBUTES = 'aoe_attributeconfigurator/attributes';
+
+    /** @var Mage_Core_Model_Config_Base $_config */
+    private $_config;
+
     /**
      * @param  string $path File Path
      * @return $this
      */
     public function loadCustomConfigXml($path)
     {
-        $merge = Mage::getModel('core/config_base');
-        $merge->loadFile(Mage::getBaseDir('var') . DS . $path);
-        $coreConfig = Mage::getConfig();
-        $coreConfig->extend($merge);
-        return $this;
+        $this->_config = Mage::getModel('core/config_base');
+        $this->_config->loadFile(Mage::getBaseDir('var') . DS . $path);
+    }
+
+    /**
+     * @return Mage_Core_Model_Config_Element
+     */
+    public function getAttributeSets()
+    {
+        return $this->_config->getNode(self::CONFIG_ATTRIBUTE_SETS);
+    }
+
+    /**
+     * @return Mage_Core_Model_Config_Element
+     */
+    public function getAttributes()
+    {
+        return $this->_config->getNode(self::CONFIG_ATTRIBUTES);
     }
 }

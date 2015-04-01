@@ -16,20 +16,12 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
-    /** @var array $_attributeData Attribute Config Data */
-    protected $_attributeData = [];
-
-    /** @var array $_setData Attribute Set Config Data */
-    protected $_setData = [];
-
-    /** @var array $_groupData Attribute Group Config Data */
-    protected $_groupData = [];
-
     /** @var Aoe_AttributeConfigurator_Model_Config $_config */
     protected $_config;
 
     /**
      * Constructor
+     *
      * @return void
      */
     public function _construct()
@@ -47,57 +39,18 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
      */
     public function import()
     {
-        $_config = Mage::getConfig();
+        // 1. Create/Update Attribute Sets
+        Mage::getModel('aoe_attributeconfigurator/attributeset', $this->_config->getAttributeSets());
 
-        // 1. Import/Delete Attribute Sets
-        $attributesets = $_config->getNode('attributesetslist');
+        // 2. Create/Update Attributes
+        Mage::getModel('aoe_attributeconfigurator/attribute', $this->_config->getAttributes());
 
-        // 2. Import/Delete Attributes
-        $attributes = $_config->getNode('attributeslist');
-        return;
+        // TODO: Refactor this into the attribute model
         if ($this->_validate($attributesets, $attributes)) {
             // 3. Connect Attributes with Attribute Sets using Attribute Groups
         }
     }
 
-    /**
-     * Get Attribute Set from XML
-     *
-     * @param  Varien_Simplexml_Element $xml Attribute XML Data
-     * @return $this
-     */
-    public function prepareAttributeSet($xml)
-    {
-        $this->_setData = json_decode(json_encode($xml->attributesets), true);
-        return $this;
-    }
-
-    /**
-     * Parse XML for Attribute Set
-     *
-     * @param  Varien_Simplexml_Element $attributesets Attribute Set Data
-     * @return array
-     */
-    protected function _getAttributeSetsFromXml($attributesets)
-    {
-        $result = [];
-        foreach ($attributesets->children() as $attributeset) {
-            $result[] = (string) $attributeset['name'];
-        }
-        return $result;
-    }
-
-    /**
-     * Fetch Attributes from XML
-     *
-     * @param  Varien_Simplexml_Element $xml Attribute XML Data
-     * @return $this
-     */
-    public function prepareAttributes($xml)
-    {
-        $this->_attributeData = json_decode(json_encode($xml->attributes), true);
-        return $this;
-    }
 
     /**
      * Validate Attributesets and Attributes
@@ -126,25 +79,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     }
 
     /**
-     * Fetches Attribute Groups from XML
-     *
-     * @param  Varien_Simplexml_Element $xml Attribute Group Configuration
-     * @return $this
-     */
-    public function prepareAttributeGroups($xml)
-    {
-        // Encode/decode to easily get Array Format
-        $this->_groupData = json_decode(json_encode($xml->attributegroups), true);
-        return $this;
-    }
-
-    /**
-     * Load XML File via Varien Simplexml to Mage Config
+     * Load Config Element
      *
      * @return void
      */
     protected function loadConfiguration()
     {
+        /** @var Aoe_AttributeConfigurator_Model_Config _config */
         $this->_config = Mage::getModel('aoe_attributeconfigurator/config');
         $this->_config->loadCustomConfigXml($this->_helper->getImportFilename());
     }
