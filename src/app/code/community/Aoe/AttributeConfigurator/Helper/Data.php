@@ -17,13 +17,21 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_CURRENT_HASH = 'attributeconfigurator/hashes/current';
 
     /**
+     * @return string
+     */
+    public function getXmlImportPath()
+    {
+        return self::XML_PATH_FILENAME;
+    }
+
+    /**
      * Build Import Filename from Store Config
      *
      * @return string
      */
     public function getImportFilename()
     {
-        return Mage::getBaseDir() . DS . trim(Mage::getStoreConfig(self::XML_PATH_FILENAME), '/\ ');
+        return Mage::getBaseDir() . DS . trim(Mage::getStoreConfig($this->getXmlImportPath()), '/\ ');
     }
 
     /**

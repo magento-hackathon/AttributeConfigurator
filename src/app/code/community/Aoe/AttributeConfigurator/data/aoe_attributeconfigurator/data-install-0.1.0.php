@@ -5,9 +5,10 @@ $installer->startSetup();
 
 // Add Maintainer Flag to eav_attribute
 try {
-    $installer->run("ALTER TABLE eav_attribute ADD COLUMN is_maintained_by_configurator smallint(5)");
+    $installer->run("ALTER TABLE eav_attribute ADD COLUMN is_maintained_by_configurator smallint(5) COMMENT 'Inserted by Aoe_AttributeConfigurator'");
 } catch (Exception $e) {
-    Mage::exception('aoe_attributeconfigurator data upgrade exception: ' . $e->getMessage());
+    Mage::logException($e);
+    throw $e;
 }
 
 $installer->endSetup();

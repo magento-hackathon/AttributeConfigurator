@@ -19,6 +19,8 @@ Description
 The AttributeConfigurator enables you to centralize the versioning of your attributes in one file (compared to have
 them scaattered over several update scripts).
 
+Configuration is found at System/Configuration/Catalog/Catalog/Attribute Configurator.
+
 Requirements
 ------------
 - PHP >= 5.2.0
