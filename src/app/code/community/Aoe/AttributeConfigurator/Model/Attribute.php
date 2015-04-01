@@ -226,26 +226,31 @@ class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_At
      * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
      *
      * @param  array $data Attribute Configuration Data
-     * @throws Mage_Core_Exception
      * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Exception
      */
     public function insertAttribute($data)
     {
-        $attribute = Mage::getModel('catalog/resource_eav_attribute')->loadByCode($data['code']);
+        $this->_validateImportData($data);
+
+        /** @var Mage_Catalog_Model_Entity_Attribute $attribute */
+        $attribute = $this->_loadAttributeByCode($data['code']);
 
         if ($attribute->getId()) {
-            Mage::throwException('Attribute already exists.');
-        } elseif (trim($data['settings']['frontend_label']) == '' || trim($data['code']) == '') {
-            Mage::throwException("Can't import the attribute with an empty label or code.");
-        } // code for set/group id checks here
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf('Attribute with code \'%s\' already exists.', $data['code'])
+            );
+        }
+
 
         $newData = [];
         foreach ($data as $node => $value) {
             $newData[$node] = $value;
         }
         $attribute->addData($newData);
-        $setup = Mage::getModel('eav/entity_setup');
         $attribute->save();
+
+        $setup = Mage::getModel('eav/entity_setup');
         foreach ($data['attribute_set'] as $key => $set) {
             // TODO: Load is not performant in Loop
             // @codingStandardsIgnoreStart
@@ -253,8 +258,120 @@ class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_At
                             ->load($set, 'attribute_set_name')
                             ->getAttributeSetId();
             // @codingStandardsIgnoreEnd
-            $setup->addAttributeGroup($data['entity_type_id'], $attributeSetId, $data['group']);
-            $setup->addAttributeToSet($data['entity_type_id'], $attributeSetId, $data['group'], $data['attribute_code'], $data['sort_order']);
+            $setup->addAttributeGroup(
+                $data['entity_type_id'],
+                $attributeSetId,
+                $data['group']
+            );
+            $setup->addAttributeToSet(
+                $data['entity_type_id'],
+                $attributeSetId, $data['group'],
+                $data['attribute_code'],
+                $data['sort_order']
+            );
+        }
+    }
+
+    /**
+     * Load a catalog entity attribute by its code
+     *
+     * @param string $attributeCode Attribute code
+     * @return Mage_Catalog_Model_Entity_Attribute
+     */
+    protected function _loadAttributeByCode($attributeCode)
+    {
+        /** @var Mage_Catalog_Model_Entity_Attribute $result */
+        $result = Mage::getModel('catalog/entity_attribute');
+
+        $result->loadByCode(
+            'catalog_product',
+            $attributeCode
+        );
+
+        return $result;
+    }
+
+    /**
+     * Validate the attribute import data.
+     * Throws exception on validation errors
+     *
+     * @param array $importData Array of import data to set up attributes
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Exception
+     */
+    protected function _validateImportData($importData)
+    {
+        if (!isset($importData['code']) || !trim($importData['code'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                'Data validation: no code set on attribute data array.'
+            );
+        }
+
+        $attributeCode = $importData['code'];
+
+        if (!isset($importData['settings'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no \'settings\' section.',
+                    $attributeCode
+                )
+            );
+        }
+
+        /** @var array $setting */
+        $setting = $importData['settings'];
+        if (!isset($setting['frontend_label']) || !trim($setting['frontend_label'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no frontend label.',
+                    $attributeCode
+                )
+            );
+        }
+
+        if (!isset($importData['attribute_set']) || !is_array($importData['attribute_set'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no attribute set config.',
+                    $attributeCode
+                )
+            );
+        }
+
+        if (!isset($importData['entity_type_id']) || !trim($importData['entity_type_id'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no entity type id.',
+                    $attributeCode
+                )
+            );
+        }
+
+        if (!isset($importData['group']) || !trim($importData['group'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no group.',
+                    $attributeCode
+                )
+            );
+        }
+
+        if (!isset($importData['attribute_code']) || !trim($importData['attribute_code'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no attribute code.',
+                    $attributeCode
+                )
+            );
+        }
+
+        if (!isset($importData['sort_order']) || !is_numeric($importData['sort_order'])) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'Data validation: attribute data for \'%s\' contains no sort order.',
+                    $attributeCode
+                )
+            );
         }
     }
 }
