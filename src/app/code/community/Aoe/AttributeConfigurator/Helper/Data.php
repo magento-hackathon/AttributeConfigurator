@@ -15,6 +15,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const XML_PATH_FILENAME = 'catalog/attribute_configurator/product_xml_location';
     const CODE_CURRENT_HASH = 'attributeconfigurator_hash';
+    const EAV_ATTRIBUTE_MAINTAINED = 'is_maintained_by_configurator';
 
     /**
      * @return string
@@ -35,22 +36,22 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Method creates md5 hash of a given file based on its content
-     * Intent: We need to figure out when to re-import a file so we have to know when its content changes
+     * Method creates md5 hash of a given file based on its content.
+     * Returns false if no md5 could be generated for a file.
      *
-     * @param string $file path and filename of Attribute Configuration XML
+     * @param string $filePath Full path to a file
      *
      * @return bool|string
      */
-    public function createFileHash($file)
+    public function createFileHash($filePath)
     {
-        // Ignore Coding Standards for forbidden functions
         // @codingStandardsIgnoreStart
-        if (file_exists($file)) {
-            return md5_file($file);
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            return false;
         }
         // @codingStandardsIgnoreEnd
-        return false;
+
+        return md5_file($filePath);
     }
 
     /**
@@ -104,9 +105,10 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function checkAttributeMaintained($attribute)
     {
-        if (!$attribute || $attribute->getData('is_maintained_by_configurator') !== 1) {
-            return false;
+        if ($attribute && $attribute->getData(self::EAV_ATTRIBUTE_MAINTAINED)) {
+            return true;
         }
-        return true;
+
+        return false;
     }
 }

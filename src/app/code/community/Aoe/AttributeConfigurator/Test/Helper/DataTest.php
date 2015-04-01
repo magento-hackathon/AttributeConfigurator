@@ -34,40 +34,64 @@ class Aoe_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUnit_Tes
     public function testCreateFileHash()
     {
         /** @var string $fileHash */
-        $fileHash = '39e261858ae67d3aed716969e449686a';
+        $fileHash = '030db930ec1f620eb9b975af9284cfe0';
         /** @var string $testFile */
         $testFileName = Mage::getModuleDir('', 'Aoe_AttributeConfigurator') .
                 DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-dummy.xml' ;
 
-        $this->assertEquals($fileHash, $this->_helper->createFileHash($testFileName));
-        $this->assertFalse($this->_helper->createFileHash(''));
-        $this->assertFalse($this->_helper->createFileHash('ranD0MsTr1ng'));
+        $this->assertEquals(
+            $fileHash,
+            $this->_helper->createFileHash($testFileName),
+            'file content hash is correct'
+        );
+
+        $this->assertFalse(
+            $this->_helper->createFileHash(''),
+            'Return false for an empty filename'
+        );
+
+        $this->assertFalse(
+            $this->_helper->createFileHash('ranD0MsTr1ng'),
+            'Return false for a not existing filename'
+        );
     }
 
     /**
      * @test
+     * @loadFixture
+     *
      * @return void
      */
     public function testGetImportFilename()
     {
-        $this->assertNotNull(Mage::getStoreConfig(Aoe_AttributeConfigurator_Helper_Data::XML_PATH_FILENAME));
-        $this->assertInternalType('int', strpos($this->_helper->getImportFilename(), Mage::getBaseDir() . DS));
+        $this->assertStringEndsWith(
+            'test/file/path.xml',
+            $this->_helper->getImportFilename(),
+            'Import filename read from config'
+        );
     }
 
     /**
      * @test
      * @return void
      */
-    public function testcheckAttributeMaintained()
+    public function testCheckAttributeMaintained()
     {
         /** @var Mage_Catalog_Model_Entity_Attribute $attribute */
         $attribute = Mage::getModel('catalog/entity_attribute');
 
-        $attribute->getData('is_maintained_by_configurator');
-        $this->assertTrue($this->_helper->checkAttributeMaintained($attribute));
+        $attribute->getData(Aoe_AttributeConfigurator_Helper_Data::EAV_ATTRIBUTE_MAINTAINED);
+        $this->assertFalse(
+            $this->_helper->checkAttributeMaintained($attribute),
+            'default maintained status is \'false\''
+        );
 
-        $attribute->setData('is_maintained_by_configurator', 0);
-        $this->assertFalse($this->_helper->checkAttributeMaintained($attribute));
+        $attribute->setData(Aoe_AttributeConfigurator_Helper_Data::EAV_ATTRIBUTE_MAINTAINED, true);
+        $this->assertTrue(
+            $this->_helper->checkAttributeMaintained($attribute),
+            'enabling maintaining status works'
+        );
+
         $this->assertFalse($this->_helper->checkAttributeMaintained(null));
     }
 }

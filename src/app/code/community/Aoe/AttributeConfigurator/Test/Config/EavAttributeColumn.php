@@ -24,7 +24,9 @@ class Aoe_AttributeConfigurator_Test_Config_EavAttributeColumn extends EcomDev_P
         /** @var  $dbConnection */
         $dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
 
-        $query = $dbConnection->query("SHOW COLUMNS FROM eav_attribute LIKE 'is_maintained_by_configurator'");
+        $query = $dbConnection->query(
+            'SHOW COLUMNS FROM eav_attribute LIKE'
+            . ' \'' . Aoe_AttributeConfigurator_Helper_Data::EAV_ATTRIBUTE_MAINTAINED . '\'');
         $queryResult = $query->fetchAll();
 
         $this->assertEquals(
