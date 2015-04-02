@@ -1,0 +1,77 @@
+-
+  - empty
+  - |
+    <attribute>
+    </attribute>
+
+-
+  - valid
+  - |
+    <attribute code="sample_code">
+      <values>
+        <pair>
+          <key>1</key>
+          <de_DE>value_1_de</de_DE>
+        </pair>
+        <pair>
+          <key>1</key>
+          <de_DE>value_e_de</de_DE>
+        </pair>
+        <pair>
+          <key>1</key>
+          <de_DE>value_3_de</de_DE>
+        </pair>
+      </values>
+      <settings>
+        <is_visible>1</is_visible>
+        <is_configurable>1</is_configurable>
+        <is_global>1</is_global>
+        <entity_type_id>4</entity_type_id>
+        <backend_model></backend_model>
+        <backend_type>varchar</backend_type>
+        <backend_table></backend_table>
+        <frontend_model></frontend_model>
+        <frontend_input></frontend_input>
+        <frontend_label></frontend_label>
+        <frontend_class></frontend_class>
+        <source_model></source_model>
+        <is_required></is_required>
+        <is_userdefined></is_userdefined>
+        <default_value></default_value>
+        <is_unique></is_unique>
+        <note></note>
+        <frontend_input_renderer></frontend_input_renderer>
+        <is_global></is_global>
+        <is_visible></is_visible>
+        <is_searchable></is_searchable>
+        <is_filterable></is_filterable>
+        <is_comparable></is_comparable>
+        <is_visible_on_front></is_visible_on_front>
+        <is_html_allowed_on_front></is_html_allowed_on_front>
+        <is_used_for_price_rules></is_used_for_price_rules>
+        <is_filterable_in_search></is_filterable_in_search>
+        <used_in_product_listing></used_in_product_listing>
+        <used_for_sort_by></used_for_sort_by>
+        <is_configurable></is_configurable>
+        <apply_to>NULL</apply_to>
+        <!-- NULL = All Product Types -->
+        <is_visible_in_advanced_search></is_visible_in_advanced_search>
+        <position></position>
+        <is_wysiwyg_enabled></is_wysiwyg_enabled>
+        <is_used_for_promo_rules></is_used_for_promo_rules>
+      </settings>
+      <attributesets>
+        <attributeset name="test_attribute_set_1">
+          <attributegroups>
+            <attributegroup name="test_default"/>
+            <attributegroup name="test_additional_1"/>
+          </attributegroups>
+        </attributeset>
+        <attributeset name="test_attribute_set_2">
+          <attributegroups>
+            <attributegroup name="test_default"/>
+            <attributegroup name="test_additional_2"/>
+          </attributegroups>
+        </attributeset>
+      </attributesets>
+    </attribute>

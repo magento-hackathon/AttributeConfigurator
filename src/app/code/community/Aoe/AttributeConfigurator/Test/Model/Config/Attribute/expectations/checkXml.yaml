@@ -1,0 +1,54 @@
+empty:
+  is_valid: false
+
+valid:
+  is_valid: true
+  code: sample_code
+  entity_type_id: 4
+  settings:
+    is_visible: 1
+    is_configurable: 1
+    is_global: 1
+    entity_type_id: 4
+    backend_model:
+    backend_type: varchar
+    backend_table:
+    frontend_model:
+    frontend_input:
+    frontend_label:
+    frontend_class:
+    source_model:
+    is_required:
+    is_userdefined:
+    default_value:
+    is_unique:
+    note:
+    frontend_input_renderer:
+    is_global:
+    is_visible:
+    is_searchable:
+    is_filterable:
+    is_comparable:
+    is_visible_on_front:
+    is_html_allowed_on_front:
+    is_used_for_price_rules:
+    is_filterable_in_search:
+    used_in_product_listing:
+    used_for_sort_by:
+    is_configurable:
+    apply_to: NULL
+    is_visible_in_advanced_search:
+    position:
+    is_wysiwyg_enabled:
+    is_used_for_promo_rules:
+  attribute_sets:
+    test_attribute_set_1:
+      groups:
+        - test_default
+        - test_additional_1
+    test_attribute_set_2:
+      groups:
+        - test_default
+        - test_additional_2
+
+

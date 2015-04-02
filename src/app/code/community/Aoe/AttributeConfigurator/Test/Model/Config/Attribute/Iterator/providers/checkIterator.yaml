@@ -1,0 +1,25 @@
+-
+  - empty
+  - |
+    <attributes>
+    </attributes>
+
+-
+  - one
+  - |
+    <attributes>
+      <attribute code="first">
+      </attribute>
+    </attributes>
+
+-
+  - several
+  - |
+    <attributes>
+      <attribute code="first">
+      </attribute>
+      <attribute code="second">
+      </attribute>
+      <attribute code="third">
+      </attribute>
+    </attributes>
