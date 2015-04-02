@@ -46,8 +46,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
 
         // 2. Create/Update Attributes
         /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
-        $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute', $this->_config->getAttributes());
-        //$attributeModel->run();
+        $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute');
+        $attributeModel->run($this->_config->getAttributes());
 
         // TODO: Refactor this into the attribute model
         //if ($this->_validate($attributesets, $attributes)) {

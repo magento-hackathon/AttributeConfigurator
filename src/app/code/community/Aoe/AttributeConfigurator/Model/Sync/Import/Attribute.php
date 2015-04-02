@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Aoe_AttributeConfigurator_Model_Attribute
+ * Class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
  *
  * @category Model
  * @package  Aoe_AttributeConfigurator
@@ -11,7 +11,7 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_Attribute
+class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Model_Entity_Attribute
 {
     /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
@@ -22,7 +22,178 @@ class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_At
     public function __construct()
     {
         $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-        parent::_construct();
+
+        parent::__construct();
+    }
+
+    /**
+     * Run the attribute update/import
+     *
+     * @param string|SimpleXMLElement $xml XML Data to process
+     * @return void
+     */
+    public function run($xml)
+    {
+        /** @var Aoe_AttributeConfigurator_Model_Config_Attribute_Iterator $iterator */
+        $iterator = Mage::getModel(
+            'aoe_attributeconfigurator/config_attribute_iterator',
+            $xml
+        );
+        foreach ($iterator as $_attributeConfig) {
+            /** @var Aoe_AttributeConfigurator_Model_Config_Attribute $_attributeConfig */
+            try {
+                $this->_processAttribute($_attributeConfig);
+
+            } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception $attributeException) {
+                $this->_helper->log(
+                    $attributeException->getMessage(),
+                    $attributeException,
+                    Zend_Log::WARN
+                );
+            } catch (Exception $e) {
+                $this->_helper->log(
+                    'error during attribute import',
+                    $e,
+                    Zend_Log::ERR
+                );
+            }
+        }
+    }
+
+    /**
+     * Process a single attribute config
+     *
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config to process
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Validation_Exception
+     */
+    protected function _processAttribute($attributeConfig)
+    {
+        if (!$attributeConfig->validate()) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Validation_Exception(
+                'Validation errors on attribute: \n'
+                . implode('\n', $attributeConfig->getValidationMessages())
+            );
+        }
+
+        $attribute = $this->_loadAttributeByCode($attributeConfig->getCode());
+        if ($attribute->getId()) {
+            $this->_updateOrMigrateAttribute($attribute, $attributeConfig);
+        } else {
+            $this->_createAttribute($attributeConfig);
+        }
+    }
+
+    /**
+     * Decide to upgrade or migrate an attribute and trigger the required methods
+     *
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
+     */
+    protected function _updateOrMigrateAttribute($attribute, $attributeConfig)
+    {
+        if (!$this->_helper->checkAttributeMaintained($attribute)) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception(
+                sprintf('Attribute \'%s\' is not maintained.', $attributeConfig->getCode())
+            );
+        }
+
+        $this->_updateAttribute($attribute, $attributeConfig);
+        // TODO: migration is dangerous and may be implemented later
+        // $this->migrateAttribute($attribute, $attributeConfig);
+    }
+
+    /**
+     * Update the data of an existing attribute
+     *
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @return void
+     */
+    protected function _updateAttribute($attribute, $attributeConfig)
+    {
+        // TODO: implement attribute updates later
+    }
+
+    /**
+     * Create a new (managed) attribute
+     *
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
+     */
+    protected function _createAttribute($attributeConfig)
+    {
+        /** @var Mage_Catalog_Model_Entity_Attribute $result */
+        $attribute = Mage::getModel('catalog/entity_attribute');
+        $attribute->setData($attributeConfig->getSettingsAsArray());
+
+        /** @var Mage_Core_Model_Mysql4_Resource $resource */
+        $resource = $attribute->getResource();
+        $resource->beginTransaction();
+        try {
+            $attribute->save();
+            $resource->commit();
+        } catch (Exception $e) {
+            $resource->rollBack();
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception(
+                $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+
+        $this->_updateAttributeSetsAndGroups($attributeConfig);
+    }
+
+    /**
+     * Update all attribute sets and groups mentioned in the $attributeConfig
+     *
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
+     */
+    protected function _updateAttributeSetsAndGroups($attributeConfig)
+    {
+        foreach ($attributeConfig->getAttributeSets() as $_attributeSet) {
+            /** @var Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset $_attributeSet */
+            $this->_updateAttributeSetAndGroup($attributeConfig, $_attributeSet);
+        }
+    }
+
+    /**
+     * Update attribute set and attribute group config
+     *
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute              $attributeConfig Attribute config
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset $attributeSet    Attributeset to use
+     * @return void
+     */
+    protected function _updateAttributeSetAndGroup($attributeConfig, $attributeSet)
+    {
+        $attributeSetId = Mage::getModel('eav/entity_attribute_set')
+            ->load($attributeSet->getName(), 'attribute_set_name')
+            ->getAttributeSetId();
+
+        /** @var Mage_Eav_Model_Entity_Setup $setup */
+        $setup = Mage::getModel('eav/entity_setup');
+
+        // TODO: we need real update (also remove if the attribute config has changed)
+        foreach ($attributeSet->getAttributeGroups() as $_group) {
+            $setup->addAttributeGroup(
+                $attributeConfig->getEntityTypeId(),
+                $attributeSetId,
+                $_group
+            );
+
+            $setup->addAttributeToSet(
+                $attributeConfig->getEntityTypeId(),
+                $attributeSetId,
+                $_group,
+                $attributeConfig->getSortOrder()
+            );
+        }
     }
 
     /**
@@ -231,45 +402,6 @@ class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_At
      */
     public function insertAttribute($data)
     {
-        $this->_validateImportData($data);
-
-        /** @var Mage_Catalog_Model_Entity_Attribute $attribute */
-        $attribute = $this->_loadAttributeByCode($data['code']);
-
-        if ($attribute->getId()) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf('Attribute with code \'%s\' already exists.', $data['code'])
-            );
-        }
-
-
-        $newData = [];
-        foreach ($data as $node => $value) {
-            $newData[$node] = $value;
-        }
-        $attribute->addData($newData);
-        $attribute->save();
-
-        $setup = Mage::getModel('eav/entity_setup');
-        foreach ($data['attribute_set'] as $key => $set) {
-            // TODO: Load is not performant in Loop
-            // @codingStandardsIgnoreStart
-            $attributeSetId = Mage::getModel('eav/entity_attribute_set')
-                            ->load($set, 'attribute_set_name')
-                            ->getAttributeSetId();
-            // @codingStandardsIgnoreEnd
-            $setup->addAttributeGroup(
-                $data['entity_type_id'],
-                $attributeSetId,
-                $data['group']
-            );
-            $setup->addAttributeToSet(
-                $data['entity_type_id'],
-                $attributeSetId, $data['group'],
-                $data['attribute_code'],
-                $data['sort_order']
-            );
-        }
     }
 
     /**
@@ -289,89 +421,5 @@ class Aoe_AttributeConfigurator_Model_Attribute extends Mage_Eav_Model_Entity_At
         );
 
         return $result;
-    }
-
-    /**
-     * Validate the attribute import data.
-     * Throws exception on validation errors
-     *
-     * @param array $importData Array of import data to set up attributes
-     * @return void
-     * @throws Aoe_AttributeConfigurator_Model_Exception
-     */
-    protected function _validateImportData($importData)
-    {
-        if (!isset($importData['code']) || !trim($importData['code'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                'Data validation: no code set on attribute data array.'
-            );
-        }
-
-        $attributeCode = $importData['code'];
-
-        if (!isset($importData['settings'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no \'settings\' section.',
-                    $attributeCode
-                )
-            );
-        }
-
-        /** @var array $setting */
-        $setting = $importData['settings'];
-        if (!isset($setting['frontend_label']) || !trim($setting['frontend_label'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no frontend label.',
-                    $attributeCode
-                )
-            );
-        }
-
-        if (!isset($importData['attribute_set']) || !is_array($importData['attribute_set'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no attribute set config.',
-                    $attributeCode
-                )
-            );
-        }
-
-        if (!isset($importData['entity_type_id']) || !trim($importData['entity_type_id'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no entity type id.',
-                    $attributeCode
-                )
-            );
-        }
-
-        if (!isset($importData['group']) || !trim($importData['group'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no group.',
-                    $attributeCode
-                )
-            );
-        }
-
-        if (!isset($importData['attribute_code']) || !trim($importData['attribute_code'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no attribute code.',
-                    $attributeCode
-                )
-            );
-        }
-
-        if (!isset($importData['sort_order']) || !is_numeric($importData['sort_order'])) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'Data validation: attribute data for \'%s\' contains no sort order.',
-                    $attributeCode
-                )
-            );
-        }
     }
 }

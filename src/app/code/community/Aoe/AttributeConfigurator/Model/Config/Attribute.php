@@ -47,6 +47,14 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
     }
 
     /**
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return (int) $this->_getSettingsNode('sort_order');
+    }
+
+    /**
      * Get the settings as key-value array
      *
      * @return array
@@ -138,7 +146,6 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
             }
         }
     }
-
 
     /**
      * Get content of the settings node
