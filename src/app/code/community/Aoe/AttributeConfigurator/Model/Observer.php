@@ -28,6 +28,7 @@ class Aoe_AttributeConfigurator_Model_Observer
 
     /**
      * Poll for Changes in XML
+     * TODO: we need to change this to a more useful event without interrupting the admin interface
      *
      * @return void
      */
