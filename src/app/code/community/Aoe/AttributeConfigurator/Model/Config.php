@@ -13,35 +13,124 @@
  */
 class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
 {
-    const CONFIG_ATTRIBUTE_SETS = 'aoe_attributeconfigurator/attributesets';
-    const CONFIG_ATTRIBUTES = 'aoe_attributeconfigurator/attributes';
-
-    /** @var Mage_Core_Model_Config_Base $_config */
-    private $_config;
+    const CONFIG_ATTRIBUTE_SETS = 'aoe_attributeconfigurator/attributesets',
+          CONFIG_ATTRIBUTES     = 'aoe_attributeconfigurator/attributes';
 
     /**
-     * @param  string $path File Path
-     * @return $this
+     * Lazy loaded config
+     *
+     * @var Varien_Simplexml_Element $_xml
      */
-    public function loadCustomConfigXml($path)
-    {
-        $this->_config = Mage::getModel('core/config_base');
-        $this->_config->loadFile(Mage::getBaseDir('var') . DS . $path);
-    }
+    protected $_xml;
 
     /**
+     * Get attributesets xml config node
+     *
      * @return Varien_Simplexml_Element
+     * @throws Aoe_AttributeConfigurator_Model_Exception
      */
     public function getAttributeSets()
     {
-        return $this->_config->getNode(self::CONFIG_ATTRIBUTE_SETS);
+        $result = $this->_getXml()
+            ->descend(self::CONFIG_ATTRIBUTE_SETS);
+
+        if (false === $result) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'config xml does not contain \'%s\'.',
+                    self::CONFIG_ATTRIBUTE_SETS
+                )
+            );
+        }
+
+        return $result;
     }
 
     /**
+     * Get attributes xml config node
+     *
      * @return Varien_Simplexml_Element
+     * @throws Aoe_AttributeConfigurator_Model_Exception
      */
     public function getAttributes()
     {
-        return $this->_config->getNode(self::CONFIG_ATTRIBUTES);
+        $result = $this->_getXml()
+            ->descend(self::CONFIG_ATTRIBUTES);
+
+        if (false === $result) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'config xml does not contain \'%s\'.',
+                    self::CONFIG_ATTRIBUTES
+                )
+            );
+        }
+
+        return $result;
     }
+
+    /**
+     * Lazy getter for the config xml
+     *
+     * @return Varien_Simplexml_Element
+     * @throws Aoe_AttributeConfigurator_Model_Exception
+     */
+    protected function _getXml()
+    {
+        if (isset($this->_xml)) {
+            return $this->_xml;
+        }
+
+        $xml = $this->_loadXml();
+        $this->_xml = $xml;
+
+        return $this->_xml;
+
+        $this->_xml = $config;
+    }
+
+    /**
+     * Load the xml config file
+     *
+     * @return Varien_Simplexml_Element
+     * @throws Aoe_AttributeConfigurator_Model_Exception
+     */
+    protected function _loadXml()
+    {
+        $filePath = $this->_getConfigHelper()->getImportFilePath();
+
+        // @codingStandardsIgnoreStart
+        if (!is_readable($filePath)) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'configured import file \'%s\' is not readable.',
+                    $filePath
+                )
+            );
+        }
+        // @codingStandardsIgnoreEnd
+
+        $xml = simplexml_load_file($filePath, 'Varien_Simplexml_Element');
+        if (false === $xml) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'unable to load xml file \'%s\'.',
+                    $filePath
+                )
+            );
+        }
+
+        return $xml;
+    }
+
+    /**
+     * Get the module config helper
+     *
+     * @return Aoe_AttributeConfigurator_Helper_Config
+     */
+    protected function _getConfigHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator/config');
+    }
+
 }

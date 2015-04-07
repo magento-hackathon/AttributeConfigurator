@@ -19,11 +19,24 @@ class Aoe_AttributeConfigurator_Helper_Config extends Mage_Core_Helper_Abstract
     /**
      * Build Import Filename from Store Config
      *
-     * @param Mage_Core_Model_Store|int $store Store reference for configuration
+     * @param Mage_Core_Model_Store|int|null $store Store reference for configuration
      * @return string
      */
     public function getImportFilename($store = null)
     {
         return trim(Mage::getStoreConfig(self::XML_CONFIG_BASE . 'product_xml_location', $store));
+    }
+
+    /**
+     * Get full path to import file
+     *
+     * @param Mage_Core_Model_Store|int|null $store Store reference for configuration
+     * @return string
+     */
+    public function getImportFilePath($store = null)
+    {
+        $filename = $this->getImportFilename($store);
+
+        return Mage::getBaseDir('var') . $filename;
     }
 }

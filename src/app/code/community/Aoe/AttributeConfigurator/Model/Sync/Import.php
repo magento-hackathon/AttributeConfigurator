@@ -99,9 +99,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
 
         /** @var Aoe_AttributeConfigurator_Model_Config $config */
         $config = Mage::getModel('aoe_attributeconfigurator/config');
-        $config->loadCustomConfigXml(
-            $this->_configHelper->getImportFilename()
-        );
         $this->_config = $config;
         return $config;
     }

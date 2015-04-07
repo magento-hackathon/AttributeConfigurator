@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config>
+    <aoe_attributeconfigurator>
+        <attributesets>
+            <attributeset name="test set one" skeleton="Default"/>
+            <attributeset name="test set two" skeleton="Default"/>
+        </attributesets>
+        <attributes>
+            <attribute code="attribute one"></attribute>
+            <attribute code="attribute two"></attribute>
+            <attribute code="attribute three"></attribute>
+        </attributes>
+    </aoe_attributeconfigurator>
+</config>
