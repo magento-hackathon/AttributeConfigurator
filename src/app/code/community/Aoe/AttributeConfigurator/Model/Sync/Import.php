@@ -11,26 +11,10 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstract
+class Aoe_AttributeConfigurator_Model_Sync_Import
 {
-    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
-    protected $_helper;
-
-    /** @var  Aoe_AttributeConfigurator_Helper_Config $_configHelper */
-    protected $_configHelper;
-
     /** @var Aoe_AttributeConfigurator_Model_Config $_config */
     protected $_config;
-
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function _construct()
-    {
-        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-    }
 
     /**
      * Sync Import Method coordinates the migration process from
@@ -41,17 +25,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
      */
     public function import()
     {
-        $config = $this->_getConfig();
-
-        // 1. Create/Update Attribute Sets
-        /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset $attributeSetModel */
-        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attributeset', $config->getAttributeSets());
-        $attributeSetModel->run();
-
-        // 2. Create/Update Attributes
-        /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
-        $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute');
-        $attributeModel->run($config->getAttributes());
+        $this->_importAttributeSets();
+        $this->_importAttributes();
 
         // TODO: Refactor this into the attribute model
         //if ($this->_validate($attributesets, $attributes)) {
@@ -59,32 +34,32 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
         //}
     }
 
+    /**
+     * Run the attributeset import task
+     *
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Exception
+     */
+    protected function _importAttributeSets()
+    {
+        /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset $attributeSetModel */
+        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attributeset');
+        $attributeSetModel->run($this->_getConfig());
+    }
 
     /**
-     * Validate Attributesets and Attributes
+     * Run the attribute import task
      *
-     * @TODO: This is not complete and probably not working at all
-     *
-     * @param  Varien_Simplexml_Element $attributesets Attribute Set XML Data
-     * @param  Varien_Simplexml_Element $attributes    Attributes XML Data
-     * @return bool
-     * @throws Mage_Adminhtml_Exception
+     * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Exception
      */
-    protected function _validate($attributesets, $attributes)
+    protected function _importAttributes()
     {
-        $attributesetNames = $this->_getAttributeSetsFromXml($attributesets);
-
-        foreach ($attributes->children() as $attribute) {
-            foreach ($attribute->attributesets->children() as $attributeset) {
-                echo $attribute["code"] . " gehört zu " . $attributeset["name"] . " <br />";
-                if (!in_array($attributeset["name"], $attributesetNames)) {
-                    Mage::throwException(sprintf('Attributeset %s referenced by %s is not listed in the attributesetslist element', $attributeset["name"], $attribute["code"]));
-                }
-
-            }
-        }
-        return false;
+        /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
+        $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute');
+        $attributeModel->run($this->_getConfig());
     }
+
 
     /**
      * Lazy getter for the config model
@@ -100,6 +75,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
         /** @var Aoe_AttributeConfigurator_Model_Config $config */
         $config = Mage::getModel('aoe_attributeconfigurator/config');
         $this->_config = $config;
+
         return $config;
     }
 }

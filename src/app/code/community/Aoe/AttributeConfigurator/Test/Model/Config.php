@@ -11,7 +11,8 @@
  * @license  Open Software License v. 3.0 (OSL-3.0)
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
- */class Aoe_AttributeConfigurator_Test_Model_Config extends EcomDev_PHPUnit_Test_Case
+ */
+class Aoe_AttributeConfigurator_Test_Model_Config extends EcomDev_PHPUnit_Test_Case
 {
 
     /**

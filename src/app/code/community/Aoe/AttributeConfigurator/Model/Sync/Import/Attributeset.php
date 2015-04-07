@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Aoe_AttributeConfigurator_Model_Attributeset
+ * Class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
  *
  * @category Model
  * @package  Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
@@ -11,43 +11,28 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset extends Mage_Core_Model_Abstract
+class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
-    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
-    protected $_helper;
-
-    /** @var Varien_Simplexml_Element $_config */
-    protected $_config;
 
     /**
-     * Constructor
+     * Import attributesets
      *
-     * @param Varien_Simplexml_Element $config Config Data
-     */
-    public function __construct($config)
-    {
-        parent::_construct();
-        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-        $this->_config = $config;
-    }
-
-    /**
-     * Cycle through Attributesets
-     *
+     * @param Aoe_AttributeConfigurator_Model_Config $config Config model
      * @return void
      */
-    public function run()
+    public function run($config)
     {
-        foreach ($this->_config->children() as $childConfig) {
+        $xml = $config->getAttributeSets();
+        foreach ($xml->children() as $childConfig) {
             try {
                 $this->validate($childConfig);
                 $this->createAttributeSet($childConfig);
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception $e) {
-                $this->_helper->log('Attribute Set validation exception.', $e);
-            }catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception $e) {
-                $this->_helper->log('Attribute Set could not be saved.', $e);
+                $this->_getHelper()->log('Attribute Set validation exception.', $e);
+            } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception $e) {
+                $this->_getHelper()->log('Attribute Set could not be saved.', $e);
             } catch (Exception $e) {
-                $this->_helper->log('Unexpected Attribute Set Error, skipping.', $e);
+                $this->_getHelper()->log('Unexpected Attribute Set Error, skipping.', $e);
             }
         }
     }
@@ -99,5 +84,15 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset extends Mage_Core
         } else {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception();
         }
+    }
+
+    /**
+     * Get the modules data helper
+     *
+     * @return Aoe_AttributeConfigurator_Helper_Data
+     */
+    protected function _getHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator');
     }
 }

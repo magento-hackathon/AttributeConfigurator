@@ -12,46 +12,38 @@
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
 class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Model_Entity_Attribute
+                                                            implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
-    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
-    protected $_helper;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-
-        parent::__construct();
-    }
 
     /**
      * Run the attribute update/import
      *
-     * @param string|SimpleXMLElement $xml XML Data to process
+     * @param Aoe_AttributeConfigurator_Model_Config $config Config model
      * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Exception
      */
-    public function run($xml)
+    public function run($config)
     {
+
         /** @var Aoe_AttributeConfigurator_Model_Config_Attribute_Iterator $iterator */
         $iterator = Mage::getModel(
             'aoe_attributeconfigurator/config_attribute_iterator',
-            $xml
+            $config->getAttributes()
         );
+
         foreach ($iterator as $_attributeConfig) {
             /** @var Aoe_AttributeConfigurator_Model_Config_Attribute $_attributeConfig */
             try {
                 $this->_processAttribute($_attributeConfig);
 
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception $attributeException) {
-                $this->_helper->log(
+                $this->_getHelper()->log(
                     $attributeException->getMessage(),
                     $attributeException,
                     Zend_Log::WARN
                 );
             } catch (Exception $e) {
-                $this->_helper->log(
+                $this->_getHelper()->log(
                     'error during attribute import',
                     $e,
                     Zend_Log::ERR
@@ -94,7 +86,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     protected function _updateOrMigrateAttribute($attribute, $attributeConfig)
     {
-        if (!$this->_helper->checkAttributeMaintained($attribute)) {
+        if (!$this->_getHelper()->checkAttributeMaintained($attribute)) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception(
                 sprintf('Attribute \'%s\' is not maintained.', $attributeConfig->getCode())
             );
@@ -210,8 +202,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         /* @var $attribute Mage_Eav_Model_Entity_Attribute */
         $attribute = $this->loadByCode($entityType, $attributeCode);
         // Stop if $data not set or Attribute not available or Attribute not maintained by module
-        $this->_helper->checkAttributeMaintained($attribute);
-        if ($data === null || !$attribute || !$this->_helper->checkAttributeMaintained($attribute)) {
+        $this->_getHelper()->checkAttributeMaintained($attribute);
+        if ($data === null || !$attribute || !$this->_getHelper()->checkAttributeMaintained($attribute)) {
             return;
         }
         // Migrate existing Attribute Values if new backend_type different from old one
@@ -422,5 +414,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         );
 
         return $result;
+    }
+
+    /**
+     * @return Aoe_AttributeConfigurator_Helper_Data
+     */
+    protected function _getHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator');
     }
 }

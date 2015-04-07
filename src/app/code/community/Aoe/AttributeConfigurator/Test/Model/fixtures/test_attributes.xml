@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<config>
+    <aoe_attributeconfigurator>
+        <attributesets>
+            <attributeset name="Test Attributeset One" skeleton="Default"/>
+            <attributeset name="Test Attributeset Two" skeleton="Default"/>
+        </attributesets>
+        <attributes>
+            <attribute code="test_attribute_one">
+                <settings>
+                    <is_visible>1</is_visible>
+                    <is_configurable>1</is_configurable>
+                    <is_global>1</is_global>
+                    <backend_type>varchar</backend_type>
+                    <apply_to>NULL</apply_to>
+                </settings>
+                <attributesets>
+                    <attributeset name="Test Attributeset One">
+                        <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                        <attributegroups>
+                            <attributegroup name="Test Group One"/>
+                        </attributegroups>
+                    </attributeset>
+                    <attributeset name="Test Attributeset Two">
+                        <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                        <attributegroups>
+                            <attributegroup name="Test Group Two"/>
+                        </attributegroups>
+                    </attributeset>
+                </attributesets>
+            </attribute>
+
+            <attribute code="test_attribute_two">
+                <settings>
+                    <is_visible>1</is_visible>
+                    <is_configurable>1</is_configurable>
+                    <is_global>1</is_global>
+                    <backend_type>varchar</backend_type>
+                    <apply_to>NULL</apply_to>
+                </settings>
+                <attributesets>
+                    <attributeset name="Test Attributeset One">
+                        <attributegroups>
+                            <attributegroup name="Test Group One"/>
+                        </attributegroups>
+                    </attributeset>
+                    <attributeset name="Test Attributeset Two">
+                        <attributegroups>
+                            <attributegroup name="Test Group Two"/>
+                        </attributegroups>
+                    </attributeset>
+                </attributesets>
+            </attribute>
+        </attributes>
+    </aoe_attributeconfigurator>
+</config>
