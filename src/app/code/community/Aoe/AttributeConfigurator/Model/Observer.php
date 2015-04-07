@@ -13,20 +13,18 @@
  */
 class Aoe_AttributeConfigurator_Model_Observer
 {
-    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
+    /**
+     * Lazy fetched data helper
+     *
+     * @var Aoe_AttributeConfigurator_Helper_Data $_helper
+     */
     protected $_helper;
 
-    /** @var Aoe_AttributeConfigurator_Model_Sync_Import $_sync */
-    protected $_sync;
-
     /**
-     * Constructor
+     * Lazy created import sync model
+     * @var Aoe_AttributeConfigurator_Model_Sync_Import $_sync
      */
-    public function __construct()
-    {
-        $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-        $this->_sync = Mage::getModel('aoe_attributeconfigurator/sync_import');
-    }
+    protected $_sync;
 
     /**
      * Poll for Changes in XML
@@ -38,5 +36,35 @@ class Aoe_AttributeConfigurator_Model_Observer
         if ($this->_helper->isAttributeXmlNewer()) {
             $this->_sync->import();
         }
+    }
+
+    /**
+     * @return Aoe_AttributeConfigurator_Helper_Data
+     */
+    protected function _getHelper()
+    {
+        if (isset($this->_helper)) {
+            return $this->_helper;
+        }
+
+        $helper = Mage::helper('aoe_attributeconfigurator');
+        $this->_helper = $helper;
+
+        return $helper;
+    }
+
+    /**
+     * @return Aoe_AttributeConfigurator_Model_Sync_Import
+     */
+    protected function _getSyncModel()
+    {
+        if (isset($this->_sync)) {
+            return $this->_sync;
+        }
+
+        $syncModel = Mage::getModel('aoe_attributeconfigurator/sync_import');
+        $this->_sync = $syncModel;
+
+        return $syncModel;
     }
 }

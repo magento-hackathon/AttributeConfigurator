@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Aoe_AttributeConfigurator_Test_Model_AttributeTest
+ * Class Aoe_AttributeConfigurator_Test_Model_Attribute
  *
  * @category Test
  * @package  Aoe_AttributeConfigurator
@@ -11,44 +11,52 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit_Test_Case
+class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends EcomDev_PHPUnit_Test_Case
 {
-    /** @var Aoe_AttributeConfigurator_Model_Attribute $_model */
-    protected $_model;
 
     /**
-     * Setup Method
-     * @return void
+     * @test
+     *
+     * @return Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
      */
-    protected function setUp()
+    public function checkClass()
     {
-        $this->_model = Mage::getModel('aoe_attributeconfigurator/attribute');
-        parent::setUp();
+        $model = Mage::getModel('aoe_attributeconfigurator/sync_import_attribute');
+        $this->assertInstanceOf(
+            'Aoe_AttributeConfigurator_Model_Sync_Import_Attribute',
+            $model
+        );
+
+        return $model;
     }
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage Data validation: no code set on attribute data array.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutCodeThrowsException()
+    public function insertAttributeWithoutCodeThrowsException($model)
     {
-        $this->_model->insertAttribute([]);
+        $model->insertAttribute([]);
     }
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no 'settings' section.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutSettingsThrowsException()
+    public function insertAttributeWithoutSettingsThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code' => $attribute->getAttributeCode()
             ]
@@ -57,15 +65,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no frontend label.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutFrontendLabelThrowsException()
+    public function insertAttributeWithoutFrontendLabelThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'     => $attribute->getAttributeCode(),
                 'settings' => []
@@ -75,15 +85,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no attribute set config.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutAttributeSetThrowsException()
+    public function insertAttributeWithoutAttributeSetThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'     => $attribute->getAttributeCode(),
                 'settings' => [
@@ -95,15 +107,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no entity type id.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutEntityTypeIdThrowsException()
+    public function insertAttributeWithoutEntityTypeIdThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'           => $attribute->getAttributeCode(),
                 'settings'       => [
@@ -118,15 +132,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no group.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutGroupThrowsException()
+    public function insertAttributeWithoutGroupThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'           => $attribute->getAttributeCode(),
                 'settings'       => [
@@ -142,15 +158,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no attribute code.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutAttributeCodeThrowsException()
+    public function insertAttributeWithoutAttributeCodeThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'           => $attribute->getAttributeCode(),
                 'settings'       => [
@@ -167,15 +185,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage contains no sort order.
      *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutSortOrderThrowsException()
+    public function insertAttributeWithoutSortOrderThrowsException($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'           => $attribute->getAttributeCode(),
                 'settings'       => [
@@ -194,14 +214,17 @@ class Aoe_AttributeConfigurator_Test_Model_AttributeTest extends EcomDev_PHPUnit
 
     /**
      * @test
+     * @depends checkClass
      * @expectedException Aoe_AttributeConfigurator_Model_Exception
      * @expectedExceptionMessage already exists.
+     *
+     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeThrowsExceptionIfIdExists()
+    public function insertAttributeThrowsExceptionIfIdExists($model)
     {
         $attribute = $this->_loadAttribute();
-        $this->_model->insertAttribute(
+        $model->insertAttribute(
             [
                 'code'           => $attribute->getAttributeCode(),
                 'settings'       => [

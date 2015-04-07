@@ -402,6 +402,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     public function insertAttribute($data)
     {
+        throw new Aoe_AttributeConfigurator_Model_Exception('method not implemented');
     }
 
     /**

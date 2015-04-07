@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Class Aoe_AttributeConfigurator_Test_Helper_DataTest
+ * Class Aoe_AttributeConfigurator_Test_Helper_Data
+ *
+ * Test class for Aoe_AttributeConfigurator_Helper_Data
  *
  * @category Test
  * @package  Aoe_AttributeConfigurator
@@ -11,7 +13,7 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_Case
+class Aoe_AttributeConfigurator_Test_Helper_Data extends EcomDev_PHPUnit_Test_Case
 {
     /** @var Aoe_AttributeConfigurator_Helper_Data $_helper*/
     protected $_helper;
@@ -53,21 +55,6 @@ class Aoe_AttributeConfigurator_Test_Helper_DataTest extends EcomDev_PHPUnit_Tes
         $this->assertFalse(
             $this->_helper->createFileHash('ranD0MsTr1ng'),
             'Return false for a not existing filename'
-        );
-    }
-
-    /**
-     * @test
-     * @loadFixture
-     *
-     * @return void
-     */
-    public function testGetImportFilename()
-    {
-        $this->assertStringEndsWith(
-            'test/file/path.xml',
-            $this->_helper->getImportFilename(),
-            'Import filename read from config'
         );
     }
 

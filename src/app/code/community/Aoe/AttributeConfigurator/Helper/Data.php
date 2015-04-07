@@ -13,7 +13,6 @@
  */
 class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const XML_PATH_FILENAME = 'catalog/attribute_configurator/product_xml_location';
     const CODE_CURRENT_HASH = 'attributeconfigurator_hash';
     const EAV_ATTRIBUTE_MAINTAINED = 'is_maintained_by_configurator';
     const FILENAME_LOGFILE = 'fraport_import.log';
@@ -34,24 +33,6 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
             $exceptionMessage = $exception->getMessage();
         }
         Mage::log(sprintf('%s %s', $message, $exceptionMessage), $level, self::FILENAME_LOGFILE);
-    }
-
-    /**
-     * @return string
-     */
-    public function getXmlImportPath()
-    {
-        return self::XML_PATH_FILENAME;
-    }
-
-    /**
-     * Build Import Filename from Store Config
-     *
-     * @return string
-     */
-    public function getImportFilename()
-    {
-        return trim(Mage::getStoreConfig($this->getXmlImportPath()));
     }
 
     /**
@@ -106,7 +87,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isAttributeXmlNewer()
     {
-        $filename = $this->getImportFilename();
+        $filename = $this->_getConfigHelper()->getImportFilename();
         $currentFileHash = $this->getFlagValue(self::CODE_CURRENT_HASH);
         $latestFileHash = $this->createFileHash($filename);
         if ($latestFileHash !== $currentFileHash) {
@@ -129,5 +110,15 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Get the config helper
+     *
+     * @return Aoe_AttributeConfigurator_Helper_Config
+     */
+    protected function _getConfigHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator/config');
     }
 }

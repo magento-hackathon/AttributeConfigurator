@@ -50,6 +50,11 @@ class Aoe_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_Test_Ca
             'aoe_attributeconfigurator',
             'Aoe_AttributeConfigurator_Helper_Data'
         );
+        $this->assertHelperAlias(
+            'aoe_attributeconfigurator/config',
+            'Aoe_AttributeConfigurator_Helper_Config'
+        );
+
         $this->assertModelAlias(
             'aoe_attributeconfigurator/attribute',
             'Aoe_AttributeConfigurator_Model_Attribute'

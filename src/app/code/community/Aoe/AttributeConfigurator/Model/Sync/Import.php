@@ -16,6 +16,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
     protected $_helper;
 
+    /** @var  Aoe_AttributeConfigurator_Helper_Config $_configHelper */
+    protected $_configHelper;
+
     /** @var Aoe_AttributeConfigurator_Model_Config $_config */
     protected $_config;
 
@@ -27,7 +30,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     public function _construct()
     {
         $this->_helper = Mage::helper('aoe_attributeconfigurator/data');
-        $this->loadConfiguration();
     }
 
     /**
@@ -39,15 +41,17 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
      */
     public function import()
     {
+        $config = $this->_getConfig();
+
         // 1. Create/Update Attribute Sets
         /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset $attributeSetModel */
-        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attributeset', $this->_config->getAttributeSets());
+        $attributeSetModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attributeset', $config->getAttributeSets());
         $attributeSetModel->run();
 
         // 2. Create/Update Attributes
         /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
         $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute');
-        $attributeModel->run($this->_config->getAttributes());
+        $attributeModel->run($config->getAttributes());
 
         // TODO: Refactor this into the attribute model
         //if ($this->_validate($attributesets, $attributes)) {
@@ -83,14 +87,22 @@ class Aoe_AttributeConfigurator_Model_Sync_Import extends Mage_Core_Model_Abstra
     }
 
     /**
-     * Load Config Element
+     * Lazy getter for the config model
      *
-     * @return void
+     * @return Aoe_AttributeConfigurator_Model_Config
      */
-    protected function loadConfiguration()
+    protected function _getConfig()
     {
-        /** @var Aoe_AttributeConfigurator_Model_Config _config */
-        $this->_config = Mage::getModel('aoe_attributeconfigurator/config');
-        $this->_config->loadCustomConfigXml($this->_helper->getImportFilename());
+        if (isset($this->_config)) {
+            return $this->_config;
+        }
+
+        /** @var Aoe_AttributeConfigurator_Model_Config $config */
+        $config = Mage::getModel('aoe_attributeconfigurator/config');
+        $config->loadCustomConfigXml(
+            $this->_configHelper->getImportFilename()
+        );
+        $this->_config = $config;
+        return $config;
     }
 }
