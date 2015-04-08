@@ -86,34 +86,6 @@ class Aoe_AttributeConfigurator_Test_Model_Config_Attribute extends EcomDev_PHPU
     }
 
     /**
-     * @test
-     * @dataProvider dataProvider
-     *
-     * @param string $label Code of the data provider expectation
-     * @param string $xml   xml string from the data provider
-     * @return void
-     */
-    public function checkEntityTypeIdAutoGenerationByValidation($label, $xml)
-    {
-        $attribute = $this->_createAttributeFromXMl($xml);
-        $expected = $this->expected($label);
-
-        $this->assertEquals(
-            $expected['is_valid'],
-            $attribute->validate(),
-            'validation is correct'
-        );
-
-        if (isset($expected['entity_type_id'])) {
-            $this->assertEquals(
-                $expected['entity_type_id'],
-                $attribute->getEntityTypeId(),
-                'entity type id fetch works'
-            );
-        }
-    }
-
-    /**
      * Create an attribute config from xml
      *
      * @param string $xml XML data string

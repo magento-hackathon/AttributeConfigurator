@@ -61,36 +61,6 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
     }
 
     /**
-     * If the entity type is is missing it can be created using the attribute
-     * default entity type code 'product'
-     *
-     * Throws an exception if the required entity type does not exist.
-     *
-     * @return this
-     * @throws Aoe_AttributeConfigurator_Model_Exception
-     */
-    protected function _createDefaultEntityTypeId()
-    {
-        /** @var Mage_Eav_Model_Entity_Type $entityType */
-        $entityType = Mage::getModel('eav/entity_type');
-        $entityType->loadByCode(self::ENTITY_TYPE_CODE);
-
-        if (!$entityType->getEntityTypeId()) {
-            throw new Aoe_AttributeConfigurator_Model_Exception(
-                sprintf(
-                    'entity type with code \'%s\' does not exist',
-                    self::ENTITY_TYPE_CODE
-                )
-            );
-        }
-
-        $typeId = $entityType->getEntityTypeId();
-        $this->_setEntityTypeId($typeId);
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getSortOrder()
@@ -169,14 +139,18 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
             $this->_addValidationMessage('code missing');
         }
 
+        $codeValidator = new Zend_Validate_Regex(
+            ['pattern' => '/^[a-z][a-z_0-9]{1,254}$/']
+        );
+        if (!$codeValidator->isValid($this->getCode())) {
+            $this->_addValidationMessage(
+                'Attribute code is invalid. Please use only letters (a-z), numbers (0-9) or underscore(_) in this field, first character should be a letter.'
+            );
+        }
+
         $settingsArray = $this->getSettingsAsArray();
         if (!is_array($settingsArray) || empty($settingsArray)) {
             $this->_addValidationMessage('settings node missing or empty');
-        }
-
-        if (!$this->getEntityTypeId()) {
-            $this->_createDefaultEntityTypeId();
-            $this->_addInfoMessage('Entity type id created: ' . $this->getEntityTypeId());
         }
 
         /** @var SimpleXMLElement $attributeSetsNode */
@@ -203,22 +177,5 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
         $settingsNode = $this->_xmlElement->{'settings'};
 
         return $settingsNode->{$nodeName};
-    }
-
-    /**
-     * Set $data on settings node $nodeName
-     *
-     * @param string     $nodeName Node name inside setting
-     * @param string|ing $data     Data to set on $nodeName
-     * @return SimpleXmlElement
-     */
-    protected function _setSettingsNode($nodeName, $data)
-    {
-        /** @var SimpleXmlElement $settingsNode */
-        $settingsNode = $this->_xmlElement->{'settings'};
-
-        $settingsNode->{$nodeName} = $data;
-
-        return $this->_getSettingsNode($nodeName);
     }
 }

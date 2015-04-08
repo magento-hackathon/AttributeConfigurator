@@ -66,4 +66,14 @@ abstract class Aoe_AttributeConfigurator_Test_Model_Case extends EcomDev_PHPUnit
         return $mockedHelper;
     }
 
+    /**
+     * Get the config model - useful if the config helper is mocked to load fixture xml files
+     *
+     * @return Aoe_AttributeConfigurator_Model_Config
+     */
+    protected function _getConfigModel()
+    {
+        return Mage::getModel('aoe_attributeconfigurator/config');
+    }
+
 }

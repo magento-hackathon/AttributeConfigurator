@@ -11,7 +11,7 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends EcomDev_PHPUnit_Test_Case
+class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_AttributeConfigurator_Test_Model_Case
 {
 
     /**
@@ -32,213 +32,128 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends EcomDev
 
     /**
      * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage Data validation: no code set on attribute data array.
      *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutCodeThrowsException($model)
+    public function checkProcessAttributeCallCount()
     {
-        $model->insertAttribute([]);
+        /** @var EcomDev_PHPUnit_Mock_Proxy|Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $mock */
+        $mock = $this->getModelMock(
+            'aoe_attributeconfigurator/sync_import_attribute',
+            ['_processAttribute']
+        );
+
+        $mock->expects($this->exactly(2))
+            ->method('_processAttribute');
+
+        $this->_mockConfigHelperLoadingXml();
+        $config = $this->_getConfigModel();
+
+        $mock->run($config);
     }
 
     /**
      * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no 'settings' section.
      *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
      * @return void
      */
-    public function insertAttributeWithoutSettingsThrowsException($model)
+    public function checkCreateAttributeCallCount()
     {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code' => $attribute->getAttributeCode()
-            ]
+        /** @var EcomDev_PHPUnit_Mock_Proxy|Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $mock */
+        $mock = $this->getModelMock(
+            'aoe_attributeconfigurator/sync_import_attribute',
+            ['_createAttribute']
         );
+
+        $mock->expects($this->exactly(2))
+            ->method('_createAttribute');
+
+        $this->_mockConfigHelperLoadingXml();
+        $config = $this->_getConfigModel();
+
+        $mock->run($config);
     }
 
     /**
      * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no frontend label.
+     * @dataProvider dataProvider
      *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
+     * @param string   $label          Data provider label
+     * @param string[] $attributeCodes Data provider attribute codes
      * @return void
      */
-    public function insertAttributeWithoutFrontendLabelThrowsException($model)
+    public function checkCreateAttributeCreationInDb($label, $attributeCodes)
     {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'     => $attribute->getAttributeCode(),
-                'settings' => []
-            ]
+        $this->assertNotEmpty(
+            $attributeCodes,
+            'provided attribute codes are empty - stopping to prevent test db breaks'
         );
+        // cleanup before this test
+        $this->_removeAttributes($attributeCodes);
+
+        // mock test xml loading
+        $this->_mockConfigHelperLoadingXml();
+
+        // run the attribute import on the model
+        /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $importModel */
+        $importModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attribute');
+
+        /** @var Aoe_AttributeConfigurator_Model_Config $configModel */
+        $configModel = Mage::getModel('aoe_attributeconfigurator/config');
+
+        $importModel->run($configModel);
+
+        // check expectations
+        $expected = $this->expected($label);
+        $expectedAttributeCode = $expected['attributes'];
+        $createdAttributes = $this->_fetchAttributes($expectedAttributeCode);
+        $this->assertEquals(
+            count($expectedAttributeCode),
+            $createdAttributes->getSize(),
+            'all expected attributes are created in the system'
+        );
+
+        // cleanup possible post test attributes
+        $this->_removeAttributes($attributeCodes);
     }
 
     /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no attribute set config.
+     * Fetch a collection of attributes filtered by codes
      *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
-     * @return void
+     * @param string[] $attributeCodes Array of attribute codes
+     * @return Mage_Eav_Model_Resource_Attribute_Collection
+     * @throws Mage_Core_Exception
      */
-    public function insertAttributeWithoutAttributeSetThrowsException($model)
+    protected function _fetchAttributes($attributeCodes)
     {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'     => $attribute->getAttributeCode(),
-                'settings' => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ]
-            ]
-        );
+        // cleanup possible pre test attributes
+        /** @var Mage_Catalog_Model_Product $productModel */
+        $productModel = Mage::getModel('catalog/product');
+
+        /** @var Mage_Eav_Model_Resource_Entity_Attribute_Collection $collection */
+        $collection = Mage::getModel('catalog/entity_attribute')
+            ->getCollection();
+        $collection->setEntityTypeFilter($productModel->getResource()->getEntityType()->getEntityTypeId());
+        $collection->setCodeFilter($attributeCodes);
+
+        return $collection;
     }
 
     /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no entity type id.
+     * Remove attributes from the database
      *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
+     * @param string[] $attributeCodes List of attribute codes to be removed
      * @return void
      */
-    public function insertAttributeWithoutEntityTypeIdThrowsException($model)
+    protected function _removeAttributes($attributeCodes)
     {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'           => $attribute->getAttributeCode(),
-                'settings'       => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ],
-                'attribute_set'  => [
-                    '0' => 'default'
-                ]
-            ]
-        );
-    }
-
-    /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no group.
-     *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
-     * @return void
-     */
-    public function insertAttributeWithoutGroupThrowsException($model)
-    {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'           => $attribute->getAttributeCode(),
-                'settings'       => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ],
-                'attribute_set'  => [
-                    '0' => 'default'
-                ],
-                'entity_type_id' => $attribute->getEntityTypeId()
-            ]
-        );
-    }
-
-    /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no attribute code.
-     *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
-     * @return void
-     */
-    public function insertAttributeWithoutAttributeCodeThrowsException($model)
-    {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'           => $attribute->getAttributeCode(),
-                'settings'       => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ],
-                'attribute_set'  => [
-                    '0' => 'default'
-                ],
-                'entity_type_id' => $attribute->getEntityTypeId(),
-                'group'          => 'default'
-            ]
-        );
-    }
-
-    /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage contains no sort order.
-     *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
-     * @return void
-     */
-    public function insertAttributeWithoutSortOrderThrowsException($model)
-    {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'           => $attribute->getAttributeCode(),
-                'settings'       => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ],
-
-                'attribute_set'  => [
-                    '0' => 'default'
-                ],
-                'entity_type_id' => $attribute->getEntityTypeId(),
-                'group'          => 'default',
-                'attribute_code' => $attribute->getAttributeCode()
-            ]
-        );
-    }
-
-    /**
-     * @test
-     * @depends checkClass
-     * @expectedException Aoe_AttributeConfigurator_Model_Exception
-     * @expectedExceptionMessage already exists.
-     *
-     * @param Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $model Attribute import model
-     * @return void
-     */
-    public function insertAttributeThrowsExceptionIfIdExists($model)
-    {
-        $attribute = $this->_loadAttribute();
-        $model->insertAttribute(
-            [
-                'code'           => $attribute->getAttributeCode(),
-                'settings'       => [
-                    'frontend_label' => $attribute->getFrontendLabel()
-                ],
-                'attribute_set'  => [
-                    '0' => 'default'
-                ],
-                'entity_type_id' => $attribute->getEntityTypeId(),
-                'group'          => 'default',
-                'attribute_code' => $attribute->getAttributeCode(),
-                'sort_order'     => 0
-            ]
-        );
+        $collection = $this->_fetchAttributes($attributeCodes);
+        foreach ($collection as $_attribute) {
+            /** @var Mage_Eav_Model_Attribute $_attribute */
+            // @codingStandardsIgnoreStart
+            $_attribute->delete();
+            // @codingStandardsIgnoreEnd
+        }
     }
 
     /**

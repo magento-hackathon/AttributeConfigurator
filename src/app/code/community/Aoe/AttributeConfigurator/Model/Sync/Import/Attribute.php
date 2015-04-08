@@ -16,6 +16,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
 {
 
     /**
+     * Lazy fetched entity type id for product attributes
+     *
+     * @var int $_entityTypeId
+     */
+    protected $_entityTypeId;
+
+    /**
      * Run the attribute update/import
      *
      * @param Aoe_AttributeConfigurator_Model_Config $config Config model
@@ -72,7 +79,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         if ($attribute->getId()) {
             $this->_updateOrMigrateAttribute($attribute, $attributeConfig);
         } else {
-            $this->_createAttribute($attributeConfig);
+            $this->_createAttribute($attribute, $attributeConfig);
         }
     }
 
@@ -112,24 +119,22 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
     /**
      * Create a new (managed) attribute
      *
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
      * @return void
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
      */
-    protected function _createAttribute($attributeConfig)
+    protected function _createAttribute($attribute, $attributeConfig)
     {
-        /** @var Mage_Catalog_Model_Entity_Attribute $result */
-        $attribute = Mage::getModel('catalog/entity_attribute');
-        $attribute->setData($attributeConfig->getSettingsAsArray());
+        $attribute->setData(
+            $attributeConfig->getSettingsAsArray()
+        );
+        $attribute->setEntityTypeId($this->_getEntityTypeId())
+            ->setAttributeCode($attributeConfig->getCode());
 
-        /** @var Mage_Core_Model_Mysql4_Resource $resource */
-        $resource = $attribute->getResource();
-        $resource->beginTransaction();
         try {
             $attribute->save();
-            $resource->commit();
         } catch (Exception $e) {
-            $resource->rollBack();
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception(
                 $e->getMessage(),
                 $e->getCode(),
@@ -167,6 +172,15 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         $attributeSetId = Mage::getModel('eav/entity_attribute_set')
             ->load($attributeSet->getName(), 'attribute_set_name')
             ->getAttributeSetId();
+
+        if (!$attributeSetId) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Exception(
+                sprintf(
+                    'Unknown attribute set with name \'%s\'.',
+                    $attributeSet->getName()
+                )
+            );
+        }
 
         /** @var Mage_Eav_Model_Entity_Setup $setup */
         $setup = Mage::getModel('eav/entity_setup');
@@ -384,20 +398,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
     }
 
     /**
-     * Insert new Attribute
-     *
-     * @TODO: nhp_havocologe, this needs to set is_maintained_by_configurator to the attribute
-     *
-     * @param  array $data Attribute Configuration Data
-     * @return void
-     * @throws Aoe_AttributeConfigurator_Model_Exception
-     */
-    public function insertAttribute($data)
-    {
-        throw new Aoe_AttributeConfigurator_Model_Exception('method not implemented');
-    }
-
-    /**
      * Load a catalog entity attribute by its code
      *
      * @param string $attributeCode Attribute code
@@ -405,15 +405,31 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     protected function _loadAttributeByCode($attributeCode)
     {
-        /** @var Mage_Catalog_Model_Entity_Attribute $result */
-        $result = Mage::getModel('catalog/entity_attribute');
 
-        $result->loadByCode(
-            'catalog_product',
-            $attributeCode
-        );
+        /** @var Mage_Catalog_Model_Resource_Eav_Attribute $result */
+        $result = Mage::getModel('catalog/resource_eav_attribute');
+        $result->loadByCode($this->_getEntityTypeId(), $attributeCode);
 
         return $result;
+    }
+
+    /**
+     * Get the entity type id for product attributes
+     *
+     * @return int
+     */
+    protected function _getEntityTypeId()
+    {
+        if (isset($this->_entityTypeId)) {
+            return $this->_entityTypeId;
+        }
+
+        $entityTypeId = Mage::getModel('eav/entity')
+            ->setType(Mage_Catalog_Model_Product::ENTITY)
+            ->getTypeId();
+        $this->_entityTypeId = $entityTypeId;
+
+        return $entityTypeId;
     }
 
     /**

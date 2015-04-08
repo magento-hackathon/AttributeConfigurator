@@ -56,7 +56,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
     protected function _importAttributes()
     {
         /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
-        $attributeModel = Mage::getModel('aoe_attributeconfigurator/attribute');
+        $attributeModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attribute');
         $attributeModel->run($this->_getConfig());
     }
 
