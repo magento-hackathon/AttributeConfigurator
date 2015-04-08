@@ -1,0 +1,8 @@
+empty:
+  is_valid: false
+
+valid:
+  is_valid: true
+  name: sample_set
+  skeleton: sample_skeleton
+

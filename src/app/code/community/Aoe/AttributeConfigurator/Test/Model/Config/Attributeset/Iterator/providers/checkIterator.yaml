@@ -1,0 +1,21 @@
+-
+  - empty
+  - |
+    <attributesets>
+    </attributesets>
+
+-
+  - one
+  - |
+    <attributesets>
+      <attributeset name="first" skeleton="first_skeleton"></attributeset>
+    </attributesets>
+
+-
+  - several
+  - |
+    <attributesets>
+      <attributeset name="first" skeleton="first_skeleton"></attributeset>
+      <attributeset name="second" skeleton="second_skeleton"></attributeset>
+      <attributeset name="third" skeleton="third_skeleton"></attributeset>
+    </attributesets>

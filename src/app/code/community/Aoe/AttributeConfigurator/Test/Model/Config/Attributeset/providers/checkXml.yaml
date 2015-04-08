@@ -1,0 +1,9 @@
+-
+  - empty
+  - |
+    <attributeset></attributeset>
+
+-
+  - valid
+  - |
+    <attributeset name="sample_set" skeleton="sample_skeleton"></attributeset>

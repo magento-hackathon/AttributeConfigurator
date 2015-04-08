@@ -1,0 +1,8 @@
+empty:
+  count: 0
+
+one:
+  count: 1
+
+several:
+  count: 3
