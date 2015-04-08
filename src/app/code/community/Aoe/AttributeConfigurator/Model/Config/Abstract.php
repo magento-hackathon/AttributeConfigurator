@@ -29,6 +29,14 @@ abstract class Aoe_AttributeConfigurator_Model_Config_Abstract
     protected $_validationMessages = [];
 
     /**
+     * Array of info messages
+     * Info messages may occour beside validation due to auto-corrections
+     *
+     * @var string[]
+     */
+    protected $_infoMessages = [];
+
+    /**
      * Validate the wrapped xml item.
      * Add validation messages for each error that is found
      *
@@ -48,6 +56,29 @@ abstract class Aoe_AttributeConfigurator_Model_Config_Abstract
         } else {
             $this->_xmlElement = new SimpleXMLElement('<attribute></attribute>');
         }
+    }
+
+    /**
+     * Get the info messages
+     *
+     * @return string[]
+     */
+    public function getInfoMessages()
+    {
+        return $this->_infoMessages;
+    }
+
+    /**
+     * Add an info message
+     *
+     * @param string $infoMessage Info message
+     * @return $this
+     */
+    public function _addInfoMessage($infoMessage)
+    {
+        $this->_infoMessages[] = $infoMessage;
+
+        return $this;
     }
 
     /**
