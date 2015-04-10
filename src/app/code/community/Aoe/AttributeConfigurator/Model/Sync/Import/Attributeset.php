@@ -15,6 +15,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
 {
 
     /**
+     * Lazy fetched entity type id for product attributes
+     *
+     * @var int $_entityTypeId
+     */
+    protected $_entityTypeId;
+
+    /**
      * Import attributesets
      *
      * @param Aoe_AttributeConfigurator_Model_Config $config Config model
@@ -22,11 +29,14 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
      */
     public function run($config)
     {
-        $xml = $config->getAttributeSets();
-        foreach ($xml->children() as $childConfig) {
+        $iterator = Mage::getModel(
+            'aoe_attributeconfigurator/config_attributeset_iterator',
+            $config->getAttributeSets()
+        );
+        foreach ($iterator as $_attributeSetConfig) {
+            /** @var Aoe_AttributeConfigurator_Model_Config_Attributeset $_attributeSetConfig */
             try {
-                $this->validate($childConfig);
-                $this->createAttributeSet($childConfig);
+                $this->_processAttributeSet($_attributeSetConfig);
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception $e) {
                 $this->_getHelper()->log('Attribute Set validation exception.', $e);
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception $e) {
@@ -38,52 +48,99 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
     }
 
     /**
-     * @param  SimpleXMLElement $config Single Attribute Set Config
-     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception
+     * Process a single attributeset config
+     *
+     * @param Aoe_AttributeConfigurator_Model_Config_Attributeset $attributeSetConfig AttributeSet config
      * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception
      */
-    private function validate($config)
+    protected function _processAttributeSet($attributeSetConfig)
     {
-        $name = (string) $config['name'];
-        $skeleton = (string) $config['skeleton'];
-        if (!isset($name) || !trim($name)) {
-            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception();
+        if (!$attributeSetConfig->validate()) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception(
+                'Validation errors on attributeset: \n'
+                . implode('\n', $attributeSetConfig->getValidationMessages())
+            );
         }
-        if (!isset($skeleton) || !trim($skeleton)) {
-            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception();
+
+        $attributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getName());
+        if ($attributeSet->getId()) {
+            // attribute set already exists
+            return;
         }
+
+        $this->_createAttributeSet($attributeSetConfig);
     }
 
     /**
      * Create Attribute Set
      *
-     * @param  SimpleXMLElement $config Attribute Set Config
+     * @param  Aoe_AttributeConfigurator_Model_Config_Attributeset $attributeSetConfig Attribute Set Config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception
      * @return void
      */
-    private function createAttributeSet($config)
+    protected function _createAttributeSet($attributeSetConfig)
     {
-        $name = trim((string) $config['name']);
-        $skeleton = trim((string) $config['skeleton']);
-        // Get Product Entity Id
-        $productEntityId = Mage::getModel('catalog/product')->getResource()->getTypeId();
-        // Retrieve Id of Skeleton Attribute Set to use for the new Attribute Set
-        $skeletonAttributeSet = Mage::getResourceModel('eav/entity_attribute_set_collection')
-            ->setEntityTypeFilter($productEntityId)
-            ->addFilter('attribute_set_name', $skeleton);
-        $skeletonId = $skeletonAttributeSet->getData()[0]['attribute_set_id'];
-        /** @var Mage_Eav_Model_Entity_Attribute_Set $setModel */
-        $setModel = Mage::getModel('eav/entity_attribute_set');
-        // Set required Data to new Attribute Set
-        $setModel->setEntityTypeId($productEntityId);
-        $setModel->setData('attribute_set_name', trim($name));
-        if ($setModel->validate()) {
-            $setModel->save();
-            $setModel->initFromSkeleton($skeletonId);
-            $setModel->save();
-        } else {
-            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception();
+        $skeletonAttributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getSkeleton());
+        if (!$skeletonAttributeSet->getId()) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
+                sprintf(
+                    'Skeleton attribute set \'%s\' does not exist',
+                    $attributeSetConfig->getSkeleton()
+                )
+            );
         }
+
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $newAttributeSet */
+        $newAttributeSet = Mage::getModel('eav/entity_attribute_set');
+
+        $newAttributeSet->setEntityTypeId($this->_getEntityTypeId())
+            ->setAttributeSetName(trim($attributeSetConfig->getName()));
+
+        try {
+            $newAttributeSet->validate();
+        } catch (Mage_Eav_Exception $validationException) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
+                sprintf(
+                    'Validation error on attribute set \'%s\': %s',
+                    $attributeSetConfig->getName(),
+                    $validationException->getMessage()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param string $name Attribut set name
+     * @return Mage_Eav_Model_Entity_Attribute_Set
+     */
+    protected function _loadAttributeSetByName($name)
+    {
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $result */
+        $result = Mage::getModel('eav/entity_attribute_set');
+        $result->setEntityTypeId($this->_getEntityTypeId())
+            ->load($name, 'attribute_set_name');
+
+        return $result;
+    }
+
+    /**
+     * Get the entity type id for product attributes
+     *
+     * @return int
+     */
+    protected function _getEntityTypeId()
+    {
+        if (isset($this->_entityTypeId)) {
+            return $this->_entityTypeId;
+        }
+
+        $entityTypeId = Mage::getModel('eav/entity')
+            ->setType(Mage_Catalog_Model_Product::ENTITY)
+            ->getTypeId();
+        $this->_entityTypeId = $entityTypeId;
+
+        return $entityTypeId;
     }
 
     /**
