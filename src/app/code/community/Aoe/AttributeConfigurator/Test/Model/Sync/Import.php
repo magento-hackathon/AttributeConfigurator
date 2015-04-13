@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Model_Sync_Import
  *
@@ -14,7 +15,6 @@
  */
 class Aoe_AttributeConfigurator_Test_Model_Sync_Import extends Aoe_AttributeConfigurator_Test_Model_Case
 {
-
     /**
      * @test
      *

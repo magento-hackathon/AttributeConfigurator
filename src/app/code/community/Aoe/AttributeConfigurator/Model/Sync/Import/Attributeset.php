@@ -13,7 +13,6 @@
  */
 class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
-
     /**
      * Lazy fetched entity type id for product attributes
      *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Model_Exception
  *
@@ -14,7 +15,6 @@
  */
 class Aoe_AttributeConfigurator_Test_Model_Exception extends EcomDev_PHPUnit_Test_Case
 {
-
     /**
      * @test
      * @expectedException Aoe_AttributeConfigurator_Model_Exception

@@ -3,6 +3,8 @@
 /**
  * Class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception
  *
+ * Exception Class for Attribute Set Creation
+ *
  * @category Model
  * @package  Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
  * @author   Firegento <contact@firegento.com>
@@ -13,4 +15,5 @@
  */
 class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception extends Mage_Core_Exception
 {
+    // empty body
 }

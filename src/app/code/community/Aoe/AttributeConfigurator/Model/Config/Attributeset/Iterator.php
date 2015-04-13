@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Model_Config_Attributeset_Iterator
  *

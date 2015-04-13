@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Config_EavAttributeColumn
  *
- * @category Model
+ * @category Test
  * @package  Aoe_AttributeConfigurator
  * @author   Firegento <contact@firegento.com>
  * @author   AOE Magento Team <team-magento@aoe.com>
@@ -12,7 +13,6 @@
  */
 class Aoe_AttributeConfigurator_Test_Config_EavAttributeColumn extends EcomDev_PHPUnit_Test_Case_Config
 {
-
     /**
      * Test if the the is_maintained_by_configurator column exists in the eav_attribute table
      *
@@ -26,7 +26,8 @@ class Aoe_AttributeConfigurator_Test_Config_EavAttributeColumn extends EcomDev_P
 
         $query = $dbConnection->query(
             'SHOW COLUMNS FROM eav_attribute LIKE'
-            . ' \'' . Aoe_AttributeConfigurator_Helper_Data::EAV_ATTRIBUTE_MAINTAINED . '\'');
+            . ' \'' . Aoe_AttributeConfigurator_Helper_Data::EAV_ATTRIBUTE_MAINTAINED . '\''
+        );
         $queryResult = $query->fetchAll();
 
         $this->assertEquals(

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset
  *
@@ -14,7 +15,6 @@
  */
 class Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset extends Aoe_AttributeConfigurator_Model_Config_Abstract
 {
-
     /**
      * @return string
      */

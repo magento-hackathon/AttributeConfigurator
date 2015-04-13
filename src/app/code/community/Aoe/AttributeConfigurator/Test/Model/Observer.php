@@ -13,7 +13,6 @@
  */
 class Aoe_AttributeConfigurator_Test_Model_Observer extends EcomDev_PHPUnit_Test_Case
 {
-
     /**
      * @test
      * @return Aoe_AttributeConfigurator_Model_Observer
@@ -68,5 +67,4 @@ class Aoe_AttributeConfigurator_Test_Model_Observer extends EcomDev_PHPUnit_Test
             $method->invoke($observer)
         );
     }
-
 }

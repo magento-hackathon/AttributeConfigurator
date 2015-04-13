@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Model_Config
  *
@@ -14,7 +15,6 @@
  */
 class Aoe_AttributeConfigurator_Test_Model_Config extends EcomDev_PHPUnit_Test_Case
 {
-
     /**
      * Test model instantiation
      * @test
@@ -220,7 +220,5 @@ class Aoe_AttributeConfigurator_Test_Model_Config extends EcomDev_PHPUnit_Test_C
         }
 
         return $mockedHelper;
-
     }
-
 }

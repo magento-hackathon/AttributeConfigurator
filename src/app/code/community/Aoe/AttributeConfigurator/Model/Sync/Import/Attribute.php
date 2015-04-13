@@ -31,7 +31,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     public function run($config)
     {
-
         /** @var Aoe_AttributeConfigurator_Model_Config_Attribute_Iterator $iterator */
         $iterator = Mage::getModel(
             'aoe_attributeconfigurator/config_attribute_iterator',
@@ -165,6 +164,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      *
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute              $attributeConfig Attribute config
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset $attributeSet    Attributeset to use
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Exception
      * @return void
      */
     protected function _updateAttributeSetAndGroup($attributeConfig, $attributeSet)
@@ -308,7 +308,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         $sourceTable = implode([$entityTypeCode, 'entity', $sourceType], '_');
         $targetTable = implode([$entityTypeCode, 'entity', $targetType], '_');
         // Select all existing entries for given Attribute
-        $srcSql = 'SELECT * FROM '.$sourceTable.' WHERE attribute_id = ? AND entity_type_id = ?';
+        $srcSql = 'SELECT'.
+            ' * FROM '.$sourceTable.' WHERE attribute_id = ? AND entity_type_id = ?';
         $sourceQuery = $_dbConnection->query(
             $srcSql,
             [
@@ -322,7 +323,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
                 // Cast Value Type to new Type (e.g. decimal to text)
                 $targetValue = $this->typeCast($currentValue, $sourceType, $targetType);
                 // Insert Value to target Entity
-                $sql = 'INSERT INTO '.$targetTable.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
+                $sql = 'INSERT' .
+                    ' INTO '.$targetTable.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
                 try{
                     $_dbConnection->query(
                         $sql,
@@ -339,7 +341,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
                 }
             }
             // Delete Value from source Entity
-            $sql = 'DELETE FROM '.$sourceTable.' WHERE value_id = ?';
+            $sql = 'DELETE' .
+                ' FROM '.$sourceTable.' WHERE value_id = ?';
             $_dbConnection->query($sql, $row['value_id']);
         }
     }

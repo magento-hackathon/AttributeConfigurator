@@ -132,5 +132,4 @@ class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
     {
         return Mage::helper('aoe_attributeconfigurator/config');
     }
-
 }

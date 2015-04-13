@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Validation_Exception
  *

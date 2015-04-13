@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Model_Case
  *
@@ -14,7 +15,6 @@
  */
 abstract class Aoe_AttributeConfigurator_Test_Model_Case extends EcomDev_PHPUnit_Test_Case
 {
-
     /**
      * Get a path to a common model fixture file
      *
@@ -75,5 +75,4 @@ abstract class Aoe_AttributeConfigurator_Test_Model_Case extends EcomDev_PHPUnit
     {
         return Mage::getModel('aoe_attributeconfigurator/config');
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Test_Model_Config_Attribute_Iterator
  *
  * Test class for Aoe_AttributeConfigurator_Model_Config_Attribute_Iterator
  *
- * @category Model
+ * @category Test
  * @package  Aoe_AttributeConfigurator
  * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
@@ -58,5 +59,4 @@ class Aoe_AttributeConfigurator_Test_Model_Config_Attribute_Iterator extends Eco
         $xml = simplexml_load_string($xml);
         return Mage::getModel('aoe_attributeconfigurator/config_attribute_iterator', $xml);
     }
-
 }
