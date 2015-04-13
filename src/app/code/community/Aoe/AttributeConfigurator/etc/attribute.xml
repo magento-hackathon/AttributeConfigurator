@@ -25,7 +25,6 @@
                     <is_visible>1</is_visible>
                     <is_configurable>1</is_configurable>
                     <is_global>1</is_global>
-                    <entity_type_id>4</entity_type_id>
                     <backend_model></backend_model>
                     <backend_type>varchar</backend_type>
                     <backend_table></backend_table>
@@ -40,8 +39,6 @@
                     <is_unique></is_unique>
                     <note></note>
                     <frontend_input_renderer></frontend_input_renderer>
-                    <is_global></is_global>
-                    <is_visible></is_visible>
                     <is_searchable></is_searchable>
                     <is_filterable></is_filterable>
                     <is_comparable></is_comparable>
