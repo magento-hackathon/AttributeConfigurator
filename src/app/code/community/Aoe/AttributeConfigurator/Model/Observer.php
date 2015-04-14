@@ -27,6 +27,15 @@ class Aoe_AttributeConfigurator_Model_Observer
     protected $_sync;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->_getHelper();
+        $this->_getSyncModel();
+    }
+
+    /**
      * Checks if Attribute XML is newer than previous one and imports it if necessary
      *
      * @return void
@@ -47,7 +56,7 @@ class Aoe_AttributeConfigurator_Model_Observer
             return $this->_helper;
         }
 
-        $helper = Mage::helper('aoe_attributeconfigurator');
+        $helper = Mage::helper('aoe_attributeconfigurator/data');
         $this->_helper = $helper;
 
         return $helper;
