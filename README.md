@@ -6,8 +6,9 @@ Update Scripts to find the latest change to your Attribute.
 
 Warning
 -------
-Work Draft. Currently nonworking.
-Generally, tampering with EAV Attribute Data is not without risk. We recommend backing up your Database regularly.
+Work Draft. Currently nonworking.<br />
+Generally, tampering with EAV Attribute Data is not without risk. We strongly recommend backing up your
+Database regularly and especially before using the Configurator!
 
 Facts
 -----
@@ -17,16 +18,20 @@ Facts
 
 Description
 -----------
-For an example XML, have a look at the attributes.xml in the /etc Directory of the extension. If you don´t understand
+For an example XML, have a look at the attributes.xml in the /etc Directory of the extension. If you do not understand
 the settings we recommend a Blogpost from Ben Marks that explains basics for the eav_attribute Table Settings:
 [Magento EAV Attribute Setup](http://www.webguys.de/magento/eav-attribute-setup/)
 
-Configuration is found at System/Configuration/Catalog/Catalog/Attribute Configurator.
-Import Path is read relative to the Magento 'var' Directory.
+Configuration is found at System/Configuration/Catalog/Catalog/Attribute Configurator, the Import Path is
+relative to the Magento 'var' Directory, e.g. importexport/product_attributes.xml
 
-The Configurator is run by a shellskript: /shell/aoe_attribute_import.php
+The Configurator itself is run by a shellskript: /shell/aoe_attribute_import.php - initially this was planned
+as being regularly checked when using the Backend but we felt the Shop Admin should be in Control when the
+File is checked. And with large Attribute Sets with a lot of Attributes the XML File can get quite large,
+so it is better to perform this action when the load is low.
 
-Run it like this: php aoe_attribute_import.php --runAll
+Run it like this:<br />
+php aoe_attribute_import.php --runAll
 
 Notice that the Extension does not change any Attributes that were added via Update Scripts or Third Party Extensions
 for your own safety. Attributes maintained by the Configurator are marked with a is_maintained_by_configurator - Flag.
@@ -81,5 +86,5 @@ License
 
 Copyright
 ---------
-(c) 2014 Firegento
+(c) 2014 Firegento<br />
 Rework 2015 Aoe
