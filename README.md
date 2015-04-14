@@ -71,6 +71,7 @@ Developer
 ---------
 Nils Preuss<br />
 Rico Neitzel<br />
+Stefan Schwan<br />
 Thomas Neumann<br />
 Joachim Adomeit<br />
 
