@@ -82,7 +82,7 @@ Joachim Adomeit<br />
 
 License
 -------
-[GNU GPL v3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
+[Open Software License v. 3.0 (OSL-3.0)](http://opensource.org/licenses/OSL-3.0)
 
 Copyright
 ---------
