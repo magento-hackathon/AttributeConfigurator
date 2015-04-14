@@ -69,10 +69,10 @@ Any contribution is highly appreciated. The best way to contribute code is to op
 
 Developer
 ---------
-Nils Preuss
-Rico Neitzel
-Thomas Neumann
-Joachim Adomeit
+Nils Preuss<br />
+Rico Neitzel<br />
+Thomas Neumann<br />
+Joachim Adomeit<br />
 
 License
 -------
