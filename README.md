@@ -1,28 +1,35 @@
 AttributeConfigurator
 =====================
-The AttributeConfigurator enables you to centralize the versioning of your attributes in one file (compared to have
-them scaattered over several update scripts).
+The AttributeConfigurator enables you to centralize the versioning of your attributes in one XML File. Goal of this
+Module is to have one File to modify if you want to change Attributes and not search through a lot of Magento
+Update Scripts to find the latest change to your Attribute.
 
 Warning
 -------
 Work Draft. Currently nonworking.
+Generally, tampering with EAV Attribute Data is not without risk. We recommend backing up your Database regularly.
 
 Facts
 -----
 - version: 0.1.0
 - extension key: Aoe_AttributeConfigurator
 - [extension on GitHub](https://github.com/AOEpeople/AttributeConfigurator)
-- no workflow implemented right now, only supportive functionality was developed
 
 Description
 -----------
-The AttributeConfigurator enables you to centralize the versioning of your attributes in one file (compared to have
-them scaattered over several update scripts).
+For an example XML, have a look at the attributes.xml in the /etc Directory of the extension. If you don´t understand
+the settings we recommend a Blogpost from Ben Marks that explains basics for the eav_attribute Table Settings:
+[Magento EAV Attribute Setup](http://www.webguys.de/magento/eav-attribute-setup/)
 
 Configuration is found at System/Configuration/Catalog/Catalog/Attribute Configurator.
+Import Path is read relative to the Magento 'var' Directory.
 
-Import Path is created at Magento Base Director with var/importexport/product_attributes. Change this path in
-the config if this doesn´t suit your needs - but use only var as it is some kind of spool file.
+The Configurator is run by a shellskript: /shell/aoe_attribute_import.php
+
+Run it like this: php aoe_attribute_import.php --runAll
+
+Notice that the Extension does not change any Attributes that were added via Update Scripts or Third Party Extensions
+for your own safety. Attributes maintained by the Configurator are marked with a is_maintained_by_configurator - Flag.
 
 Requirements
 ------------
@@ -35,32 +42,36 @@ Compatibility
 
 Installation Instructions
 -------------------------
-Use the included modman manifest to integrate into your project. If you want to manually copy the files, use the directory structure provided at /src.
+Use the included modman manifest to integrate into your project. If you want to manually copy the files, use the
+directory structure provided at /src.
 
 Uninstallation
 --------------
 1. Remove all extension files from your Magento installation
+2. Drop the 'is_maintained_by_configurator' Column in the 'eav_attribute' Table.
+3. Removing created Attributes depends on your Setup and will probably need manual action
 
 Planned Features
 ----------------
-- supply an XML File with attribute information (name, label, type, values/options, ...)
-- add new attributes
-- change existing one (type change also, but in some cases information loss is inevitable)
-- clean up no longer needed ones
-- just care about a specific subset that comes/came from XML (handled by flagging) to not interfere with system or 3rd party attributes
+- Change existing Attributes (type change also, but in some cases information loss is inevitable if source and target
+type are incompatible, i.e. text to integer)
+- Clean up no longer needed Attributes
 
 Support
 -------
-If you have any issues with this extension, open an issue on [GitHub](https://github.com/AOEpeople/AttributeConfigurator/issues).
+If you have any issues with this extension, open an issue on
+[GitHub](https://github.com/AOEpeople/AttributeConfigurator/issues).
 
 Contribution
 ------------
-Any contribution is highly appreciated. The best way to contribute code is to open a [pull request on GitHub](https://help.github.com/articles/using-pull-requests).
+Any contribution is highly appreciated. The best way to contribute code is to open a
+[pull request on GitHub](https://help.github.com/articles/using-pull-requests).
 
 Developer
 ---------
 Nils Preuss
 Rico Neitzel
+Thomas Neumann
 Joachim Adomeit
 
 License
