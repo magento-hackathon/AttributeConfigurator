@@ -5,7 +5,7 @@
  *
  * @category Test
  * @package  Aoe_AttributeConfigurator
- * @author   Firegento <contact@firegento.com>
+ * @author   FireGento Team <team@firegento.com>
  * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
  * @link     https://github.com/AOEpeople/AttributeConfigurator
@@ -66,20 +66,6 @@ class Aoe_AttributeConfigurator_Test_Config_Main extends EcomDev_PHPUnit_Test_Ca
         $this->assertModelAlias(
             'aoe_attributeconfigurator/observer',
             'Aoe_AttributeConfigurator_Model_Observer'
-        );
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function testObserverDefinition()
-    {
-        $this->assertEventObserverDefined(
-            'adminhtml',
-            'controller_action_predispatch_adminhtml',
-            'aoe_attributeconfigurator/observer',
-            'controllerActionPredispatchAdminhtml'
         );
     }
 

@@ -7,7 +7,7 @@
  *
  * @category Test
  * @package  Aoe_AttributeConfigurator
- * @author   Firegento <contact@firegento.com>
+ * @author   FireGento Team <team@firegento.com>
  * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
  * @link     https://github.com/AOEpeople/AttributeConfigurator
@@ -41,6 +41,24 @@ class Aoe_AttributeConfigurator_Test_Helper_Config extends EcomDev_PHPUnit_Test_
             'test/file/path.xml',
             $this->_helper->getImportFilename(),
             'Import filename read from config'
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function testCheckFile()
+    {
+        $this->assertFalse(
+            $this->_helper->checkFile('/var/www/a.nonexistant.file')
+        );
+
+        $testFileName = Mage::getModuleDir('', 'Aoe_AttributeConfigurator') .
+            DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-dummy.xml' ;
+        $this->assertTrue(
+            $this->_helper->checkFile($testFileName)
         );
     }
 }

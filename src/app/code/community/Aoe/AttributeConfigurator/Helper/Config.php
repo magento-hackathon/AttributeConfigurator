@@ -6,7 +6,7 @@
  *
  * @category Helper
  * @package  Aoe_AttributeConfigurator
- * @author   Firegento <contact@firegento.com>
+ * @author   FireGento Team <team@firegento.com>
  * @author   AOE Magento Team <team-magento@aoe.com>
  * @license  Open Software License v. 3.0 (OSL-3.0)
  * @link     https://github.com/AOEpeople/AttributeConfigurator
@@ -37,6 +37,28 @@ class Aoe_AttributeConfigurator_Helper_Config extends Mage_Core_Helper_Abstract
     {
         $filename = $this->getImportFilename($store);
 
-        return Mage::getBaseDir('var') . $filename;
+        return Mage::getBaseDir('var') . DS . $filename;
+    }
+
+    /**
+     * Checks File
+     *
+     * @param string $xmlLocation Location of XML File
+     * @return bool
+     */
+    public function checkFile($xmlLocation)
+    {
+        if (empty($xmlLocation)) {
+            return false;
+        }
+
+        // @codingStandardsIgnoreStart
+        $fileExists = file_exists($xmlLocation);
+        // @codingStandardsIgnoreEnd
+        if (!$fileExists) {
+            return false;
+        }
+
+        return true;
     }
 }

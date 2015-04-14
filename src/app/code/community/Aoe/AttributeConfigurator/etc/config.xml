@@ -27,18 +27,6 @@
             </aoe_attributeconfigurator>
         </resources>
     </global>
-    <adminhtml>
-        <events>
-            <controller_action_predispatch_adminhtml>
-                <observers>
-                    <aoe_attributeconfigurator_version>
-                        <class>aoe_attributeconfigurator/observer</class>
-                        <method>controllerActionPredispatchAdminhtml</method>
-                    </aoe_attributeconfigurator_version>
-                </observers>
-            </controller_action_predispatch_adminhtml>
-        </events>
-    </adminhtml>
     <default>
         <catalog>
             <attribute_configurator>
