@@ -25,13 +25,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
      */
     public function import()
     {
+        $this->_getHelper()->log('Attribute Configurator Sync started', null, Zend_Log::INFO);
         $this->_importAttributeSets();
         $this->_importAttributes();
-
-        // TODO: Refactor this into the attribute model
-        //if ($this->_validate($attributesets, $attributes)) {
-            // 3. Connect Attributes with Attribute Sets using Attribute Groups
-        //}
     }
 
     /**
@@ -55,11 +51,10 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
      */
     protected function _importAttributes()
     {
-        /** @var Aoe_AttributeConfigurator_Model_Attribute $attributeModel */
+        /** @var Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $attributeModel */
         $attributeModel = Mage::getModel('aoe_attributeconfigurator/sync_import_attribute');
         $attributeModel->run($this->_getConfig());
     }
-
 
     /**
      * Lazy getter for the config model
@@ -77,5 +72,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
         $this->_config = $config;
 
         return $config;
+    }
+
+    /**
+     * @return Aoe_AttributeConfigurator_Helper_Data
+     */
+    protected function _getHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator');
     }
 }

@@ -41,7 +41,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             /** @var Aoe_AttributeConfigurator_Model_Config_Attribute $_attributeConfig */
             try {
                 $this->_processAttribute($_attributeConfig);
-
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception $attributeException) {
                 $this->_getHelper()->log(
                     $attributeException->getMessage(),

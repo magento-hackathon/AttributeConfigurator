@@ -46,17 +46,18 @@ class Aoe_AttributeConfigurator_Shell_Import extends Mage_Shell_Abstract
 
         $config = $this->checkConfig();
         if (!$config) {
-            // @codingStandardsIgnoreStart
-            die($this->configError());
-            // @codingStandardsIgnoreEnd
+            $this->exitConfigurator($this->configError());
+        }
+
+        $install = $this->checkInstall();
+        if (!$install) {
+            $this->exitConfigurator($this->installError());
         }
 
         $runAll = $this->getArg(self::PARAM_RUN_ALL);
 
         if (!$runAll) {
-            // @codingStandardsIgnoreStart
-            die($this->usageHelp());
-            // @codingStandardsIgnoreEnd
+            $this->exitConfigurator($this->usageHelp());
         }
 
         if ($runAll) {
@@ -80,9 +81,7 @@ class Aoe_AttributeConfigurator_Shell_Import extends Mage_Shell_Abstract
                 break;
 
             default:
-                // @codingStandardsIgnoreStart
-                die($this->_usageHelp());
-                // @codingStandardsIgnoreEnd
+                $this->exitConfigurator($this->_usageHelp());
         }
     }
 
@@ -148,6 +147,44 @@ USAGE;
 Error: System Config Settings missing or File could not be read.
 
 USAGE;
+    }
+
+    /**
+     * Check if Installation is correct
+     *
+     * @return string
+     */
+    protected function checkInstall()
+    {
+        /** @var Aoe_AttributeConfigurator_Helper_Data $helper */
+        $helper = Mage::helper('aoe_attributeconfigurator/data');
+        return $helper->checkExtensionInstallStatus();
+    }
+
+    /**
+     * Return Error Message
+     *
+     * @return string
+     */
+    protected function installError()
+    {
+        return <<<USAGE
+Error: Aoe_Attributeconfigurator has not been installed completely. Check your System.
+
+USAGE;
+    }
+
+    /**
+     * Prints Exit Message while ending the Shell Script
+     *
+     * @param string $msg Exit Message
+     * @return void
+     */
+    protected function exitConfigurator($msg)
+    {
+        // @codingStandardsIgnoreStart
+        die($msg);
+        // @codingStandardsIgnoreEnd
     }
 }
 

@@ -99,11 +99,22 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
         try {
             $newAttributeSet->validate();
         } catch (Mage_Eav_Exception $validationException) {
-            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception(
                 sprintf(
                     'Validation error on attribute set \'%s\': %s',
                     $attributeSetConfig->getName(),
                     $validationException->getMessage()
+                )
+            );
+        }
+        try {
+            $newAttributeSet->save();
+        } catch (Exception $saveException) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
+                sprintf(
+                    'Creation error on attribute set \'%s\': %s',
+                    $attributeSetConfig->getName(),
+                    $saveException->getMessage()
                 )
             );
         }

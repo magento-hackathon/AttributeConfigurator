@@ -15,7 +15,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const CODE_CURRENT_HASH = 'attributeconfigurator_hash';
     const EAV_ATTRIBUTE_MAINTAINED = 'is_maintained_by_configurator';
-    const FILENAME_LOGFILE = 'fraport_import.log';
+    const FILENAME_LOGFILE = 'aoe_attributeconfigurator.log';
 
     /**
      * Custom Logging
@@ -109,6 +109,29 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Checks if Column has been added to the eav_attribute Table,
+     * the extension won´t work correctly if it is missing.
+     *
+     * @return bool
+     */
+    public function checkExtensionInstallStatus()
+    {
+        $read = Mage::getSingleton('core/resource')->getConnection('core_read');
+        $attributeTable = Mage::getSingleton('core/resource')->getTableName('eav_attribute');
+        $query = "SHOW COLUMNS FROM " .
+            $attributeTable .
+            " LIKE :maintainerflag";
+        $binds = [
+            'maintainerflag' => self::EAV_ATTRIBUTE_MAINTAINED
+        ];
+        $columnConfig = $read->query($query, $binds)->fetch();
+        if ($columnConfig) {
+            return true;
+        }
         return false;
     }
 
