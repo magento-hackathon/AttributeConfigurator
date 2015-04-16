@@ -2,11 +2,28 @@
 <config>
     <aoe_attributeconfigurator>
         <attributesets>
-            <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default"/>
-            <attributeset name="Flöten/Blechbläser" skeleton="Default"/>
+            <!-- Configure <attributeset> completely with required <attributegroups> -->
+            <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Three"/>
+                    <attributegroup name="Four"/>
+                </attributegroups>
+            </attributeset>
+            <attributeset name="Flöten/Blechbläser" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Salsa"/>
+                    <attributegroup name="Lambada"/>
+                </attributegroups>
+            </attributeset>
         </attributesets>
         <attributes>
             <attribute code="hersteller">
+                <!-- This is Data for a single <attribute> -->
+                <!-- <values> can only be used for <frontend_input>select</frontend_input> -->
                 <values>
                     <pair>
                         <key>1</key>
@@ -22,6 +39,7 @@
                     </pair>
                 </values>
                 <settings>
+                    <!-- <settings> as seen in Magentos Core models and eav_attribute DB Table -->
                     <is_visible>1</is_visible>
                     <is_configurable>1</is_configurable>
                     <is_global>1</is_global>
@@ -57,10 +75,17 @@
                     <is_used_for_promo_rules></is_used_for_promo_rules>
                 </settings>
                 <attributesets>
+                    <!-- <attributeset> name has to match an element from <attributesetslist> -->
                     <attributeset name="Gitarren &amp; Saiteninstrumente">
-                        <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
                         <attributegroups>
-                            <attributegroup name="Default"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Two"/>
+                        </attributegroups>
+                    </attributeset>
+                    <attributeset name="Flöten/Blechbläser">
+                        <attributegroups>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Salsa"/>
                         </attributegroups>
                     </attributeset>
                 </attributesets>
