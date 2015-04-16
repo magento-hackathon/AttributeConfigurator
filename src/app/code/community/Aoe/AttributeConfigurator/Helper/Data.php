@@ -136,6 +136,16 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Returns Property from Constant
+     *
+     * @return string
+     */
+    public function getFlagColumnName()
+    {
+        return self::EAV_ATTRIBUTE_MAINTAINED;
+    }
+
+    /**
      * Get the config helper
      *
      * @return Aoe_AttributeConfigurator_Helper_Config

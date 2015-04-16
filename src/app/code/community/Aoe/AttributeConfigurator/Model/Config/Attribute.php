@@ -46,7 +46,9 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
      */
     public function getEntityTypeId()
     {
-        return (string) $this->_getSettingsNode('entity_type_id');
+        /** @var Mage_Eav_Model_Config $eavConfig */
+        $eavConfig = Mage::getModel('eav/config');
+        return (int) $eavConfig->getEntityType(self::ENTITY_TYPE_CODE)->getEntityTypeId();
     }
 
     /**

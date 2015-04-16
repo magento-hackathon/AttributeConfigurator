@@ -33,6 +33,35 @@ class Aoe_AttributeConfigurator_Model_Config_Attributeset extends Aoe_AttributeC
     }
 
     /**
+     * Returns Attribute Groups for this Attribute Set
+     * @return array
+     */
+    public function getAttributeGroups()
+    {
+
+        if (isset($this->_attributeGroups)) {
+            return $this->_attributeGroups;
+        }
+
+        /** @var SimpleXmlElement $attributeSetsNode */
+        $attributeSetsNode = $this->_xmlElement;
+
+        /** @var Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset_Iterator $iterator */
+        $iterator = Mage::getModel(
+            'aoe_attributeconfigurator/config_attribute_attributeset_iterator',
+            $attributeSetsNode
+        );
+
+        $result = null;
+        foreach ($iterator as $_attributeGroup) {
+            $result = $_attributeGroup->_xmlElement->xpath('attributegroup');
+        }
+
+        $this->_attributeGroups = $result;
+        return $result;
+    }
+
+    /**
      * Validate the wrapped xml item.
      * Add validation messages for each error that is found
      *

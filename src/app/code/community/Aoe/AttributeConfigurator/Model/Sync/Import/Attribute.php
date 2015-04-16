@@ -14,13 +14,15 @@
 class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Model_Entity_Attribute
                                                             implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
-
     /**
      * Lazy fetched entity type id for product attributes
      *
      * @var int $_entityTypeId
      */
     protected $_entityTypeId;
+
+    /** @var array */
+    protected $_attributesToSkip;
 
     /**
      * Run the attribute update/import
@@ -37,13 +39,21 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             $config->getAttributes()
         );
 
+        $this->_attributesToSkip = $this->_getConfigHelper()->getSkipAttributeCodes();
+
         foreach ($iterator as $_attributeConfig) {
             /** @var Aoe_AttributeConfigurator_Model_Config_Attribute $_attributeConfig */
             try {
                 $this->_processAttribute($_attributeConfig);
+            } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception $akippedException) {
+                $this->_getHelper()->log(
+                    $akippedException->getMessage(),
+                    null,
+                    Zend_Log::INFO
+                );
             } catch (Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception $attributeException) {
                 $this->_getHelper()->log(
-                    $attributeException->getMessage(),
+                    '-',
                     $attributeException,
                     Zend_Log::WARN
                 );
@@ -63,6 +73,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config to process
      * @return void
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Validation_Exception
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
      */
     protected function _processAttribute($attributeConfig)
     {
@@ -73,12 +84,32 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             );
         }
 
+        if (!$this->_checkSkipAttribute($attributeConfig->getCode())) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception(
+                sprintf('Attribute \'%s\' skipped (see System Config).', $attributeConfig->getCode())
+            );
+        }
+
         $attribute = $this->_loadAttributeByCode($attributeConfig->getCode());
         if ($attribute->getId()) {
             $this->_updateOrMigrateAttribute($attribute, $attributeConfig);
         } else {
             $this->_createAttribute($attribute, $attributeConfig);
         }
+    }
+
+    /**
+     * Checks if Attribute is set to be Skipped in System Config
+     *
+     * @param string $code Attribute Code
+     * @return bool
+     */
+    protected function _checkSkipAttribute($code)
+    {
+        if (in_array($code, $this->_attributesToSkip)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -128,7 +159,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             $attributeConfig->getSettingsAsArray()
         );
         $attribute->setEntityTypeId($this->_getEntityTypeId())
-            ->setAttributeCode($attributeConfig->getCode());
+            ->setAttributeCode($attributeConfig->getCode())
+            ->setData($this->_getHelper()->getFlagColumnName(), 1);
 
         try {
             $attribute->save();
@@ -168,9 +200,37 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     protected function _updateAttributeSetAndGroup($attributeConfig, $attributeSet)
     {
-        $attributeSetId = Mage::getModel('eav/entity_attribute_set')
-            ->load($attributeSet->getName(), 'attribute_set_name')
-            ->getAttributeSetId();
+        /** @var Mage_Eav_Model_Entity_Setup $setup */
+        $setup = Mage::getModel('eav/entity_setup', 'core_setup');
+
+        /*
+         * Autocorrection for incoming 'default' Attribute Set Name in different capitalization,
+         * we don´t want to have more than one Default Attribute Set, so everything remotely like this
+         * will be redirected to the Magento Default Attribute Set
+         */
+        $attributeSetName = trim($attributeSet->getName());
+        if (strtolower($attributeSetName) == 'default') {
+            $attributeSetName = ucwords(strtolower($attributeSetName));
+        }
+
+        $entityTypeCode = $setup->getEntityType($attributeConfig->getEntityTypeId())['entity_type_code'];
+        // Attribute ID - we will need this later
+        $attributeId = Mage::getModel('eav/entity_attribute')
+            ->loadByCode($entityTypeCode, $attributeConfig->getCode())
+            ->getData('attribute_id');
+
+        /*
+         * Much Overhead to get the Attribute Set Model, but entity attribute set returns
+         * wrong id when loading via name
+         */
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $attributeSetModel */
+        $attributeSetModel = Mage::getModel('eav/entity_attribute_set')
+            ->getCollection()
+            ->addFieldToFilter('attribute_set_name', $attributeSetName)
+            ->addFieldToFilter('entity_type_id', $attributeConfig->getEntityTypeId())
+            ->getFirstItem();
+        // Attribute Set ID - we will need this later
+        $attributeSetId = (int) $attributeSetModel->getData('attribute_set_id');
 
         if (!$attributeSetId) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Exception(
@@ -181,23 +241,32 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             );
         }
 
-        /** @var Mage_Eav_Model_Entity_Setup $setup */
-        $setup = Mage::getModel('eav/entity_setup');
-
         // TODO: we need real update (also remove if the attribute config has changed)
-        foreach ($attributeSet->getAttributeGroups() as $_group) {
-            $setup->addAttributeGroup(
-                $attributeConfig->getEntityTypeId(),
-                $attributeSetId,
-                $_group
-            );
+        // Most likely only one, fetch all
+        $attributeGroups = (array) $attributeSet->getAttributeGroups();
 
-            $setup->addAttributeToSet(
+        // Iterate through Attribute Groups
+        foreach ($attributeGroups as $group) {
+            $groupId = $setup->getAttributeGroup(
                 $attributeConfig->getEntityTypeId(),
                 $attributeSetId,
-                $_group,
-                $attributeConfig->getSortOrder()
+                $group,
+                'attribute_group_name'
             );
+            if ($groupId) {
+                try {
+                    $setup->addAttributeToSet(
+                        $attributeConfig->getEntityTypeId(),
+                        $attributeSetId,
+                        $groupId,
+                        $attributeId,
+                        $attributeConfig->getSortOrder()
+                    );
+                    $this->_getHelper()->log(sprintf('Added Attribute \'%s\' to Attribute Set Id #%s.', $attributeConfig->getCode(), $attributeSetId));
+                } catch (Exception $e) {
+                    $this->_getHelper()->log(sprintf('Exception while adding Attribute \'%s\' to Attibute Set Id #%s.', $attributeConfig->getCode(), $attributeSetId), $e);
+                }
+            }
         }
     }
 
@@ -441,4 +510,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
     {
         return Mage::helper('aoe_attributeconfigurator');
     }
+
+    /**
+     * @return Aoe_AttributeConfigurator_Helper_Config
+     */
+    protected function _getConfigHelper()
+    {
+        return Mage::helper('aoe_attributeconfigurator/config');
+    }
+
 }

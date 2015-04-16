@@ -63,12 +63,15 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
         }
 
         $attributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getName());
-        if ($attributeSet->getId()) {
-            // attribute set already exists
-            return;
+        if (!$attributeSet->getId()) {
+            // Attribute Set does not exist, create
+            $this->_createAttributeSet($attributeSetConfig);
         }
-
-        $this->_createAttributeSet($attributeSetConfig);
+        $attributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getName());
+        if ($attributeSet->getId()) {
+            // Update Groups on Attribute Set
+            $this->_updateAttributeGroups($attributeSetConfig, $attributeSet->getId(), $attributeSet->getData('attribute_set_name'));
+        }
     }
 
     /**
@@ -76,6 +79,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
      *
      * @param  Aoe_AttributeConfigurator_Model_Config_Attributeset $attributeSetConfig Attribute Set Config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception
      * @return void
      */
     protected function _createAttributeSet($attributeSetConfig)
@@ -118,6 +122,40 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
                 )
             );
         }
+        $this->_getHelper()->log(sprintf('Attribute Set \'%s\' has been created/updated', $attributeSetConfig->getName()));
+    }
+
+    /**
+     * Create Attribute Set Groups
+     *
+     * @param  Aoe_AttributeConfigurator_Model_Config_Attributeset $attributeSetConfig Attribute Set Config
+     * @param  int                                                 $attributeSetId     Attribute Set Id
+     * @param  string                                              $attributeSetName   Attribute Set Name
+     * @return void
+     */
+    protected function _updateAttributeGroups($attributeSetConfig, $attributeSetId, $attributeSetName)
+    {
+        /** @var Mage_Eav_Model_Entity_Setup $setup */
+        $setup = Mage::getModel('eav/entity_setup', 'core_setup');
+
+        /** @var array $groups */
+        $groups = $attributeSetConfig->getAttributeGroups();
+
+        /** @var SimpleXMLIterator $group */
+        foreach ($groups as $group) {
+            $xmlAttr = current($group->attributes());
+            $groupName = $xmlAttr['name'];
+            try {
+                $setup->addAttributeGroup(
+                    $this->_getEntityTypeId(),
+                    $attributeSetId,
+                    $groupName
+                );
+                $this->_getHelper()->log(sprintf('Added Group \'%s\' to Attribute Set \'%s\'.', $groupName, $attributeSetName));
+            } catch (Exception $e) {
+                $this->_getHelper()->log(sprintf('Exception while adding Group \'%s\' to Attribute Set \'%s\'.', $groupName, $attributeSetName), $e);
+            }
+        }
     }
 
     /**
@@ -126,10 +164,12 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
      */
     protected function _loadAttributeSetByName($name)
     {
-        /** @var Mage_Eav_Model_Entity_Attribute_Set $result */
-        $result = Mage::getModel('eav/entity_attribute_set');
-        $result->setEntityTypeId($this->_getEntityTypeId())
-            ->load($name, 'attribute_set_name');
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $attributeSetModel */
+        $result = Mage::getModel('eav/entity_attribute_set')
+            ->getCollection()
+            ->addFieldToFilter('attribute_set_name', $name)
+            ->addFieldToFilter('entity_type_id', $this->_getEntityTypeId())
+            ->getFirstItem();
 
         return $result;
     }

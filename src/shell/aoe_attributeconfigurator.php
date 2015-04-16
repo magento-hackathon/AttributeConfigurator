@@ -144,7 +144,7 @@ USAGE;
     protected function configError()
     {
         return <<<USAGE
-Error: System Config Settings missing or File could not be read.
+Error: System Config Settings missing or File could not be read. Check System Config Cache.
 
 USAGE;
     }

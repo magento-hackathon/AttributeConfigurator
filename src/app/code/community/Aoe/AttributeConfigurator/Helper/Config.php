@@ -41,6 +41,25 @@ class Aoe_AttributeConfigurator_Helper_Config extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get Array with Attribute Codes that should be skipped
+     *
+     * @param Mage_Core_Model_Store|int|null $store Store reference for configuration
+     * @return array
+     */
+    public function getSkipAttributeCodes($store = null)
+    {
+        // Complete String with lots of \n
+        $configValue = Mage::getStoreConfig(self::XML_CONFIG_BASE . 'skip_attribute_codes', $store);
+        // Explode by \n
+        $rawCodes = explode(PHP_EOL, $configValue);
+        // Trim lines with just spaces to be empty values
+        $trimmedCodes = array_map('trim', $rawCodes);
+        // Remove empty values
+        $cleanedCodes = array_filter($trimmedCodes);
+        return $cleanedCodes;
+    }
+
+    /**
      * Checks File
      *
      * @param string $xmlLocation Location of XML File
