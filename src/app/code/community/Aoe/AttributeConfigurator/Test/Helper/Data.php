@@ -36,7 +36,7 @@ class Aoe_AttributeConfigurator_Test_Helper_Data extends EcomDev_PHPUnit_Test_Ca
     public function testCreateFileHash()
     {
         /** @var string $fileHash */
-        $fileHash = '030db930ec1f620eb9b975af9284cfe0';
+        $fileHash = '2dedc9a026657341b72623a4953c4d70';
         /** @var string $testFile */
         $testFileName = Mage::getModuleDir('', 'Aoe_AttributeConfigurator') .
                 DS . 'Test' . DS . 'Helper' . DS . 'Fixture' . DS . 'attribute-dummy.xml' ;

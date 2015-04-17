@@ -1,33 +1,48 @@
 <?xml version="1.0"?>
 <config>
-    <aoe_attributeconfig>
-        <attributesetslist>
-            <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default"/>
-            <attributeset name="Flöten/Blechbläser" skeleton="Default"/>
-        </attributesetslist>
-        <attributeslist>
+    <aoe_attributeconfigurator>
+        <attributesets>
+            <!-- Configure <attributeset> completely with required <attributegroups> -->
+            <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Three"/>
+                    <attributegroup name="Four"/>
+                </attributegroups>
+            </attributeset>
+            <attributeset name="Flöten/Blechbläser" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Salsa"/>
+                    <attributegroup name="Lambada"/>
+                </attributegroups>
+            </attributeset>
+        </attributesets>
+        <attributes>
             <attribute code="hersteller">
+                <!-- This is Data for a single <attribute> -->
+                <!-- <values> can only be used for <frontend_input>select</frontend_input> -->
                 <values>
                     <pair>
                         <key>1</key>
                         <de_DE>Fender</de_DE>
                     </pair>
-
                     <pair>
                         <key>1</key>
                         <de_DE>Acoustics</de_DE>
                     </pair>
-
                     <pair>
                         <key>1</key>
                         <de_DE>Hendrix</de_DE>
                     </pair>
                 </values>
                 <settings>
+                    <!-- <settings> as seen in Magentos Core models and eav_attribute DB Table -->
                     <is_visible>1</is_visible>
                     <is_configurable>1</is_configurable>
                     <is_global>1</is_global>
-                    <entity_type_id>4</entity_type_id>
                     <backend_model></backend_model>
                     <backend_type>varchar</backend_type>
                     <backend_table></backend_table>
@@ -42,8 +57,6 @@
                     <is_unique></is_unique>
                     <note></note>
                     <frontend_input_renderer></frontend_input_renderer>
-                    <is_global></is_global>
-                    <is_visible></is_visible>
                     <is_searchable></is_searchable>
                     <is_filterable></is_filterable>
                     <is_comparable></is_comparable>
@@ -54,20 +67,29 @@
                     <used_in_product_listing></used_in_product_listing>
                     <used_for_sort_by></used_for_sort_by>
                     <is_configurable></is_configurable>
-                    <apply_to>NULL</apply_to> <!-- NULL = All Product Types -->
+                    <apply_to>NULL</apply_to>
+                    <!-- NULL = All Product Types -->
                     <is_visible_in_advanced_search></is_visible_in_advanced_search>
                     <position></position>
                     <is_wysiwyg_enabled></is_wysiwyg_enabled>
                     <is_used_for_promo_rules></is_used_for_promo_rules>
                 </settings>
                 <attributesets>
-                    <attributeset name="Gitarren &amp; Saiteninstrumente"> <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                    <!-- <attributeset> name has to match an element from <attributesetslist> -->
+                    <attributeset name="Gitarren &amp; Saiteninstrumente">
                         <attributegroups>
-                            <attributegroup name="Default"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Two"/>
+                        </attributegroups>
+                    </attributeset>
+                    <attributeset name="Flöten/Blechbläser">
+                        <attributegroups>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Salsa"/>
                         </attributegroups>
                     </attributeset>
                 </attributesets>
             </attribute>
-        </attributeslist>
-    </aoe_attributeconfig>
+        </attributes>
+    </aoe_attributeconfigurator>
 </config>
