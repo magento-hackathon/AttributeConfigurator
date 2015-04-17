@@ -81,4 +81,16 @@ class Aoe_AttributeConfigurator_Test_Helper_Data extends EcomDev_PHPUnit_Test_Ca
 
         $this->assertFalse($this->_helper->checkAttributeMaintained(null));
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function testCheckExtensionInstallStatus()
+    {
+        $this->assertInternalType(
+            'bool',
+            $this->_helper->checkExtensionInstallStatus()
+        );
+    }
 }
