@@ -1,0 +1,4 @@
+config:
+  default/dev/template/allow_symlink: 1
+  default/catalog/attribute_configurator/product_xml_location: test/file/path.xml
+  default/catalog/attribute_configurator/migrate_flag: 1

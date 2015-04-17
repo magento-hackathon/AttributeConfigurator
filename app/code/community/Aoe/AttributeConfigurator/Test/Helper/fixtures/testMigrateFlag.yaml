@@ -1,0 +1,2 @@
+config:
+  default/catalog/attribute_configurator/migrate_flag: 1

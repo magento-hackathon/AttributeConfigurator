@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <catalog translate="label" module="catalog">
+            <label>Catalog</label>
+            <sort_order>200</sort_order>
+        </catalog>
+    </tabs>
+    <sections>
+        <catalog translate="label" module="catalog">
+            <groups>
+                <attribute_configurator translate="label">
+                    <label>Attribute Configurator</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>999</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <product_xml_location translate="label">
+                            <label>Product Attribute XML Location</label>
+                            <comment>Relative Path to the Magento 'var' directory, e.g. importexport/product_attributes.xml</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </product_xml_location>
+                        <skip_attribute_codes>
+                            <label>Attribute Codes to Skip</label>
+                            <comment>List of Attributes that should not be modified even if present in the XML, separate by newline</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </skip_attribute_codes>
+                        <migrate_flag translate="label">
+                            <label>Switch on Attribute Migration Feature</label>
+                            <comment><![CDATA[<strong style="color:red;">Attention! Migration of Data Types can be hazardous to your Product Data. Backup your Database first!</strong>]]></comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </migrate_flag>
+                    </fields>
+                </attribute_configurator>
+            </groups>
+        </catalog>
+    </sections>
+</config>

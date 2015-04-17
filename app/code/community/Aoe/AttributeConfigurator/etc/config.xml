@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Aoe_AttributeConfigurator>
+            <version>0.1.1</version>
+        </Aoe_AttributeConfigurator>
+    </modules>
+    <global>
+        <helpers>
+            <aoe_attributeconfigurator>
+                <class>Aoe_AttributeConfigurator_Helper</class>
+            </aoe_attributeconfigurator>
+        </helpers>
+        <models>
+            <aoe_attributeconfigurator>
+                <class>Aoe_AttributeConfigurator_Model</class>
+            </aoe_attributeconfigurator>
+        </models>
+        <resources>
+            <aoe_attributeconfigurator>
+                <setup>
+                    <module>Aoe_AttributeConfigurator</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </aoe_attributeconfigurator>
+        </resources>
+    </global>
+    <default>
+        <catalog>
+            <attribute_configurator>
+                <product_xml_location>importexport/product_attributes/attribute.xml</product_xml_location>
+                <skip_attribute_codes>attribute_code
+allow_message
+allow_open_amount
+category_ids
+color
+cost
+country_of_manufacture
+created_at
+custom_design
+custom_design_from
+custom_design_to
+custom_layout_update
+description
+email_template
+gallery
+giftcard_amounts
+giftcard_type
+gift_message_available
+gift_wrapping_available
+gift_wrapping_price
+group_price
+has_options
+image
+image_label
+is_recurring
+is_redeemable
+is_returnable
+lifetime
+links_exist
+links_purchased_separately
+links_title
+manufacturer
+media_gallery
+meta_autogenerate
+meta_description
+meta_keyword
+meta_title
+minimal_price
+msrp
+msrp_display_actual_price_type
+msrp_enabled
+name
+news_from_date
+news_to_date
+old_id
+open_amount_max
+open_amount_min
+options_container
+page_layout
+price
+price_type
+price_view
+recurring_profile
+related_tgtr_position_behavior
+related_tgtr_position_limit
+required_options
+revocation_product_type
+samples_title
+shipment_type
+short_description
+sku
+sku_type
+small_image
+small_image_label
+special_from_date
+special_price
+special_to_date
+status
+tax_class_id
+thumbnail
+thumbnail_label
+tier_price
+updated_at
+upsell_tgtr_position_behavior
+upsell_tgtr_position_limit
+url_key
+url_path
+use_config_allow_message
+use_config_email_template
+use_config_is_redeemable
+use_config_lifetime
+visibility
+weight
+weight_type</skip_attribute_codes>
+                <display_all>0</display_all>
+            </attribute_configurator>
+        </catalog>
+    </default>
+    <aoe_attributeconfigurator>
+        <title>Aoe Attributeconfigurator</title>
+        <!-- Do not remove -->
+    </aoe_attributeconfigurator>
+    <phpunit>
+        <suite>
+            <modules>
+                <Aoe_AttributeConfigurator/>
+            </modules>
+        </suite>
+    </phpunit>
+</config>
