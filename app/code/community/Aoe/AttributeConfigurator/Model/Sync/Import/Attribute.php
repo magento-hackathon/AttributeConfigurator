@@ -117,8 +117,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      *
      * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
-     * @return void
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
+     * @return void
      */
     protected function _updateOrMigrateAttribute($attribute, $attributeConfig)
     {
@@ -128,12 +128,10 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             );
         }
 
-        if (!$this->_getHelper()->checkMigrationActivated()) {
-            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception(
-                sprintf('Migration/Updating deactivated: Attribute \'%s\' untouched.', $attributeConfig->getCode())
-            );
-        }
+        // Update Attribute Group and Set Assignment before changing Attribute itself
+        $this->_updateAttributeSetsAndGroups($attributeConfig);
 
+        // Update Attribute Settings
         $this->_updateAttribute($attribute, $attributeConfig);
     }
 
@@ -142,21 +140,19 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      *
      * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
      * @return void
      */
     protected function _updateAttribute($attribute, $attributeConfig)
     {
-        $migrationState = $this->_getConfigHelper()->getMigrateFlag();
-        if ($migrationState) {
-            $this->_getHelper()->log(
-                sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not finished.', $attributeConfig->getCode())
+        if (!$this->_getHelper()->checkMigrationActivated()) {
+            throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception(
+                sprintf('Migration/Updating deactivated: Attribute \'%s\' not modified.', $attributeConfig->getCode())
             );
-            // TODO: Check implementation
-            // $this->migrateAttribute($attribute, $attributeConfig);
         }
-        $this->_getHelper()->log(
-            sprintf('Attribute \'%s\' left unmodified - Attribute Migration is disabled (see System/Config).', $attributeConfig->getCode())
-        );
+        sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not production safe.', $attributeConfig->getCode());
+        // TODO: Check implementation for (mostly) safe execution as this can potentially destroy data
+        // $this->migrateAttribute($attribute, $attributeConfig);
     }
 
     /**

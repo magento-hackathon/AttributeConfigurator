@@ -98,11 +98,16 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
         /** @var Mage_Eav_Model_Entity_Attribute_Set $newAttributeSet */
         $newAttributeSet = Mage::getModel('eav/entity_attribute_set');
 
-        $newAttributeSet->setEntityTypeId($this->_getEntityTypeId())
-            ->setAttributeSetName(trim($attributeSetConfig->getName()));
+        $newName = ucwords(
+            strtolower(
+                trim(
+                    $attributeSetConfig->getName()
+                )
+            )
+        );
 
-        // Initialize from Skeleton
-        $newAttributeSet->initFromSkeleton($skeletonAttributeSet->getId());
+        $newAttributeSet->setEntityTypeId($this->_getEntityTypeId())
+            ->setAttributeSetName($newName);
 
         try {
             $newAttributeSet->validate();
@@ -116,6 +121,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
             );
         }
         try {
+            $newAttributeSet->save();
+            // Initialize from Skeleton
+            $newAttributeSet->initFromSkeleton($skeletonAttributeSet->getId());
             $newAttributeSet->save();
         } catch (Exception $saveException) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
@@ -148,7 +156,15 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
         /** @var SimpleXMLIterator $group */
         foreach ($groups as $group) {
             $xmlAttr = current($group->attributes());
-            $groupName = $xmlAttr['name'];
+
+            $groupName = ucwords(
+                strtolower(
+                    trim(
+                        $xmlAttr['name']
+                    )
+                )
+            );
+
             try {
                 $setup->addAttributeGroup(
                     $this->_getEntityTypeId(),
