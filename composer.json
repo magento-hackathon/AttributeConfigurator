@@ -1,6 +1,6 @@
 {
-  "name": "aoepeople/attributeconfigurator",
-  "licence": "OSL-3.0",
+  "name": "aoepeople/aoe_attributeconfigurator",
+  "license": "OSL-3.0",
   "type": "magento-module",
   "description": "Module for attribute creation and maintenance by file instead of setup scripts or backend",
   "require": {
