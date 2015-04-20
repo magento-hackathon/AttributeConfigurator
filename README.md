@@ -14,7 +14,7 @@ Facts
 -----
 - version: 0.1.0
 - extension key: Aoe_AttributeConfigurator
-- [extension on GitHub](https://github.com/AOEpeople/AttributeConfigurator)
+- [extension on GitHub](https://github.com/AOEpeople/Aoe_AttributeConfigurator)
 
 Description
 -----------
@@ -65,7 +65,7 @@ type are incompatible, i.e. text to integer)
 Support
 -------
 If you have any issues with this extension, open an issue on
-[GitHub](https://github.com/AOEpeople/AttributeConfigurator/issues).
+[GitHub](https://github.com/AOEpeople/Aoe_AttributeConfigurator/issues).
 
 Contribution
 ------------
