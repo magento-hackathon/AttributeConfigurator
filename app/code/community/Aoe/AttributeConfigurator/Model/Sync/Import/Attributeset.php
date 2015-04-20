@@ -84,6 +84,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
      */
     protected function _createAttributeSet($attributeSetConfig)
     {
+        /** @var Mage_Eav_Model_Entity_Attribute_Set $skeletonAttributeSet */
         $skeletonAttributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getSkeleton());
         if (!$skeletonAttributeSet->getId()) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
@@ -99,6 +100,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
 
         $newAttributeSet->setEntityTypeId($this->_getEntityTypeId())
             ->setAttributeSetName(trim($attributeSetConfig->getName()));
+
+        // Initialize from Skeleton
+        $newAttributeSet->initFromSkeleton($skeletonAttributeSet->getId());
 
         try {
             $newAttributeSet->validate();
