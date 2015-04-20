@@ -135,8 +135,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         }
 
         $this->_updateAttribute($attribute, $attributeConfig);
-        // TODO: migration is dangerous and may be implemented later
-        // $this->migrateAttribute($attribute, $attributeConfig);
     }
 
     /**
@@ -148,7 +146,17 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
      */
     protected function _updateAttribute($attribute, $attributeConfig)
     {
-        // TODO: implement attribute updates later
+        $migrationState = $this->_getConfigHelper()->getMigrateFlag();
+        if ($migrationState) {
+            $this->_getHelper()->log(
+                sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not finished.', $attributeConfig->getCode())
+            );
+            // TODO: Check implementation
+            // $this->migrateAttribute($attribute, $attributeConfig);
+        }
+        $this->_getHelper()->log(
+            sprintf('Attribute \'%s\' left unmodified - Attribute Migration is disabled (see System/Config).', $attributeConfig->getCode())
+        );
     }
 
     /**

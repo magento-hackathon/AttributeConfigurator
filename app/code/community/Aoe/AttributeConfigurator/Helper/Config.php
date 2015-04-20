@@ -91,6 +91,4 @@ class Aoe_AttributeConfigurator_Helper_Config extends Mage_Core_Helper_Abstract
 
         return true;
     }
-
-
 }
