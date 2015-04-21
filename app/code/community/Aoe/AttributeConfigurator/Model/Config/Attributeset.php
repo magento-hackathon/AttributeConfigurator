@@ -38,7 +38,6 @@ class Aoe_AttributeConfigurator_Model_Config_Attributeset extends Aoe_AttributeC
      */
     public function getAttributeGroups()
     {
-
         if (isset($this->_attributeGroups)) {
             return $this->_attributeGroups;
         }
@@ -58,6 +57,7 @@ class Aoe_AttributeConfigurator_Model_Config_Attributeset extends Aoe_AttributeC
         }
 
         $this->_attributeGroups = $result;
+
         return $result;
     }
 

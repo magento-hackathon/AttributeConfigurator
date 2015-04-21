@@ -93,6 +93,7 @@ class Aoe_AttributeConfigurator_Test_Model_Config_Attribute extends EcomDev_PHPU
     protected function _createAttributeFromXMl($xml)
     {
         $xml = simplexml_load_string($xml);
+
         return Mage::getModel('aoe_attributeconfigurator/config_attribute', $xml);
     }
 }

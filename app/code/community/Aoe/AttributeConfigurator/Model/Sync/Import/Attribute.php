@@ -11,8 +11,9 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Model_Entity_Attribute
-                                                            implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
+class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
+    extends Mage_Eav_Model_Entity_Attribute
+    implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
     /**
      * Lazy fetched entity type id for product attributes
@@ -109,6 +110,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         if (in_array($code, $this->_attributesToSkip)) {
             return false;
         }
+
         return true;
     }
 
@@ -306,7 +308,28 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
          * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
          */
         // Actual Conversion of Attribute
-        $sql = 'UPDATE eav_attribute SET attribute_model=?, backend_model=?, backend_type=?, backend_table=?, frontend_model=?, frontend_input=?, frontend_label=?, frontend_class=?, source_model=?, is_required=?, is_user_defined=?, default_value=?, is_unique=?, note=? WHERE attribute_id=?';
+        $sql = <<<EOS
+UPDATE
+    eav_attribute
+SET
+    attribute_model = ?,
+    backend_model = ?,
+    backend_type = ?,
+    backend_table = ?,
+    frontend_model = ?,
+    frontend_input = ?,
+    frontend_label = ?,
+    frontend_class = ?,
+    source_model = ?,
+    is_required = ?,
+    is_user_defined = ?,
+    default_value = ?,
+    is_unique = ?,
+    note = ?
+WHERE
+    attribute_id = ?'
+EOS;
+
         try{
             $_dbConnection->query(
                 $sql,
@@ -333,7 +356,30 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         }
         // If entity of catalog_product, also update catalog_eav_attribute
         if ($attribute->getEntity()->getData('entity_type_code') === Mage_Catalog_Model_Product::ENTITY) {
-            $sql = 'UPDATE catalog_eav_attribute SET frontend_input_renderer=?, is_global, is_visible=?, is_searchable=?, is_filterable=?, is_comparable=?, is_visible_on_front=?, is_html_allowed_on_front=?, is_used_for_price_rules=?, is_filterable_in_search=?, used_in_product_listing=?, used_for_sort_by=?, is_configurable=?, apply_to=?, is_visible_in_advanced_search=?, position=?, is_wysiwyg_enabled=?, is_used_for_promo_rules=?';
+            $sql = <<<EOS
+UPDATE
+    catalog_eav_attribute
+SET
+    frontend_input_renderer = ?,
+    is_global = ?,
+    is_visible = ?,
+    is_searchable = ?,
+    is_filterable = ?,
+    is_comparable = ?,
+    is_visible_on_front = ?,
+    is_html_allowed_on_front = ?,
+    is_used_for_price_rules = ?,
+    is_filterable_in_search = ?,
+    used_in_product_listing = ?,
+    used_for_sort_by = ?,
+    is_configurable = ?,
+    apply_to = ?,
+    is_visible_in_advanced_search = ?,
+    position = ?,
+    is_wysiwyg_enabled = ?,
+    is_used_for_promo_rules = ?
+EOS;
+
             try{
                 $_dbConnection->query(
                     $sql,
@@ -358,7 +404,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
                         $data['is_used_for_promo_rules'],
                     ]
                 );
-            }catch(Exception $e){
+            } catch (Exception $e){
                 Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
             }
         }
@@ -386,8 +432,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         $sourceTable = implode([$entityTypeCode, 'entity', $sourceType], '_');
         $targetTable = implode([$entityTypeCode, 'entity', $targetType], '_');
         // Select all existing entries for given Attribute
-        $srcSql = 'SELECT'.
-            ' * FROM '.$sourceTable.' WHERE attribute_id = ? AND entity_type_id = ?';
+        $srcSql = 'SELECT' .
+            ' * FROM ' . $sourceTable . ' WHERE attribute_id = ? AND entity_type_id = ?';
         $sourceQuery = $_dbConnection->query(
             $srcSql,
             [
@@ -402,8 +448,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
                 $targetValue = $this->typeCast($currentValue, $sourceType, $targetType);
                 // Insert Value to target Entity
                 $sql = 'INSERT' .
-                    ' INTO '.$targetTable.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
-                try{
+                    ' INTO ' . $targetTable . ' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
+                try {
                     $_dbConnection->query(
                         $sql,
                         [
@@ -414,13 +460,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
                             $targetValue
                         ]
                     );
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
                 }
             }
             // Delete Value from source Entity
             $sql = 'DELETE' .
-                ' FROM '.$sourceTable.' WHERE value_id = ?';
+                ' FROM ' . $sourceTable . ' WHERE value_id = ?';
             $_dbConnection->query($sql, $row['value_id']);
         }
     }
@@ -460,6 +506,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
             case 'varchar':
                 return $this->truncateString((string) $value, 254);
         }
+
         return null;
     }
 
@@ -475,6 +522,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
         if (strlen($str) <= $maxlen) {
             return $str;
         }
+
         return substr($str, 0, $maxlen);
     }
 
@@ -528,5 +576,4 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute extends Mage_Eav_Mod
     {
         return Mage::helper('aoe_attributeconfigurator/config');
     }
-
 }

@@ -13,7 +13,8 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset extends Aoe_AttributeConfigurator_Model_Config_Abstract
+class Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset
+    extends Aoe_AttributeConfigurator_Model_Config_Abstract
 {
     /**
      * @return string

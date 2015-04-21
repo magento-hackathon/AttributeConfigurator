@@ -37,12 +37,11 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
      */
     public function getCode()
     {
-
         return (string) $this->_xmlElement['code'];
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getEntityTypeId()
     {

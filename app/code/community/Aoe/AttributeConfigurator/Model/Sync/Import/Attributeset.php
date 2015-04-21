@@ -11,7 +11,8 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
+class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
+    implements Aoe_AttributeConfigurator_Model_Sync_Import_Interface
 {
     /**
      * Lazy fetched entity type id for product attributes
@@ -120,6 +121,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset implements Aoe_At
                 )
             );
         }
+
         try {
             $newAttributeSet->save();
             // Initialize from Skeleton

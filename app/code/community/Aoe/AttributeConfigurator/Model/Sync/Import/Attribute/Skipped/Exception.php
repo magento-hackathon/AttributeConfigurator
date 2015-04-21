@@ -13,7 +13,8 @@
  * @link     https://github.com/AOEpeople/AttributeConfigurator
  * @see      https://github.com/magento-hackathon/AttributeConfigurator
  */
-class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception extends Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
+class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
+    extends Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
 {
     // empty body
 }

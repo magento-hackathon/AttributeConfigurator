@@ -58,6 +58,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     {
         /** @var Mage_Core_Model_Flag $flagModel */
         $flagModel = Mage::getModel('core/flag', ['flag_code' => $code])->loadSelf();
+
         return $flagModel->getFlagData();
     }
 
@@ -98,6 +99,7 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
         if ($columnConfig) {
             return true;
         }
+
         return false;
     }
 

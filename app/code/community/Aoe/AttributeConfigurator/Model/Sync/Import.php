@@ -16,6 +16,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
     /** @var Aoe_AttributeConfigurator_Model_Config $_config */
     protected $_config;
 
+    /** @var Aoe_AttributeConfigurator_Helper_Data $_helper */
+    protected $_helper;
+
     /**
      * Sync Import Method coordinates the migration process from
      * XML File Data into the Magento Database
@@ -79,6 +82,12 @@ class Aoe_AttributeConfigurator_Model_Sync_Import
      */
     protected function _getHelper()
     {
-        return Mage::helper('aoe_attributeconfigurator');
+        if (isset($this->_helper)) {
+            return $this->_helper;
+        }
+
+        $this->_helper = Mage::helper('aoe_attributeconfigurator');
+
+        return $this->_helper;
     }
 }

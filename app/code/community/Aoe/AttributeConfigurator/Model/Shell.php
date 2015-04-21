@@ -84,6 +84,7 @@ class Aoe_AttributeConfigurator_Model_Shell extends Mage_Core_Model_Abstract
         /** @var Aoe_AttributeConfigurator_Helper_Config $helper */
         $helper = Mage::helper('aoe_attributeconfigurator/config');
         $configFilePath = $helper->getImportFilePath();
+
         return $helper->checkFile($configFilePath);
     }
 
@@ -109,6 +110,7 @@ USAGE;
     {
         /** @var Aoe_AttributeConfigurator_Helper_Data $helper */
         $helper = Mage::helper('aoe_attributeconfigurator/data');
+
         return $helper->checkExtensionInstallStatus();
     }
 

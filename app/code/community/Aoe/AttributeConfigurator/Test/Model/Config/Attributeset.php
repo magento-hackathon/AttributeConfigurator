@@ -70,6 +70,7 @@ class Aoe_AttributeConfigurator_Test_Model_Config_Attributeset extends EcomDev_P
     protected function _createAttributeSetFromXMl($xml)
     {
         $xml = simplexml_load_string($xml);
+
         return Mage::getModel('aoe_attributeconfigurator/config_attributeset', $xml);
     }
 }

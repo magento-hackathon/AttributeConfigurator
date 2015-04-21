@@ -57,6 +57,7 @@ class Aoe_AttributeConfigurator_Test_Model_Config_Attribute_Iterator extends Eco
     protected function _createIteratorFromFixture($xml)
     {
         $xml = simplexml_load_string($xml);
+
         return Mage::getModel('aoe_attributeconfigurator/config_attribute_iterator', $xml);
     }
 }
