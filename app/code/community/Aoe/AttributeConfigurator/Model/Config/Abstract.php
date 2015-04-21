@@ -101,6 +101,7 @@ abstract class Aoe_AttributeConfigurator_Model_Config_Abstract
     protected function _addValidationMessage($string)
     {
         $this->_validationMessages[] = $string;
+
         return $this;
     }
 

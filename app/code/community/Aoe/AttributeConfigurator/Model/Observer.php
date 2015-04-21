@@ -42,9 +42,7 @@ class Aoe_AttributeConfigurator_Model_Observer
      */
     public function runAll()
     {
-        if ($this->_helper->isAttributeXmlNewer()) {
-            $this->_sync->import();
-        }
+        $this->_sync->import();
     }
 
     /**

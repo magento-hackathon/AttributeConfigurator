@@ -7,13 +7,17 @@
     "magento-hackathon/magento-composer-installer": "*"
   },
   "authors":[
-    {"name": "nhp"
+    {
+      "name": "nhp"
     }, 
-    { "name": "riconeitzel"
+    {
+      "name": "riconeitzel"
     },
-    {"name": "jadhub"
+    {
+      "name": "jadhub"
     },
-    {"name": "stefanschan"
+    {
+      "name": "stefanschan"
     }
   ]
 }

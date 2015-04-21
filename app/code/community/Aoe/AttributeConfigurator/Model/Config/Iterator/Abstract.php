@@ -69,6 +69,7 @@ abstract class Aoe_AttributeConfigurator_Model_Config_Iterator_Abstract implemen
             $this->_xmlIterator->current()
         );
         $this->_current = $current;
+
         return $current;
     }
 

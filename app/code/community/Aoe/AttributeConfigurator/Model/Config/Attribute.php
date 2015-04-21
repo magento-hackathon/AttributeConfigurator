@@ -48,6 +48,7 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
     {
         /** @var Mage_Eav_Model_Config $eavConfig */
         $eavConfig = Mage::getModel('eav/config');
+
         return (int) $eavConfig->getEntityType(self::ENTITY_TYPE_CODE)->getEntityTypeId();
     }
 
@@ -60,6 +61,7 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
     protected function _setEntityTypeId($entityTypeId)
     {
         $this->_setSettingsNode('entity_type_id', $entityTypeId);
+
         return $this;
     }
 
@@ -127,6 +129,7 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
         }
 
         $this->_attributeSets = $result;
+
         return $result;
     }
 

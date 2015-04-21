@@ -36,25 +36,6 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Method creates md5 hash of a given file based on its content.
-     * Returns false if no md5 could be generated for a file.
-     *
-     * @param string $filePath Full path to a file
-     *
-     * @return bool|string
-     */
-    public function createFileHash($filePath)
-    {
-        // @codingStandardsIgnoreStart
-        if (!file_exists($filePath) || !is_readable($filePath)) {
-            return false;
-        }
-        // @codingStandardsIgnoreEnd
-
-        return md5_file($filePath);
-    }
-
-    /**
      * Writes Values with given code to the core_flag Table (underutilized feature)
      *
      * @param string $code  flag_code for core_flag table
@@ -78,22 +59,6 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
         /** @var Mage_Core_Model_Flag $flagModel */
         $flagModel = Mage::getModel('core/flag', ['flag_code' => $code])->loadSelf();
         return $flagModel->getFlagData();
-    }
-
-    /**
-     * Check if the XML file is newer than the last imported one.
-     *
-     * @return bool
-     */
-    public function isAttributeXmlNewer()
-    {
-        $filename = $this->_getConfigHelper()->getImportFilename();
-        $currentFileHash = $this->getFlagValue(self::CODE_CURRENT_HASH);
-        $latestFileHash = $this->createFileHash($filename);
-        if ($latestFileHash !== $currentFileHash) {
-            return true;
-        }
-        return false;
     }
 
     /**
