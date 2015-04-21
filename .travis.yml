@@ -11,6 +11,7 @@ env:
     - MAGENTO_VERSION=magento-ce-1.8.0.0
 before_script:
   - curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+  - phpenv rehash
   - git clone git@github.com:AOEpeople/magento-coding-standard.git $(pear config-get php_dir)/PHP/CodeSniffer/Standards/Ecg
 script:
   # Code Style
