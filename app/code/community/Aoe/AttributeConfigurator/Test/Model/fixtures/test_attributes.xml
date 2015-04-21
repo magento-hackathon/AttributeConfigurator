@@ -2,51 +2,159 @@
 <config>
     <aoe_attributeconfigurator>
         <attributesets>
-            <attributeset name="Test Attributeset One" skeleton="Default"/>
-            <attributeset name="Test Attributeset Two" skeleton="Default"/>
+            <!-- Configure <attributeset> completely with required <attributegroups> -->
+            <attributeset name="Gitarren &amp; Saiteninstrumente" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Three"/>
+                    <attributegroup name="Four"/>
+                </attributegroups>
+            </attributeset>
+            <attributeset name="Flöten/Blechbläser" skeleton="Default">
+                <attributegroups>
+                    <attributegroup name="One"/>
+                    <attributegroup name="Two"/>
+                    <attributegroup name="Salsa"/>
+                    <attributegroup name="Lambada"/>
+                </attributegroups>
+            </attributeset>
         </attributesets>
         <attributes>
             <attribute code="test_attribute_one">
+                <!-- This is Data for a single <attribute> -->
+                <!-- <values> can only be used for <frontend_input>select</frontend_input> -->
+                <values>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Fender</de_DE>
+                    </pair>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Acoustics</de_DE>
+                    </pair>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Hendrix</de_DE>
+                    </pair>
+                </values>
                 <settings>
+                    <!-- <settings> as seen in Magentos Core models and eav_attribute DB Table -->
                     <is_visible>1</is_visible>
                     <is_configurable>1</is_configurable>
                     <is_global>1</is_global>
+                    <backend_model></backend_model>
                     <backend_type>varchar</backend_type>
+                    <backend_table></backend_table>
+                    <frontend_model></frontend_model>
+                    <frontend_input></frontend_input>
+                    <frontend_label></frontend_label>
+                    <frontend_class></frontend_class>
+                    <source_model></source_model>
+                    <is_required></is_required>
+                    <is_userdefined></is_userdefined>
+                    <default_value></default_value>
+                    <is_unique></is_unique>
+                    <note></note>
+                    <frontend_input_renderer></frontend_input_renderer>
+                    <is_searchable></is_searchable>
+                    <is_filterable></is_filterable>
+                    <is_comparable></is_comparable>
+                    <is_visible_on_front></is_visible_on_front>
+                    <is_html_allowed_on_front></is_html_allowed_on_front>
+                    <is_used_for_price_rules></is_used_for_price_rules>
+                    <is_filterable_in_search></is_filterable_in_search>
+                    <used_in_product_listing></used_in_product_listing>
+                    <used_for_sort_by></used_for_sort_by>
+                    <is_configurable></is_configurable>
                     <apply_to>NULL</apply_to>
+                    <!-- NULL = All Product Types -->
+                    <is_visible_in_advanced_search></is_visible_in_advanced_search>
+                    <position></position>
+                    <is_wysiwyg_enabled></is_wysiwyg_enabled>
+                    <is_used_for_promo_rules></is_used_for_promo_rules>
                 </settings>
                 <attributesets>
-                    <attributeset name="Test Attributeset One">
-                        <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                    <!-- <attributeset> name has to match an element from <attributesetslist> -->
+                    <attributeset name="Gitarren &amp; Saiteninstrumente">
                         <attributegroups>
-                            <attributegroup name="Test Group One"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Two"/>
                         </attributegroups>
                     </attributeset>
-                    <attributeset name="Test Attributeset Two">
-                        <!-- Attributeset Name Attribute has to match an element from the <attributesetslist> -->
+                    <attributeset name="Flöten/Blechbläser">
                         <attributegroups>
-                            <attributegroup name="Test Group Two"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Salsa"/>
                         </attributegroups>
                     </attributeset>
                 </attributesets>
             </attribute>
-
             <attribute code="test_attribute_two">
+                <!-- This is Data for a single <attribute> -->
+                <!-- <values> can only be used for <frontend_input>select</frontend_input> -->
+                <values>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Fender</de_DE>
+                    </pair>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Acoustics</de_DE>
+                    </pair>
+                    <pair>
+                        <key>1</key>
+                        <de_DE>Hendrix</de_DE>
+                    </pair>
+                </values>
                 <settings>
+                    <!-- <settings> as seen in Magentos Core models and eav_attribute DB Table -->
                     <is_visible>1</is_visible>
                     <is_configurable>1</is_configurable>
                     <is_global>1</is_global>
+                    <backend_model></backend_model>
                     <backend_type>varchar</backend_type>
+                    <backend_table></backend_table>
+                    <frontend_model></frontend_model>
+                    <frontend_input></frontend_input>
+                    <frontend_label></frontend_label>
+                    <frontend_class></frontend_class>
+                    <source_model></source_model>
+                    <is_required></is_required>
+                    <is_userdefined></is_userdefined>
+                    <default_value></default_value>
+                    <is_unique></is_unique>
+                    <note></note>
+                    <frontend_input_renderer></frontend_input_renderer>
+                    <is_searchable></is_searchable>
+                    <is_filterable></is_filterable>
+                    <is_comparable></is_comparable>
+                    <is_visible_on_front></is_visible_on_front>
+                    <is_html_allowed_on_front></is_html_allowed_on_front>
+                    <is_used_for_price_rules></is_used_for_price_rules>
+                    <is_filterable_in_search></is_filterable_in_search>
+                    <used_in_product_listing></used_in_product_listing>
+                    <used_for_sort_by></used_for_sort_by>
+                    <is_configurable></is_configurable>
                     <apply_to>NULL</apply_to>
+                    <!-- NULL = All Product Types -->
+                    <is_visible_in_advanced_search></is_visible_in_advanced_search>
+                    <position></position>
+                    <is_wysiwyg_enabled></is_wysiwyg_enabled>
+                    <is_used_for_promo_rules></is_used_for_promo_rules>
                 </settings>
                 <attributesets>
-                    <attributeset name="Test Attributeset One">
+                    <!-- <attributeset> name has to match an element from <attributesetslist> -->
+                    <attributeset name="Gitarren &amp; Saiteninstrumente">
                         <attributegroups>
-                            <attributegroup name="Test Group One"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Two"/>
                         </attributegroups>
                     </attributeset>
-                    <attributeset name="Test Attributeset Two">
+                    <attributeset name="Flöten/Blechbläser">
                         <attributegroups>
-                            <attributegroup name="Test Group Two"/>
+                            <!-- Only apply a single <attributegroup> -->
+                            <attributegroup name="Salsa"/>
                         </attributegroups>
                     </attributeset>
                 </attributesets>

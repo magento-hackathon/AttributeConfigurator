@@ -71,7 +71,9 @@ class Aoe_AttributeConfigurator_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function checkAttributeMaintained($attribute)
     {
-        $attribute->load($attribute->getId());
+        if (!is_null($attribute) && $attribute->getId()) {
+            $attribute->load($attribute->getId());
+        }
         if ($attribute && $attribute->getData(self::EAV_ATTRIBUTE_MAINTAINED)) {
             return true;
         }

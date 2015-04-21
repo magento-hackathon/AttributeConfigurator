@@ -37,11 +37,15 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_Att
         /** @var EcomDev_PHPUnit_Mock_Proxy|Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $mock */
         $mock = $this->getModelMock(
             'aoe_attributeconfigurator/sync_import_attribute',
-            ['_processAttribute']
+            ['_processAttribute', '_createAttribute']
         );
 
         $mock->expects($this->exactly(2))
             ->method('_processAttribute');
+
+        // Attribute already has been created by ProcessAttribute
+        $mock->expects($this->exactly(0))
+            ->method('_createAttribute');
 
         $this->_mockConfigHelperLoadingXml();
         $config = $this->_getConfigModel();
@@ -51,10 +55,18 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_Att
 
     /**
      * @test
+     * @dataProvider dataProvider
      * @return void
      */
     public function checkCreateAttributeCallCount()
     {
+        // check expectations
+        $expected = $this->expected($label);
+        $expectedAttributeCodes = $expected['attributes'];
+
+        // Remove Attribute from XML before checking again -> Attribute otherwise already exists
+        $this->_removeAttributes($expectedAttributeCodes);
+
         /** @var EcomDev_PHPUnit_Mock_Proxy|Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $mock */
         $mock = $this->getModelMock(
             'aoe_attributeconfigurator/sync_import_attribute',
