@@ -108,7 +108,17 @@ class Aoe_AttributeConfigurator_Model_Config extends Mage_Core_Model_Config
         }
         // @codingStandardsIgnoreEnd
 
-        $xml = simplexml_load_file($filePath, 'Varien_Simplexml_Element');
+        try {
+            $xml = simplexml_load_file($filePath, 'Varien_Simplexml_Element');
+        } catch (Exception $e) {
+            throw new Aoe_AttributeConfigurator_Model_Exception(
+                sprintf(
+                    'unable to parse xml file \'%s\'.',
+                    $filePath
+                )
+            );
+        }
+
         if (false === $xml) {
             throw new Aoe_AttributeConfigurator_Model_Exception(
                 sprintf(

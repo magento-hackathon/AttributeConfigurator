@@ -86,17 +86,19 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
         /** @var SimpleXMLElement $settings */
         $settingsNode = $this->_xmlElement->{'settings'};
         $settings = [];
-        foreach ($settingsNode->children() as $_setting) {
-            /** @var SimpleXmlElement $_setting */
+        if (count($settingsNode->children()) > 0) {
+            foreach ($settingsNode->children() as $_setting) {
+                /** @var SimpleXmlElement $_setting */
 
-            // pseudocast the parsed xml node values
-            $value = (string) $_setting;
-            if (is_numeric($value)) {
-                $value = (int) $value;
-            } else if ('NULL' == $value || 'null' == $value) {
-                $value = null;
+                // pseudocast the parsed xml node values
+                $value = (string) $_setting;
+                if (is_numeric($value)) {
+                    $value = (int) $value;
+                } else if ('NULL' == $value || 'null' == $value) {
+                    $value = null;
+                }
+                $settings[$_setting->getName()] = $value;
             }
-            $settings[$_setting->getName()] = $value;
         }
 
         $this->_settingsArray = $settings;
