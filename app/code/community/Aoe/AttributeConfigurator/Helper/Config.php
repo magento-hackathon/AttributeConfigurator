@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Aoe_AttributeConfigurator_Helper_Config
  *
@@ -67,7 +68,7 @@ class Aoe_AttributeConfigurator_Helper_Config extends Mage_Core_Helper_Abstract
         $trimmedCodes = array_map('trim', $rawCodes);
         // Remove empty values
         $cleanedCodes = array_filter($trimmedCodes);
-        
+
         return $cleanedCodes;
     }
 
