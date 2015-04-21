@@ -1,6 +1,6 @@
 [![AOE](aoe-logo.png)](http://www.aoe.com)
 
-# AttributeConfigurator
+# Aoe_AttributeConfigurator Magento Module
 
 [![Build Status](https://travis-ci.org/AOEpeople/Aoe_AttributeConfigurator.svg)](https://travis-ci.org/AOEpeople/Aoe_AttributeConfigurator)
 
