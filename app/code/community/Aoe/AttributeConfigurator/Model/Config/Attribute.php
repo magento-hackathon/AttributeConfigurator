@@ -86,7 +86,7 @@ class Aoe_AttributeConfigurator_Model_Config_Attribute extends Aoe_AttributeConf
         /** @var SimpleXMLElement $settings */
         $settingsNode = $this->_xmlElement->{'settings'};
         $settings = [];
-        if (count($settingsNode->children()) > 0) {
+        if ($settingsNode->count() > 0) {
             foreach ($settingsNode->children() as $_setting) {
                 /** @var SimpleXmlElement $_setting */
 

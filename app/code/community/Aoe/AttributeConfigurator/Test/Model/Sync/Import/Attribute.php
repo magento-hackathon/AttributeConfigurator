@@ -61,7 +61,7 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_Att
     public function checkCreateAttributeCallCount()
     {
         // check expectations
-        $expected = $this->expected($label);
+        $expected = $this->expected();
         $expectedAttributeCodes = $expected['attributes'];
 
         // Remove Attribute from XML before checking again -> Attribute otherwise already exists
