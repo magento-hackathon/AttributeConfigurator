@@ -14,7 +14,7 @@ before_script:
   - git clone https://github.com/AOEpeople/magento-coding-standard $(pear config-get php_dir)/PHP/CodeSniffer/Standards/Ecg
 script:
   # Code Style
-  - php phpcs.phar --standard=$(pear config-get php_dir)/PHP/CodeSniffer/Standards/Ecg --encoding=utf-8 --report-width=180 ./app
+  - php phpcs.phar --config-set ignore_warnings_on_exit --standard=$(pear config-get php_dir)/PHP/CodeSniffer/Standards/Ecg --encoding=utf-8 --report-width=180 ./app
   # Unit Tests
   - curl -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand/master/setup.sh | bash
 notifications:
