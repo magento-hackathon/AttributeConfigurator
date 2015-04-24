@@ -56,16 +56,14 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_Att
     /**
      * @test
      * @dataProvider dataProvider
+     * @param string   $label          Data provider label
+     * @param string[] $attributeCodes Data provider attribute codes
      * @return void
      */
-    public function checkCreateAttributeCallCount()
+    public function checkCreateAttributeCallCount($label, $attributeCodes)
     {
-        // check expectations
-        $expected = $this->expected();
-        $expectedAttributeCodes = $expected['attributes'];
-
         // Remove Attribute from XML before checking again -> Attribute otherwise already exists
-        $this->_removeAttributes($expectedAttributeCodes);
+        $this->_removeAttributes($attributeCodes);
 
         /** @var EcomDev_PHPUnit_Mock_Proxy|Aoe_AttributeConfigurator_Model_Sync_Import_Attribute $mock */
         $mock = $this->getModelMock(
@@ -154,6 +152,10 @@ class Aoe_AttributeConfigurator_Test_Model_Sync_Import_Attribute extends Aoe_Att
      */
     protected function _removeAttributes($attributeCodes)
     {
+        if (count($attributeCodes) == 0) {
+            // Don´t delete attributes if no attributes are passed
+            return;
+        }
         $collection = $this->_fetchAttributes($attributeCodes);
         foreach ($collection as $_attribute) {
             /** @var Mage_Eav_Model_Attribute $_attribute */

@@ -25,6 +25,36 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /** @var array */
     protected $_attributesToSkip;
 
+    /** @var array Attribute Properties that cannot be changed */
+    protected $_fixedProps = [
+        'attribute_id',
+        'entity_type_id',
+        'attribute_code',
+        'attribute_model',
+        'is_unique',
+        'is_maintained_by_configurator'
+    ];
+
+    /** @var array Attribute Properties that can be changed without problems */
+    protected $_changeableProps = [
+        'is_required',
+        'is_user_defined',
+        'note'
+    ];
+
+    /** @var array Attribute Properties that need to be migrated if changed */
+    protected $_migratableProps = [
+        'attribute_model',
+        'backend_model',
+        'backend_type',
+        'frontend_model',
+        'frontend_input',
+        'frontend_label',
+        'frontend_class',
+        'source_model',
+        'default_value'
+    ];
+
     /**
      * Run the attribute update/import
      *
@@ -154,6 +184,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         }
         sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not production safe.', $attributeConfig->getCode());
         // TODO: Check implementation for (mostly) safe execution as this can potentially destroy data
+        $attributeDiff = $this->_getAttributeDiff($attribute, $attributeConfig);
         // $this->migrateAttribute($attribute, $attributeConfig);
     }
 
@@ -575,5 +606,26 @@ EOS;
     protected function _getConfigHelper()
     {
         return Mage::helper('aoe_attributeconfigurator/config');
+    }
+
+    /**
+     * Create Diff Data between incoming Attribute and existing Attribute Data
+     *
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @return array
+     */
+    protected function _getAttributeDiff($attribute, $attributeConfig)
+    {
+        $incomingData = $attributeConfig->getSettingsAsArray();
+        $existingData = $attribute->getData();
+        $diff = [];
+        foreach ($incomingData as $key => $value) {
+            if (isset($existingData[$key]) && $existingData[$key] != $value) {
+                $diff[] = [$key => $value];
+            }
+        }
+
+        return $diff;
     }
 }
