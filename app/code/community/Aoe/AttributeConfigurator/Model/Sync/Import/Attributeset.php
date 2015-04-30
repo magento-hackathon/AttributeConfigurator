@@ -99,13 +99,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
         /** @var Mage_Eav_Model_Entity_Attribute_Set $newAttributeSet */
         $newAttributeSet = Mage::getModel('eav/entity_attribute_set');
 
-        $newName = ucwords(
-            strtolower(
-                trim(
-                    $attributeSetConfig->getName()
-                )
-            )
-        );
+        $newName = trim($attributeSetConfig->getName());
 
         $newAttributeSet->setEntityTypeId($this->_getEntityTypeId())
             ->setAttributeSetName($newName);
@@ -159,13 +153,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
         foreach ($groups as $group) {
             $xmlAttr = current($group->attributes());
 
-            $groupName = ucwords(
-                strtolower(
-                    trim(
-                        $xmlAttr['name']
-                    )
-                )
-            );
+            $groupName = trim($xmlAttr['name']);
 
             try {
                 $setup->addAttributeGroup(

@@ -253,7 +253,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
          */
         $attributeSetName = trim($attributeSet->getName());
         if (strtolower($attributeSetName) == 'default') {
-            $attributeSetName = ucwords(strtolower($attributeSetName));
+            $attributeSetName = trim($attributeSetName);
         }
 
         $entityTypeCode = $setup->getEntityType($attributeConfig->getEntityTypeId())['entity_type_code'];
