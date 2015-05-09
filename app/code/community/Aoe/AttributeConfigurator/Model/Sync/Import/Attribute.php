@@ -184,6 +184,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         }
         sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not production safe.', $attributeConfig->getCode());
         // TODO: Check implementation for (mostly) safe execution as this can potentially destroy data
+
+        // Compute Differences between existing settings and incoming settings
         $attributeDiff = $this->_getAttributeDiff($attribute, $attributeConfig);
 
         // Remove Fixed Properties = can not be changed
@@ -191,7 +193,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
 
         // Update Changeable Settings
         $this->_changeableAttributeUpdate($attribute, $attributeConfig, $attributeDiff);
-        
+
         // Update Settings that need migration methods
         $this->_migratableAttributeUpdate($attribute, $attributeConfig, $attributeDiff);
     }
@@ -316,6 +318,49 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
                     $this->_getHelper()->log(sprintf('Added: Attribute \'%s\' to Attribute Set Id #%s.', $attributeConfig->getCode(), $attributeSetId));
                 } catch (Exception $e) {
                     $this->_getHelper()->log(sprintf('Error: When Adding Attribute \'%s\' to Attibute Set Id #%s.', $attributeConfig->getCode(), $attributeSetId), $e);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @param array $attributeDiff
+     */
+    protected function _migratableAttributeUpdate($attribute, $attributeConfig, $attributeDiff)
+    {
+        foreach($this->$_migratableProps as $prop) {
+            // Only act if this is a changed setting
+            if(in_array($attributeDiff, $prop)) {
+                switch ($prop) {
+                    case 'attribute_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'backend_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'backend_type':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'frontend_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'frontend_input':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'frontend_label':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'frontend_class':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'source_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'default_value':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
                 }
             }
         }
