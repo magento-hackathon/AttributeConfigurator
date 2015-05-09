@@ -185,7 +185,15 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         sprintf('Attribute \'%s\' left unmodified - Attribute migration implementation not production safe.', $attributeConfig->getCode());
         // TODO: Check implementation for (mostly) safe execution as this can potentially destroy data
         $attributeDiff = $this->_getAttributeDiff($attribute, $attributeConfig);
-        // $this->migrateAttribute($attribute, $attributeConfig);
+
+        // Remove Fixed Properties = can not be changed
+        $attributeDiff = array_diff($attributeDiff, $this->_fixedProps);
+
+        // Update Changeable Settings
+        $this->_changeableAttributeUpdate($attribute, $attributeConfig, $attributeDiff);
+        
+        // Update Settings that need migration methods
+        $this->_migratableAttributeUpdate($attribute, $attributeConfig, $attributeDiff);
     }
 
     /**
@@ -621,8 +629,13 @@ EOS;
         $existingData = $attribute->getData();
         $diff = [];
         foreach ($incomingData as $key => $value) {
-            if (isset($existingData[$key]) && $existingData[$key] != $value) {
-                $diff[] = [$key => $value];
+            /**
+             * Only add this to the diff if key exists in Attribute Config (limiting incoming to valid settings)
+             * and Incoming is different from existing setting
+             * and Incoming Value is not empty (empty values are being ignored then
+             */
+            if (isset($existingData[$key]) && $existingData[$key] != $value && $value !== '') {
+                $diff[] = $key;
             }
         }
 
