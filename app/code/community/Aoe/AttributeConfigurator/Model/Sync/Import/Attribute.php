@@ -27,12 +27,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
 
     /** @var array Attribute Properties that cannot be changed */
     protected $_fixedProps = [
-        'attribute_id',
-        'entity_type_id',
-        'attribute_code',
-        'attribute_model',
-        'is_unique',
-        'is_maintained_by_configurator'
+        'attribute_id', // Internal ID
+        'entity_type_id', // Can't toggle Attributes between entities, i´m afraid
+        'attribute_code', // Obviously
+        'attribute_model', // Makes no sense
+        'is_unique', // Unique is already streched over all entities, hard to roll back
+        'is_maintained_by_configurator', // Fixed for this module
+        'frontend_input', // Will be set dependent on backend_type
     ];
 
     /** @var array Attribute Properties that can be changed without problems */
@@ -48,11 +49,19 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         'backend_model',
         'backend_type',
         'frontend_model',
-        'frontend_input',
         'frontend_label',
         'frontend_class',
         'source_model',
         'default_value'
+    ];
+
+    /** @var array Possible Frontend Input Types for different Backend Types, first value is the preferred */
+    protected $_frontendMappping = [
+        'varchar' => ['textarea', 'text'],
+        'datetime' => 'date',
+        'int' => ['text', 'select', 'hidden'],
+        'text' => ['textarea', 'text', 'multiline', 'multiselect'],
+        'decimal' => ['text', 'price', 'weight']
     ];
 
     /**
@@ -329,12 +338,9 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
      * @param array $attributeDiff
      */
     protected function _migratableAttributeUpdate($attribute, $attributeConfig, $attributeDiff)
-    {#
-
-        var_dump($attributeDiff);
-
+    {
         foreach($this->_migratableProps as $prop) {
-            // Only act if this is a changed setting
+            // Only act if this is a changed setting#
             if(in_array($prop, $attributeDiff)) {
                 switch ($prop) {
                     case 'attribute_model':
@@ -344,13 +350,24 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
                         $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
                         break;
                     case 'backend_type':
-                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        $backendType = $attributeConfig->getSettingsAsArray()['backend_type'];
+                        $frontendInput = $attributeConfig->getSettingsAsArray()['frontend_input'];
+                        if ($backendType == 'static') {
+                            $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, static type not supported', $prop, $attribute->getName()));
+                            break;
+                        }
+                        $this->_getHelper()->log(sprintf('Migrating setting %s for attribute %s', $prop, $attribute->getName()));
+                        $this->_convertBackendType(
+                            $attribute,
+                            $backendType,
+                            $frontendInput
+                        );
                         break;
                     case 'frontend_model':
                         $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
                         break;
                     case 'frontend_input':
-                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, can\'t be set independent of backend_type.', $prop, $attribute->getName()));
                         break;
                     case 'frontend_label':
                         $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
@@ -372,47 +389,29 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Converts existing Attribute to different type
      *
-     * @param  string $attributeCode Attribute Code
-     * @param  int    $entityType    Entity Type which Attribute is attached to
-     * @param  array  $data          New Attribute Data
+     * @param  Mage_Catalog_Model_Entity_Attribute $attribute     Attribute
+     * @param  string                              $backendType   New Backend Type
+     * @param  string                              $frontendInput New Frontend Input
      * @return void
      */
-    public function convertAttribute($attributeCode, $entityType, $data = null)
+    protected function _convertBackendType($attribute, $backendType, $frontendInput)
     {
         $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
-        /* @var $attribute Mage_Eav_Model_Entity_Attribute */
-        $attribute = $this->loadByCode($entityType, $attributeCode);
-        // Stop if $data not set or Attribute not available or Attribute not maintained by module
-        $this->_getHelper()->checkAttributeMaintained($attribute);
-        if ($data === null || !$attribute || !$this->_getHelper()->checkAttributeMaintained($attribute)) {
-            return;
-        }
-        // Migrate existing Attribute Values if new backend_type different from old one
-        if ($attribute->getBackendType() !== $data['backend_type']) {
-            $this->migrateData($attribute, $data);
-        }
-        /*
-         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
-         */
+
+        $frontendMapping = $this->_frontendMappping[$backendType];
+        if (!in_array($frontendInput, $frontendMapping)) {
+            // Override Frontend Input if invalid one was supplied in XML with the first one from the _frontendMappping
+            $frontendInput = $this->_frontendMappping[$backendType][0];
+            $this->_getHelper()->log(sprintf('Overriding faulty frontend type for attribute %s while migrating with %s.', $attribute->getData('attribute_code'), $frontendInput));
+        };
+
         // Actual Conversion of Attribute
         $sql = <<<EOS
 UPDATE
     eav_attribute
 SET
-    attribute_model = ?,
-    backend_model = ?,
     backend_type = ?,
-    backend_table = ?,
-    frontend_model = ?,
     frontend_input = ?,
-    frontend_label = ?,
-    frontend_class = ?,
-    source_model = ?,
-    is_required = ?,
-    is_user_defined = ?,
-    default_value = ?,
-    is_unique = ?,
-    note = ?
 WHERE
     attribute_id = ?'
 EOS;
@@ -421,79 +420,14 @@ EOS;
             $_dbConnection->query(
                 $sql,
                 [
-                    $data['attribute_model'],
-                    $data['backend_model'],
-                    $data['backend_type'],
-                    $data['backend_table'],
-                    $data['frontend_model'],
-                    $data['frontend_input'],
-                    $data['frontend_label'],
-                    $data['frontend_class'],
-                    $data['source_model'],
-                    $data['is_required'],
-                    $data['is_user_defined'],
-                    $data['default_value'],
-                    $data['is_unique'],
-                    $data['note'],
+                    $backendType,
+                    $frontendInput,
                     $attribute->getId()
                 ]
             );
+            $this->migrateData($attribute, $backendType);
         }catch(Exception $e){
-            Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
-        }
-        // If entity of catalog_product, also update catalog_eav_attribute
-        if ($attribute->getEntity()->getData('entity_type_code') === Mage_Catalog_Model_Product::ENTITY) {
-            $sql = <<<EOS
-UPDATE
-    catalog_eav_attribute
-SET
-    frontend_input_renderer = ?,
-    is_global = ?,
-    is_visible = ?,
-    is_searchable = ?,
-    is_filterable = ?,
-    is_comparable = ?,
-    is_visible_on_front = ?,
-    is_html_allowed_on_front = ?,
-    is_used_for_price_rules = ?,
-    is_filterable_in_search = ?,
-    used_in_product_listing = ?,
-    used_for_sort_by = ?,
-    is_configurable = ?,
-    apply_to = ?,
-    is_visible_in_advanced_search = ?,
-    position = ?,
-    is_wysiwyg_enabled = ?,
-    is_used_for_promo_rules = ?
-EOS;
-
-            try{
-                $_dbConnection->query(
-                    $sql,
-                    [
-                        $data['frontend_input_renderer'],
-                        $data['is_global'],
-                        $data['is_visible'],
-                        $data['is_searchable'],
-                        $data['is_filterable'],
-                        $data['is_comparable'],
-                        $data['is_visible_on_front'],
-                        $data['is_html_allowed_on_front'],
-                        $data['is_used_for_price_rules'],
-                        $data['is_filterable_in_search'],
-                        $data['used_in_product_listing'],
-                        $data['used_for_sort_by'],
-                        $data['is_configurable'],
-                        $data['apply_to'],
-                        $data['is_visible_in_advanced_search'],
-                        $data['position'],
-                        $data['is_wysiwyg_enabled'],
-                        $data['is_used_for_promo_rules'],
-                    ]
-                );
-            } catch (Exception $e){
-                Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
-            }
+            $this->_getHelper()->log(sprintf('Exception occured while converting Backend Type'), $e);
         }
     }
 
@@ -506,6 +440,9 @@ EOS;
      */
     private function migrateData($attribute, $data = null)
     {
+        /*
+         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
+         */
         if ($data === null) {
             return;
         }
