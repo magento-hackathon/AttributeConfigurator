@@ -686,4 +686,23 @@ EOS;
 
         return $diff;
     }
+
+    /**
+     * Update changeable properties of a managed attribute
+     *
+     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @param array                                            $attributeDiff   Attributes to be updated
+     * @return void
+     */
+    protected function _changeableAttributeUpdate($attribute, $attributeConfig, $attributeDiff)
+    {
+        $attributeSetting = $attributeConfig->getSettingsAsArray();
+
+        foreach($attributeDiff as $property) {
+            if(in_array($property, $this->_changeableProps)) {
+                $attribute->setData($property, $attributeSetting[$property]);
+            }
+        }
+    }
 }
