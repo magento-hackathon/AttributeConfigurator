@@ -78,6 +78,7 @@ Any contribution is highly appreciated. The best way to contribute code is to op
 
 ## Developer
 
+Maik Rosenthal<br />
 Nils Preuss<br />
 Rico Neitzel<br />
 Stefan Schwan<br />
