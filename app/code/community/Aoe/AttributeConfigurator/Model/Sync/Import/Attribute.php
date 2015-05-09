@@ -329,10 +329,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
      * @param array $attributeDiff
      */
     protected function _migratableAttributeUpdate($attribute, $attributeConfig, $attributeDiff)
-    {
-        foreach($this->$_migratableProps as $prop) {
+    {#
+
+        var_dump($attributeDiff);
+
+        foreach($this->_migratableProps as $prop) {
             // Only act if this is a changed setting
-            if(in_array($attributeDiff, $prop)) {
+            if(in_array($prop, $attributeDiff)) {
                 switch ($prop) {
                     case 'attribute_model':
                         $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
@@ -672,6 +675,7 @@ EOS;
     {
         $incomingData = $attributeConfig->getSettingsAsArray();
         $existingData = $attribute->getData();
+
         $diff = [];
         foreach ($incomingData as $key => $value) {
             /**
@@ -679,7 +683,8 @@ EOS;
              * and Incoming is different from existing setting
              * and Incoming Value is not empty (empty values are being ignored then
              */
-            if (isset($existingData[$key]) && $existingData[$key] != $value && $value !== '') {
+            if (array_key_exists(trim($key), $existingData) && $existingData[trim($key)] != $value && !empty($value)) {
+
                 $diff[] = $key;
             }
         }
