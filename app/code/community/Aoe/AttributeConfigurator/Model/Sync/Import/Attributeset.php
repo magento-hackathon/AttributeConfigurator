@@ -66,9 +66,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
         $attributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getName());
         if (!$attributeSet->getId()) {
             // Attribute Set does not exist, create
-            $this->_createAttributeSet($attributeSetConfig);
+            $attributeSet = $this->_createAttributeSet($attributeSetConfig);
         }
-        $attributeSet = $this->_loadAttributeSetByName($attributeSetConfig->getName());
         if ($attributeSet->getId()) {
             // Update Groups on Attribute Set
             $this->_updateAttributeGroups($attributeSetConfig, $attributeSet->getId(), $attributeSet->getData('attribute_set_name'));
@@ -81,7 +80,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
      * @param  Aoe_AttributeConfigurator_Model_Config_Attributeset $attributeSetConfig Attribute Set Config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Validation_Exception
-     * @return void
+     * @return Mage_Eav_Model_Entity_Attribute_Set
      */
     protected function _createAttributeSet($attributeSetConfig)
     {
@@ -115,12 +114,16 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
                 )
             );
         }
+        $this->_getHelper()->log(sprintf('Attribute Set \'%s\' Data has been validated', $attributeSetConfig->getName()));
 
         try {
             $newAttributeSet->save();
+            $this->_getHelper()->log(sprintf('Attribute Set \'%s\' created.', $attributeSetConfig->getName()));
             // Initialize from Skeleton
             $newAttributeSet->initFromSkeleton($skeletonAttributeSet->getId());
+            $this->_getHelper()->log(sprintf('Attribute Set \'%s\' initialized from skeleton %s.', $attributeSetConfig->getName(), $attributeSetConfig->getSkeleton()));
             $newAttributeSet->save();
+            $this->_getHelper()->log(sprintf('Attribute Set \'%s\' updated from skeleton.', $attributeSetConfig->getName()));
         } catch (Exception $saveException) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset_Creation_Exception(
                 sprintf(
@@ -131,6 +134,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attributeset
             );
         }
         $this->_getHelper()->log(sprintf('Attribute Set \'%s\' has been created/updated', $attributeSetConfig->getName()));
+
+        return $newAttributeSet;
     }
 
     /**

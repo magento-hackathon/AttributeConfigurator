@@ -43,6 +43,12 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         'note'
     ];
 
+    /** @var array Attribute Properties boolean validation */
+    protected $_booleanValidation = [
+        'is_required',
+        'is_user_defined'
+    ];
+
     /** @var array Attribute Properties that need to be migrated if changed */
     protected $_migratableProps = [
         'attribute_model',
@@ -58,7 +64,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /** @var array Possible Frontend Input Types for different Backend Types, first value is the preferred */
     protected $_frontendMappping = [
         'varchar' => ['textarea', 'text'],
-        'datetime' => 'date',
+        'datetime' => ['date'],
         'int' => ['text', 'select', 'hidden'],
         'text' => ['textarea', 'text', 'multiline', 'multiselect'],
         'decimal' => ['text', 'price', 'weight']
@@ -156,7 +162,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Decide to upgrade or migrate an attribute and trigger the required methods
      *
-     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
      * @return void
@@ -179,7 +185,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Update the data of an existing attribute
      *
-     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Skipped_Exception
      * @return void
@@ -210,7 +216,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Create a new (managed) attribute
      *
-     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
      * @return void
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
@@ -255,8 +261,8 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Update attribute set and attribute group config
      *
-     * @param Aoe_AttributeConfigurator_Model_Config_Attribute              $attributeConfig Attribute config
-     * @param Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset $attributeSet    Attributeset to use
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
+     * @param Aoe_AttributeConfigurator_Model_Config_Attribute_Attributeset $attributeSet Attributeset to use
      * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Exception
      * @return void
      */
@@ -292,7 +298,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
             ->addFieldToFilter('entity_type_id', $attributeConfig->getEntityTypeId())
             ->getFirstItem();
         // Attribute Set ID - we will need this later
-        $attributeSetId = (int) $attributeSetModel->getData('attribute_set_id');
+        $attributeSetId = (int)$attributeSetModel->getData('attribute_set_id');
 
         if (!$attributeSetId) {
             throw new Aoe_AttributeConfigurator_Model_Sync_Import_Exception(
@@ -305,7 +311,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
 
         // TODO: we need real update (also remove if the attribute config has changed)
         // Most likely only one, fetch all
-        $attributeGroups = (array) $attributeSet->getAttributeGroups();
+        $attributeGroups = (array)$attributeSet->getAttributeGroups();
 
         // Iterate through Attribute Groups
         foreach ($attributeGroups as $group) {
@@ -389,6 +395,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Converts existing Attribute to different type
      *
+
      * @param  Mage_Catalog_Model_Entity_Attribute $attribute     Attribute
      * @param  string                              $backendType   New Backend Type
      * @param  string                              $frontendInput New Frontend Input
@@ -416,7 +423,7 @@ WHERE
     attribute_id = ?;
 EOS;
 
-        try{
+        try {
             $_dbConnection->query(
                 $sql,
                 [
@@ -425,6 +432,7 @@ EOS;
                     $attribute->getId(),
                 ]
             );
+
             // Migrate existing Data
             $this->_migrateData($attribute, $backendType);
         }catch(Exception $e){
@@ -439,7 +447,6 @@ EOS;
      *
      * @param  Mage_Eav_Model_Entity_Attribute $attribute  Attribute Model
      * @param  string $targetType Target Backend Type
-     *
      * @return void
      */
     protected function _migrateData($attribute, $targetType)
@@ -502,7 +509,7 @@ EOS;
     /**
      * Force Casting of Backend Types
      *
-     * @param mixed  $value      Current Value
+     * @param mixed $value Current Value
      * @param string $sourceType Current Source Type
      * @param string $targetType New Source Type
      * @return null
@@ -514,25 +521,25 @@ EOS;
         }
         switch ($targetType) {
             case 'decimal':
-                return min((int) $value, 2147483648);
+                return min((int)$value, 2147483648);
             case 'gallery':
-                return $this->truncateString((string) $value, 254);
+                return $this->truncateString((string)$value, 254);
             case 'group_price':
-                return min((int) $value, 65535);
+                return min((int)$value, 65535);
             case 'int':
-                return min((int) $value, 2147483648);
+                return min((int)$value, 2147483648);
             case 'media_gallery':
-                return $this->truncateString((string) $value, 254);
+                return $this->truncateString((string)$value, 254);
             case 'media_gallery_value':
-                return min((int) $value, 65535);
+                return min((int)$value, 65535);
             case 'text':
-                return (string) $value;
+                return (string)$value;
             case 'tier_price':
-                return min((int) $value, 65535);
+                return min((int)$value, 65535);
             case 'url_key':
-                return $this->truncateString((string) $value, 254);
+                return $this->truncateString((string)$value, 254);
             case 'varchar':
-                return $this->truncateString((string) $value, 254);
+                return $this->truncateString((string)$value, 254);
         }
 
         return null;
@@ -541,7 +548,7 @@ EOS;
     /**
      * Truncate string if too long
      *
-     * @param  string  $str    Input String
+     * @param  string $str Input String
      * @param  integer $maxlen Maximum String Length
      * @return string
      */
@@ -608,7 +615,7 @@ EOS;
     /**
      * Create Diff Data between incoming Attribute and existing Attribute Data
      *
-     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
      * @return array
      */
@@ -636,19 +643,58 @@ EOS;
     /**
      * Update changeable properties of a managed attribute
      *
-     * @param Mage_Catalog_Model_Entity_Attribute              $attribute       Attribute to update
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute Attribute to update
      * @param Aoe_AttributeConfigurator_Model_Config_Attribute $attributeConfig Attribute config
-     * @param array                                            $attributeDiff   Attributes to be updated
+     * @param array $attributeDiff Attributes to be updated
      * @return void
+     * @throws Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception
      */
     protected function _changeableAttributeUpdate($attribute, $attributeConfig, $attributeDiff)
     {
-        $attributeSetting = $attributeConfig->getSettingsAsArray();
+        if (!empty($attributeDiff)) {
+            $attributeSetting = $attributeConfig->getSettingsAsArray();
 
-        foreach($attributeDiff as $property) {
-            if(in_array($property, $this->_changeableProps)) {
-                $attribute->setData($property, $attributeSetting[$property]);
+            foreach ($attributeDiff as $property) {
+                if (in_array($property, $this->_changeableProps)) {
+                    if ($this->_validateProperty($property, $attributeSetting[$property])) {
+                        $attribute->setData($property, $attributeSetting[$property]);
+                    } else {
+                        $this->_getHelper()->log(sprintf('Property \'%s\' of Attribute \'%s\' skipped: \'%s\' is no valid value.',
+                            $property, $attributeConfig->getCode(), $attributeSetting[$property]));
+                    }
+                }
+            }
+
+            try {
+                $attribute->save();
+            } catch (Exception $e) {
+                throw new Aoe_AttributeConfigurator_Model_Sync_Import_Attribute_Exception(
+                    $e->getMessage(),
+                    $e->getCode(),
+                    $e
+                );
             }
         }
     }
+
+    /**
+     * Validate Property of an Attribute
+     *
+     * @param string $property property of attribute
+     * @param mixed  $value    value of the property
+     * @return boolean
+     */
+    protected function _validateProperty($property, $value)
+    {
+        if(in_array($property, $this->_booleanValidation)) {
+            if(in_array($value, array('0', '1'))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 }
+
