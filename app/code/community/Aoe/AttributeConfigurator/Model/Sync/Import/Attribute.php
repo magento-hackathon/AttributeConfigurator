@@ -402,7 +402,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
         if (!in_array($frontendInput, $frontendMapping)) {
             // Override Frontend Input if invalid one was supplied in XML with the first one from the _frontendMappping
             $frontendInput = $this->_frontendMappping[$backendType][0];
-            $this->_getHelper()->log(sprintf('Overriding faulty frontend type for attribute %s while migrating with %s.', $attribute->getData('attribute_code'), $frontendInput));
+            $this->_getHelper()->log(sprintf('Overriding faulty Frontend Input Type for attribute %s while migrating with Type %s.', $attribute->getData('attribute_code'), $frontendInput));
         };
 
         // Actual Conversion of Attribute
@@ -411,9 +411,9 @@ UPDATE
     eav_attribute
 SET
     backend_type = ?,
-    frontend_input = ?,
+    frontend_input = ?
 WHERE
-    attribute_id = ?'
+    attribute_id = ?;
 EOS;
 
         try{
@@ -422,10 +422,11 @@ EOS;
                 [
                     $backendType,
                     $frontendInput,
-                    $attribute->getId()
+                    $attribute->getId(),
                 ]
             );
-            $this->migrateData($attribute, $backendType);
+            // Migrate existing Data
+            $this->_migrateData($attribute, $backendType);
         }catch(Exception $e){
             $this->_getHelper()->log(sprintf('Exception occured while converting Backend Type'), $e);
         }
@@ -434,27 +435,27 @@ EOS;
     /**
      * Migrate Entries from source to target tables (if possible)
      *
-     * @param  Mage_Eav_Model_Entity_Attribute $attribute Attribute Model
-     * @param  array                           $data      Attribute Data
+     * @TODO: Delete existing Select/Multiselect Values if the new Backend Type is not one of Select/Multiselect
+     *
+     * @param  Mage_Eav_Model_Entity_Attribute $attribute  Attribute Model
+     * @param  string $targetType Target Backend Type
+     *
      * @return void
      */
-    private function migrateData($attribute, $data = null)
+    protected function _migrateData($attribute, $targetType)
     {
-        /*
-         * @TODO: jadhub, muss hier noch eventuell vorhandene Select/Multiselect-Values löschen falls der neue BackendType ein anderer ist
-         */
-        if ($data === null) {
-            return;
-        }
         $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
+
         // e.g. Entity is 'catalog_product'
         $entityTypeCode = $attribute->getEntity()->getData('entity_type_code');
+
         // Set Backend Types for later reference
         $sourceType = $attribute->getBackendType();
-        $targetType = $data['backend_type'];
+
         // Create complete Entity Table names, e.g. 'catalog_product_entity_text'
         $sourceTable = implode([$entityTypeCode, 'entity', $sourceType], '_');
         $targetTable = implode([$entityTypeCode, 'entity', $targetType], '_');
+
         // Select all existing entries for given Attribute
         $srcSql = 'SELECT' .
             ' * FROM ' . $sourceTable . ' WHERE attribute_id = ? AND entity_type_id = ?';
@@ -465,11 +466,13 @@ EOS;
                 $attribute->getEntity()->getData('entity_type_id')
             ]
         );
+
         while ($row = $sourceQuery->fetch()) {
             $currentValue = $row['value'];
             if (!is_null($currentValue)) {
                 // Cast Value Type to new Type (e.g. decimal to text)
-                $targetValue = $this->typeCast($currentValue, $sourceType, $targetType);
+                $targetValue = $this->_typeCast($currentValue, $sourceType, $targetType);
+
                 // Insert Value to target Entity
                 $sql = 'INSERT' .
                     ' INTO ' . $targetTable . ' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
@@ -485,9 +488,10 @@ EOS;
                         ]
                     );
                 } catch (Exception $e) {
-                    Mage::exception(__CLASS__.' - '.__LINE__.':'.$e->getMessage());
+                    $this->_getHelper()->log(sprintf('Exception occured while migrating Data. See exception log.'), $e);
                 }
             }
+
             // Delete Value from source Entity
             $sql = 'DELETE' .
                 ' FROM ' . $sourceTable . ' WHERE value_id = ?';
@@ -503,7 +507,7 @@ EOS;
      * @param string $targetType New Source Type
      * @return null
      */
-    private function typeCast($value, $sourceType, $targetType)
+    protected function _typeCast($value, $sourceType, $targetType)
     {
         if ($sourceType === $targetType) {
             return $value;
