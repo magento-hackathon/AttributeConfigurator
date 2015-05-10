@@ -63,7 +63,7 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
 
     /** @var array Possible Frontend Input Types for different Backend Types, first value is the preferred */
     protected $_frontendMappping = [
-        'varchar' => ['textarea', 'text'],
+        'varchar' => ['text', 'textarea'],
         'datetime' => ['date'],
         'int' => ['text', 'select', 'hidden'],
         'text' => ['textarea', 'text', 'multiline', 'multiselect'],
@@ -354,12 +354,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
             // Only act if this is a changed setting#
             if(in_array($prop, $attributeDiff)) {
                 switch ($prop) {
-                    case 'attribute_model':
-                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
-                        break;
-                    case 'backend_model':
-                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
-                        break;
                     case 'backend_type':
                         $backendType = $attributeConfig->getSettingsAsArray()['backend_type'];
                         $frontendInput = $attributeConfig->getSettingsAsArray()['frontend_input'];
@@ -373,6 +367,12 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
                             $backendType,
                             $frontendInput
                         );
+                        break;
+                    case 'attribute_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
+                        break;
+                    case 'backend_model':
+                        $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
                         break;
                     case 'frontend_model':
                         $this->_getHelper()->log(sprintf('Skipping Migration of setting %s for attribute %s, not implemented', $prop, $attribute->getName()));
@@ -400,7 +400,6 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     /**
      * Converts existing Attribute to different type
      *
-
      * @param  Mage_Catalog_Model_Entity_Attribute $attribute     Attribute
      * @param  string                              $backendType   New Backend Type
      * @param  string                              $frontendInput New Frontend Input
@@ -437,7 +436,12 @@ EOS;
             );
 
             // Migrate existing Data
-            $this->_migrateData($attribute, $backendType);
+            if (!in_array($frontendInput, ['select', 'multiselect'])) {
+                $this->_migrateData($attribute, $backendType);
+            } else {
+                $this->_migrateSelect($attribute, $backendType, $frontendInput);
+            }
+
         }catch(Exception $e){
             $this->_getHelper()->log(sprintf('Exception occured while converting Backend Type'), $e);
         }
@@ -446,14 +450,15 @@ EOS;
     /**
      * Migrate Entries from source to target tables (if possible)
      *
-     * @TODO: Delete existing Select/Multiselect Values if the new Backend Type is not one of Select/Multiselect
+     * TODO: Delete existing Select/Multiselect Values if the new Backend Type is not one of Select/Multiselect
      *
-     * @param  Mage_Eav_Model_Entity_Attribute $attribute  Attribute Model
-     * @param  string $targetType Target Backend Type
+     * @param Mage_Eav_Model_Entity_Attribute $attribute Attribute Model
+     * @param string $targetType Target Backend Type
      * @return void
      */
     protected function _migrateData($attribute, $targetType)
     {
+        /** @var Varien_Db_Adapter_Interface $_dbConnection */
         $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
 
         // e.g. Entity is 'catalog_product'
@@ -469,6 +474,7 @@ EOS;
         // Select all existing entries for given Attribute
         $srcSql = 'SELECT' .
             ' * FROM ' . $sourceTable . ' WHERE attribute_id = ? AND entity_type_id = ?';
+        /** @var Zend_Db_Statement_Interface $sourceQuery */
         $sourceQuery = $_dbConnection->query(
             $srcSql,
             [
@@ -477,40 +483,52 @@ EOS;
             ]
         );
 
-        while ($row = $sourceQuery->fetch()) {
-            $currentValue = $row['value'];
-            if (!is_null($currentValue)) {
-                // Cast Value Type to new Type (e.g. decimal to text)
-                $targetValue = $this->_typeCast($currentValue, $sourceType, $targetType);
+        $this->_mergeNonSelect(
+            $targetType, $sourceQuery, $sourceType, $targetTable,
+            $_dbConnection, $sourceTable
+        );
+    }
 
-                // Insert Value to target Entity
-                $sql = 'INSERT' .
-                    ' INTO ' . $targetTable . ' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
-                try {
-                    $_dbConnection->query(
-                        $sql,
-                        [
-                            $row['entity_type_id'],
-                            $row['attribute_id'],
-                            $row['store_id'],
-                            $row['entity_id'],
-                            $targetValue
-                        ]
-                    );
-                } catch (Exception $e) {
-                    $this->_getHelper()->log(sprintf('Exception occured while migrating Data. See exception log.'), $e);
-                }
-            }
+    /**
+     * Migrate Different Select/Multiselect Combinations
+     *
+     * @param Mage_Catalog_Model_Entity_Attribute $attribute       Attribute
+     * @param string                              $targetType      New Backend Type
+     * @param string                              $targetInputType Frontend Input Type
+     */
+    protected function _migrateSelect($attribute, $targetType, $targetInputType)
+    {
+        $selectTypes = ['select', 'multiselect'];
+        $sourceType = $attribute->getBackendType();
+        $sourceInputType = $attribute->getData('frontend_input');
 
-            // Delete Value from source Entity
-            $sql = 'DELETE' .
-                ' FROM ' . $sourceTable . ' WHERE value_id = ?';
-            $_dbConnection->query($sql, $row['value_id']);
+        if(in_array($sourceInputType, $selectTypes) && in_array($targetInputType, $selectTypes)) {
+            // Everything is SelectType
+            /**
+             * Convert Multiselect to Select
+             * Note: Select to Multiselect is not necessary, same Backend Type, just able to save more values
+             */
+        }
+
+        if(in_array($sourceInputType, $selectTypes)) {
+            // Source is SelectType
+            /**
+             * Convert From Select to 'flat' Entity
+             */
+        }
+
+        if(in_array($targetInputType, $selectTypes)) {
+            // Target is SelectType
+            /**
+             * Convert from 'flat' Entity to Select/Multiselect
+             */
         }
     }
 
     /**
      * Force Casting of Backend Types
+     *
+     * TODO : Fetch Field Type and Length Definition from Database Entity Tables
      *
      * @param mixed $value Current Value
      * @param string $sourceType Current Source Type
@@ -543,6 +561,10 @@ EOS;
                 return $this->truncateString((string)$value, 254);
             case 'varchar':
                 return $this->truncateString((string)$value, 254);
+            case 'datetime':
+                return null;
+            case 'static':
+                return null;
         }
 
         return null;
@@ -725,6 +747,60 @@ EOS;
             );
         };
         return $frontendInput;
+    }
+
+    /**
+     * Migrate Entries of non-select/multiselect Entities to new Entity Table
+     *
+     * @param string                      $targetType    Target Type as String
+     * @param Zend_Db_Statement_Interface $sourceQuery   Source Entity Table Query with old Entity Data to Transfer
+     * @param string                      $sourceType    Source Type as String
+     * @param string                      $targetTable   Target Entity Table
+     * @param Varien_Db_Adapter_Interface $_dbConnection Database Connection
+     * @param string                      $sourceTable   Source Entity Table
+     */
+    protected function _mergeNonSelect($targetType, $sourceQuery, $sourceType,
+        $targetTable, $_dbConnection, $sourceTable
+    ) {
+        if (in_array($sour))
+
+        while ($row = $sourceQuery->fetch()) {
+            $currentValue = $row['value'];
+            if (!is_null($currentValue)) {
+                // Cast Value Type to new Type (e.g. decimal to text)
+                $targetValue = $this->_typeCast(
+                    $currentValue, $sourceType, $targetType
+                );
+
+                // Insert Value to target Entity
+                $sql = 'INSERT' .
+                    ' INTO ' . $targetTable
+                    . ' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES (?,?,?,?,?)';
+                try {
+                    $_dbConnection->query(
+                        $sql,
+                        [
+                            $row['entity_type_id'],
+                            $row['attribute_id'],
+                            $row['store_id'],
+                            $row['entity_id'],
+                            $targetValue
+                        ]
+                    );
+                } catch (Exception $e) {
+                    $this->_getHelper()->log(
+                        sprintf(
+                            'Exception occured while migrating Data. See exception log.'
+                        ), $e
+                    );
+                }
+            }
+
+            // Delete Value from source Entity
+            $sql = 'DELETE' .
+                ' FROM ' . $sourceTable . ' WHERE value_id = ?';
+            $_dbConnection->query($sql, $row['value_id']);
+        }
     }
 }
 
