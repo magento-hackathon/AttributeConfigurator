@@ -223,8 +223,13 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
      */
     protected function _createAttribute($attribute, $attributeConfig)
     {
+        $data = $attributeConfig->getSettingsAsArray();
+        $data['frontend_input'] = $this->_getFrontendForBackend(
+            $data['backend_type'],
+            $data['frontend_input']
+        );
         $attribute->setData(
-            $attributeConfig->getSettingsAsArray()
+            $data
         );
         $attribute->setEntityTypeId($this->_getEntityTypeId())
             ->setAttributeCode($attributeConfig->getCode())
@@ -405,12 +410,10 @@ class Aoe_AttributeConfigurator_Model_Sync_Import_Attribute
     {
         $_dbConnection = Mage::getSingleton('core/resource')->getConnection('core_write');
 
-        $frontendMapping = $this->_frontendMappping[$backendType];
-        if (!in_array($frontendInput, $frontendMapping)) {
-            // Override Frontend Input if invalid one was supplied in XML with the first one from the _frontendMappping
-            $frontendInput = $this->_frontendMappping[$backendType][0];
-            $this->_getHelper()->log(sprintf('Overriding faulty Frontend Input Type for attribute %s while migrating with Type %s.', $attribute->getData('attribute_code'), $frontendInput));
-        };
+        $frontendInput = $this->_getFrontendForBackend(
+            $backendType,
+            $frontendInput
+        );
 
         // Actual Conversion of Attribute
         $sql = <<<EOS
@@ -695,6 +698,33 @@ EOS;
         } else {
             return true;
         }
+    }
+
+    /**
+     * Returns Mapping for matching Frontend Input to given Backend Type
+     * Corrects Value if wrong Frontend Input is supplied
+     *
+     * @param string $backendType          Attribute Backend Type
+     * @param string $currentFrontendInput Current Attribute Frontend Type (may be wrong, gets fixed here)
+     * @return bool|string
+     */
+    protected function _getFrontendForBackend($backendType, $currentFrontendInput)
+    {
+        $frontendMapping = $this->_frontendMappping[$backendType];
+        $frontendInput = false;
+        if (!in_array($currentFrontendInput, $frontendMapping)) {
+            // Override Frontend Input if invalid one was supplied in XML with the first one from the _frontendMappping
+            $frontendInput = $this->_frontendMappping[$backendType][0];
+            $this->_getHelper()->log(
+                sprintf(
+                    "Overriding faulty Frontend Input Type '%s' for Backend Type '%a' with Frontend Input of '%s'.",
+                    $currentFrontendInput,
+                    $backendType,
+                    $frontendInput
+                )
+            );
+        };
+        return $frontendInput;
     }
 }
 
